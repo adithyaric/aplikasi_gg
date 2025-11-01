@@ -1,0 +1,232 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* border: 1px solid red; */
+}
+
+/* color */
+.gradient-red {
+  background: linear-gradient(135deg, #8b0000, #e53935, #ff7043);
+}
+
+/* whatsapp */
+.floating-wa {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: white;
+  border-radius: 50%;
+  padding: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.floating-wa:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+.floating-wa img {
+  display: block;
+}
+
+/* hero image */
+.hero-img {
+  width: 420px;
+  border-radius: 20px;
+  transition: transform 0.3s ease;
+  position: relative;
+  z-index: 10;
+}
+
+.hero-img:hover {
+  transform: scale(1.05);
+}
+
+/* Identitas - menumpang di bawah gambar */
+.hero-identity {
+  position: absolute;
+  bottom: 80px; /* geser naik sedikit */
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.568);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 12px 28px;
+  width: 450px;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  z-index: 20;
+}
+
+.hero-identity h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.hero-identity p {
+  font-size: 0.95rem;
+  color: #374151;
+  font-style: italic;
+}
+
+/* Timer menumpang di bawah identitas */
+.timer-box {
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  color: #e91e63;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  padding: 10px 20px;
+  gap: 20px;
+  z-index: 30;
+}
+
+.timer-box > div {
+  min-width: 90px;
+  min-height: 70px;
+  text-align: center;
+  align-content: center;
+}
+
+.timer-box div[id] {
+  font-size: 2.2rem;
+  font-weight: 800;
+}
+
+.timer-box div.text-xs {
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.timer-box:hover {
+  transform: translateX(-50%) scale(1.03);
+  transition: all 0.3s ease;
+}
+
+/* Logo */
+.logo-SKM {
+  width: 260px;
+}
+
+.logo-polres {
+  width: 490px;
+}
+
+/* Efek latar belakang */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes spin-slower {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+.spin-slow {
+  background: #ffae00;
+  animation: spin-slow 30s linear infinite; /* durasi bisa kamu ubah */
+}
+.spin-slower {
+  background: #ffae007a;
+  animation: spin-slower 60s linear infinite; /* lebih lambat lagi dan arah berlawanan */
+}
+
+/* flatcpikr */
+/* 🌈 Perindah input date range */
+#dateRange.flatpickr-input {
+  background-color: #fff !important;
+  border: 1px solid #d0d5dd !important;
+  border-radius: 8px !important;
+  padding: 8px 10px !important;
+  font-size: 0.9rem !important;
+  color: #2b2b2b !important;
+  transition: all 0.3s ease;
+}
+#dateRange.flatpickr-input:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* 🌟 Kalender tampil dengan bayangan halus */
+.flatpickr-calendar {
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+  font-family: "Inter", "Poppins", sans-serif !important;
+  z-index: 9999 !important;
+}
+
+/* 🎯 Header kalender (bulan & tahun) */
+.flatpickr-months .flatpickr-month {
+  background-color: #3b82f6 !important;
+  color: white !important;
+  border-radius: 12px 12px 0 0 !important;
+}
+.flatpickr-current-month {
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+}
+
+/* 🗓️ Tombol navigasi bulan */
+.flatpickr-prev-month svg,
+.flatpickr-next-month svg {
+  fill: #ffffff !important;
+}
+
+/* 📅 Hari biasa & dipilih */
+.flatpickr-day {
+  border-radius: 6px !important;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.flatpickr-day:hover {
+  background: #eff6ff !important;
+  color: #2563eb !important;
+}
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+  background: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+  color: #fff !important;
+}
+
+/* 🌄 Warna range di antara tanggal */
+.flatpickr-day.inRange {
+  background: rgba(59, 130, 246, 0.15) !important;
+}
+
+/* 🧭 Hari Minggu warna abu */
+.flatpickr-weekday {
+  color: #64748b !important;
+  font-weight: 500 !important;
+}
+
+.reply {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+}
+
+.reply.open {
+  opacity: 1;
+}
+
