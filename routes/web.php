@@ -5,6 +5,7 @@ use App\Http\Controllers\BahanBakuController;
 use App\Http\Controllers\BahanOperasionalController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GiziController;
 use App\Http\Controllers\KategoriSkmController;
 use App\Http\Controllers\KuesionerController;
 use App\Http\Controllers\PaketSurveyController;
@@ -50,6 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('bahanbaku', BahanBakuController::class);
     Route::resource('bahanoperasional', BahanOperasionalController::class);
+    Route::resource('gizi', GiziController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('surats', SuratController::class);
     Route::get('/surats/{id}/cetak', [SuratController::class, 'cetak'])->name('surats.cetak');
