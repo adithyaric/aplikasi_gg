@@ -7,8 +7,8 @@
               <div class="col-md-12">
                   <div class="flex-wrap d-flex justify-content-between align-items-center">
                       <div>
-                          <h3>Hello {{ auth()->user()->name }}!</h3>
-                          <p>SPKT POLRES PACITAN</p>
+                          <h3>DAPUR BERGIZI</h3>
+                          <p>Makan Sehat Bergizi.</p>
                       </div>
                       <!-- <div>
                           <a href="" class="btn btn-link btn-soft-light">

@@ -49,10 +49,10 @@
                               <!--Logo start-->
                               <div class="logo-main">
                                   <div class="logo-normal">
-                                      <img src="{{ asset('assets/images/polri.png') }}" alt="" width="50px">
+                                      <img src="{{ asset('assets/images/logo-bgn.png') }}" alt="" width="50px">
                                   </div>
                                   <div class="logo-mini">
-                                      <img src="{{ asset('assets/images/polri.png') }}" alt="" width="50px">
+                                      <img src="{{ asset('assets/images/logo-bgn.png') }}" alt="" width="50px">
                                   </div>
                               </div>
                               <!--logo End-->

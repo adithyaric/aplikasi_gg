@@ -65,7 +65,7 @@
     </table>
 
     <div class="center">
-        <img style="margin-top: 10; margin-bottom: 10;" src="{{ public_path('assets/images/polri.png') }}" width="75px" height="75px" alt=""><br>
+        <img style="margin-top: 10; margin-bottom: 10;" src="{{ public_path('assets/images/logo-bgn.png') }}" width="75px" height="75px" alt=""><br>
         <b>SURAT KETERANGAN TANDA LAPOR KEHILANGAN</b><br>
         <span class="upperline">NOMOR : {{ $no_surat }}</span>
     </div>

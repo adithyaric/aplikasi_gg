@@ -7,7 +7,7 @@
     <title>SPKT | POLRES PACITAN</title>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="{{ asset('assets/images/polri.png') }}">
+    <link rel="shortcut icon" href="{{ asset('assets/images/logo-bgn.png') }}">
 
     <!-- Library / Plugin Css Build -->
     <link rel="stylesheet" href="{{ asset('assets/css/core/libs.min.css') }}">
@@ -56,10 +56,10 @@
                         <!--Logo start-->
                         <div class="logo-main">
                             <div class="logo-normal">
-                                <img src="{{ asset('assets/images/polri.png') }}" width="50px" alt="logo-polri" class="img-fluid">
+                                <img src="{{ asset('assets/images/logo-bgn.png') }}" width="50px" alt="logo-polri" class="img-fluid">
                             </div>
                             <div class="logo-mini">
-                                <img src="{{ asset('assets/images/polri.png') }}" width="50px" alt="logo-polri" class="img-fluid">
+                                <img src="{{ asset('assets/images/logo-bgn.png') }}" width="50px" alt="logo-polri" class="img-fluid">
                             </div>
                         </div>
                         <!--logo End-->
@@ -76,10 +76,10 @@
                                     <!--Logo start-->
                                     <div class="logo-main">
                                         <div class="logo-normal">
-                                            <img src="{{ asset('assets/images/polri.png') }}" width="50px" alt="logo-polri" class="img-fluid">
+                                            <img src="{{ asset('assets/images/logo-bgn.png') }}" width="50px" alt="logo-polri" class="img-fluid">
                                         </div>
                                         <div class="logo-mini">
-                                            <img src="{{ asset('assets/images/polri.png') }}" width="50px" alt="logo-polri" class="img-fluid">
+                                            <img src="{{ asset('assets/images/logo-bgn.png') }}" width="50px" alt="logo-polri" class="img-fluid">
                                         </div>
                                     </div>
                                     <!--logo End-->

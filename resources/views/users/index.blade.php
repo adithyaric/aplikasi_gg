@@ -339,18 +339,18 @@
                                 </tr>
                                 @endforeach
                             </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama</th>
-                                    <th>NRP</th>
-                                    <th>Pangkat</th>
-                                    <th>Jabatan</th>
-                                    <th>Role</th>
-                                    <th>TTD</th>
-                                    <th>Action</th>
-                                </tr>
-                            </tfoot>
+                            {{-- <tfoot> --}}
+                                {{-- <tr> --}}
+                                    {{-- <th>No</th> --}}
+                                    {{-- <th>Nama</th> --}}
+                                    {{-- <th>NRP</th> --}}
+                                    {{-- <th>Pangkat</th> --}}
+                                    {{-- <th>Jabatan</th> --}}
+                                    {{-- <th>Role</th> --}}
+                                    {{-- <th>TTD</th> --}}
+                                    {{-- <th>Action</th> --}}
+                                {{-- </tr> --}}
+                            {{-- </tfoot> --}}
                         </table>
                     </div>
                 </div>

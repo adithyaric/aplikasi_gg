@@ -4,10 +4,10 @@
   <head>
     <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-      <title>SPKT | POLRES PACITAN</title>
+      <title>BGN | Badan Gizi Nasional</title>
 
       <!-- Favicon -->
-      <link rel="shortcut icon" href="{{ asset('assets/images/polri.png') }}">
+      <link rel="shortcut icon" href="{{ asset('assets/images/logo-bgn.png') }}">
 
       <!-- Library / Plugin Css Build -->
       <link rel="stylesheet" href="{{ asset('assets/css/core/libs.min.css') }}">
