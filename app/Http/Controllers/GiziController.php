@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BahanBaku;
 use App\Models\Gizi;
 use Illuminate\Http\Request;
 
@@ -16,15 +17,17 @@ class GiziController extends Controller
 
     public function create()
     {
+        $bahanbakus = BahanBaku::orderBy('nama')->get(['id', 'nama', 'kelompok']);
         $title = 'Tambah Data Gizi';
-        return view('gizi.create', compact('title'));
+        return view('gizi.create', compact('bahanbakus', 'title'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
+            'bahan_baku_id' => 'required|exists:bahan_bakus,id|unique:gizis,bahan_baku_id',
             'nomor_pangan' => 'required|string|max:255',
-            'rincian_bahan_makanan' => 'required|string|max:255',
+            // 'rincian_bahan_makanan' => 'required|string|max:255',
             'bdd' => 'required|numeric',
         ]);
 
@@ -48,7 +51,7 @@ class GiziController extends Controller
     {
         $request->validate([
             'nomor_pangan' => 'required|string|max:255',
-            'rincian_bahan_makanan' => 'required|string|max:255',
+            // 'rincian_bahan_makanan' => 'required|string|max:255',
             'bdd' => 'required|numeric',
         ]);
 

@@ -10,6 +10,7 @@ class Gizi extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'bahan_baku_id',
         'nomor_pangan',
         'rincian_bahan_makanan',
         'bdd',
@@ -35,4 +36,9 @@ class Gizi extends Model
         'niasin',
         'vitamin_c',
     ];
+
+    public function bahanBaku()
+    {
+        return $this->belongsTo(BahanBaku::class);
+    }
 }

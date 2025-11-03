@@ -58,7 +58,7 @@
                                                 <div class="col-md-4">
                                                     <label class="form-label small fw-semibold mb-0">Nomor Pangan <span
                                                             class="text-danger">*</span></label>
-                                                    <input type="text" name="nomor_pangan"
+                                                    <input type="number" name="nomor_pangan"
                                                         class="form-control form-control-sm @error('nomor_pangan') is-invalid @enderror"
                                                         placeholder="P001"
                                                         value="{{ old('nomor_pangan', $gizi->nomor_pangan) }}" required>
@@ -68,15 +68,9 @@
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label class="form-label small fw-semibold mb-0">Nama Bahan Makanan
-                                                        <span class="text-danger">*</span></label>
-                                                    <input type="text" name="rincian_bahan_makanan"
-                                                        class="form-control form-control-sm @error('rincian_bahan_makanan') is-invalid @enderror"
-                                                        placeholder="Beras Merah"
-                                                        value="{{ old('rincian_bahan_makanan', $gizi->rincian_bahan_makanan) }}"
-                                                        required>
-                                                    @error('rincian_bahan_makanan')
-                                                        <div class="invalid-feedback small">{{ $message }}</div>
-                                                    @enderror
+                                                        <span class="text-danger">*</span>
+                                                    </label>
+                                                    <input type="text" name="rincian_bahan_makanan" class="form-control form-control-sm" value="{{ $gizi->bahanBaku?->nama }}" readonly>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label class="form-label small fw-semibold mb-0">BDD (%) <span

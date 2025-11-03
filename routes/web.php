@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GiziController;
 use App\Http\Controllers\KategoriSkmController;
 use App\Http\Controllers\KuesionerController;
+use App\Http\Controllers\PaketMenuController;
 use App\Http\Controllers\PaketSurveyController;
 use App\Http\Controllers\RespondenController;
 use App\Http\Controllers\SuratController;
@@ -52,6 +53,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('bahanbaku', BahanBakuController::class);
     Route::resource('bahanoperasional', BahanOperasionalController::class);
     Route::resource('gizi', GiziController::class);
+    Route::resource('paketmenu', PaketMenuController::class);
+
     Route::resource('categories', CategoryController::class);
     Route::resource('surats', SuratController::class);
     Route::get('/surats/{id}/cetak', [SuratController::class, 'cetak'])->name('surats.cetak');

@@ -15,4 +15,16 @@ class BahanBaku extends Model
         'jenis',
         'satuan',
     ];
+
+    public function menus()
+    {
+        return $this->belongsToMany(Menu::class, 'bahan_baku_menu')
+            ->withPivot(['berat_bersih', 'energi'])
+            ->withTimestamps();
+    }
+
+    public function gizi()
+    {
+        return $this->hasOne(Gizi::class);
+    }
 }
