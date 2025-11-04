@@ -25,8 +25,8 @@ class CreateMenusTable extends Migration
             $table->id();
             $table->foreignId('menu_id')->constrained()->onDelete('cascade');
             $table->foreignId('bahan_baku_id')->constrained()->onDelete('cascade');
-            $table->decimal('berat_bersih', 10, 2);
-            $table->decimal('energi', 10, 2);
+            $table->decimal('berat_bersih', 10, 2)->nullable()->default(0);
+            $table->decimal('energi', 10, 2)->nullable()->default(0);
             $table->timestamps();
         });
     }

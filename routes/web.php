@@ -10,6 +10,7 @@ use App\Http\Controllers\KategoriSkmController;
 use App\Http\Controllers\KuesionerController;
 use App\Http\Controllers\PaketMenuController;
 use App\Http\Controllers\PaketSurveyController;
+use App\Http\Controllers\RencanaMenuController;
 use App\Http\Controllers\RespondenController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\SurveyController;
@@ -54,6 +55,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('bahanoperasional', BahanOperasionalController::class);
     Route::resource('gizi', GiziController::class);
     Route::resource('paketmenu', PaketMenuController::class);
+    Route::resource('rencanamenu', RencanaMenuController::class);
 
     Route::resource('categories', CategoryController::class);
     Route::resource('surats', SuratController::class);

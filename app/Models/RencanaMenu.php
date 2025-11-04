@@ -5,22 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class PaketMenu extends Model
+class RencanaMenu extends Model
 {
     use SoftDeletes;
 
     protected $fillable = [
-        'nama',
+        'periode',
     ];
 
-    public function menus()
+    public function paketMenu()
     {
-        return $this->hasMany(Menu::class);
-    }
-
-    public function rencanaMenu()
-    {
-        return $this->belongsToMany(rencanaMenu::class, 'rencana_paket')
+        return $this->belongsToMany(PaketMenu::class, 'rencana_paket')
             ->withPivot('porsi')
             ->withTimestamps();
     }
