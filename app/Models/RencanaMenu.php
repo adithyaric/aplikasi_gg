@@ -11,6 +11,8 @@ class RencanaMenu extends Model
 
     protected $fillable = [
         'periode',
+        'start_date',
+        'end_date',
     ];
 
     public function paketMenu()

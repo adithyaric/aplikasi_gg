@@ -12,7 +12,7 @@ class Gizi extends Model
     protected $fillable = [
         'bahan_baku_id',
         'nomor_pangan',
-        'rincian_bahan_makanan',
+        // 'rincian_bahan_makanan',
         'bdd',
         'air',
         'energi',

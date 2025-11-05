@@ -17,7 +17,7 @@ class CreateGizisTable extends Migration
             $table->id();
             $table->foreignId('bahan_baku_id')->constrained()->onDelete('cascade');
             $table->string('nomor_pangan');
-            $table->string('rincian_bahan_makanan');
+            // $table->string('rincian_bahan_makanan');
             $table->decimal('bdd', 8, 2)->default(0)->nullable();
             $table->decimal('air', 8, 2)->default(0)->nullable();
             $table->decimal('energi', 8, 2)->default(0)->nullable();

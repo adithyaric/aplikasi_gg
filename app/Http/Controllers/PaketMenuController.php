@@ -72,7 +72,9 @@ class PaketMenuController extends Controller
     public function show(PaketMenu $paketmenu)
     {
         $paketmenu->load(['menus.bahanBakus']);
-        return response()->json($paketmenu);
+        $bahanbakus = BahanBaku::orderBy('nama')->get(['id', 'nama', 'kelompok']);
+        $title = 'Detail Paket Menu';
+        return view('paket-menu.show', compact('paketmenu', 'bahanbakus', 'title'));
     }
 
     public function edit(PaketMenu $paketmenu)

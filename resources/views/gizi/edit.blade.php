@@ -60,7 +60,7 @@
                                                             class="text-danger">*</span></label>
                                                     <input type="number" name="nomor_pangan"
                                                         class="form-control form-control-sm @error('nomor_pangan') is-invalid @enderror"
-                                                        placeholder="P001"
+                                                        placeholder="1"
                                                         value="{{ old('nomor_pangan', $gizi->nomor_pangan) }}" required>
                                                     @error('nomor_pangan')
                                                         <div class="invalid-feedback small">{{ $message }}</div>

@@ -11,6 +11,8 @@ class CreateRencanaMenusTable extends Migration
         Schema::create('rencana_menus', function (Blueprint $table) {
             $table->id();
             $table->string('periode')->nullable();
+            $table->string('start_date')->nullable();
+            $table->string('end_date')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
