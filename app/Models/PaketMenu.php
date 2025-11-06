@@ -13,6 +13,7 @@ class PaketMenu extends Model
         'nama',
     ];
 
+    //TODO ganti ke Many to Many
     public function menus()
     {
         return $this->hasMany(Menu::class);

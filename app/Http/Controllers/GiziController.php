@@ -18,8 +18,9 @@ class GiziController extends Controller
     public function create()
     {
         $bahanbakus = BahanBaku::doesntHave('gizi')->orderBy('nama')->get(['id', 'nama', 'kelompok']);
+        $nomor = Gizi::latest()->first()?->nomor_pangan + 1 ?? 1;
         $title = 'Tambah Data Gizi';
-        return view('gizi.create', compact('bahanbakus', 'title'));
+        return view('gizi.create', compact('bahanbakus', 'title', 'nomor'));
     }
 
     public function store(Request $request)

@@ -48,6 +48,7 @@ class RencanaMenuController extends Controller
             'items.*.porsi' => 'required|numeric|min:1',
         ]);
 
+        //TODO hanya input start_date
         // Parse the periode to extract start_date and end_date
         $periodeParts = explode(' to ', $request->periode);
         $startDate = \Carbon\Carbon::createFromFormat('d/m/Y', trim($periodeParts[0]))->format('Y-m-d');

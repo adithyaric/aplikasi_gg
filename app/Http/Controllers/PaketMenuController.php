@@ -24,6 +24,8 @@ class PaketMenuController extends Controller
         return view('paket-menu.create', compact('bahanbakus', 'title'));
     }
 
+    //TODO pindah Input Menu ke crud tersendiri,
+    //di CRUD Menu pilih bahan baku
     public function store(Request $request)
     {
         $request->validate([
@@ -74,6 +76,7 @@ class PaketMenuController extends Controller
         $paketmenu->load(['menus.bahanBakus']);
         $bahanbakus = BahanBaku::orderBy('nama')->get(['id', 'nama', 'kelompok']);
         $title = 'Detail Paket Menu';
+        //TODO menunggu rumus
         return view('paket-menu.show', compact('paketmenu', 'bahanbakus', 'title'));
     }
 

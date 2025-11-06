@@ -8,7 +8,7 @@
                 <div class="flex-wrap d-flex justify-content-between align-items-center">
                     <div>
                         <h3>{{ $title }}</h3>
-                        <p>SPKT POLRES PACITAN</p>
+                        <p>BGN Makan Sehat Bergizi</p>
                     </div>
                     <div>
                         <a href="#" class="btn btn-link btn-soft-light" data-bs-toggle="modal" data-bs-target="#modalTambah">

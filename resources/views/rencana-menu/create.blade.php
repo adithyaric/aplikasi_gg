@@ -49,6 +49,7 @@
                             <div class="row">
                                 <div class="form-group col-4">
                                     <label class="form-label">Periode Tanggal</label>
+                                    {{-- //TODO hanya input start_date --}}
                                     <input type="text" id="periodePO" class="form-control" name="periode"
                                         placeholder="Pilih rentang tanggal" readonly>
                                     <div class="invalid-feedback"></div>

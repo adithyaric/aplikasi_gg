@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-      <title>E-SPKT | POLRES PACITAN</title>
+      <title>BGN | Makan Sehat Bergizi</title>
 
       <!-- Favicon -->
       <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
@@ -57,7 +57,7 @@
                               </div>
                               <!--logo End-->
 
-                              <h4 class="logo-title ms-3">SPKT POLRES PACITAN</h4>
+                              <h4 class="logo-title ms-3">BGN Makan Sehat Bergizi</h4>
                            </a>
                            <h2 class="mb-2 text-center">Sign In</h2>
                            <p class="text-center">Silahkan Masukkan NRP dan Password</p>

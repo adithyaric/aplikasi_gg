@@ -229,7 +229,7 @@
                     ©
                     <script>
                         document.write(new Date().getFullYear())
-                    </script> SPKT POLRES PACITAN, Developed by <a href="https://decaa.id">DECAA.ID</a>.
+                    </script> BGN Makan Sehat Bergizi, Developed by <a href="https://decaa.id">DECAA.ID</a>.
                 </div>
             </div>
         </footer>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>E-SPKT POLRES PACITAN</title>
+    <title>BGN Makan Sehat Bergizi</title>
     <link
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
@@ -38,14 +38,14 @@
             alt="Logo Polres"
             class="h-10"
           />
-          <h1 class="text-xl font-bold text-red-700">E-SPKT POLRES PACITAN</h1>
+          <h1 class="text-xl font-bold text-red-700">BGN Makan Sehat Bergizi</h1>
         </div>
         <nav
           class="hidden md:flex space-x-6 font-medium text-gray-700"
           id="text"
         >
           <a href="#beranda" class="hover:text-red-600">Beranda</a>
-          <a href="#profil" class="hover:text-red-600">Profil SPKT</a>
+          <a href="#profil" class="hover:text-red-600">Profil BGN</a>
           <a href="#pelayanan" class="hover:text-red-600">Pelayanan Publik</a>
           <a href="#galeri" class="hover:text-red-600">Galeri</a>
           <a href="#pengaduan" class="hover:text-red-600">Pengaduan</a>
@@ -89,10 +89,10 @@
             class="logo-polres mb-6"
           />
           <h2 class="text-3xl md:text-5xl font-extrabold mb-3">
-            POLRES PACITAN
+            Makan Sehat Bergizi
           </h2>
           <h1 class="text-4xl md:text-6xl font-bold mb-6">
-            E-SPKT POLRES PACITAN
+            BGN Makan Sehat Bergizi
           </h1>
           <p class="text-lg md:text-xl mb-6 font-light italic">
             “Pelayanan Cepat, Transparan, dan Humanis”
@@ -104,7 +104,7 @@
               href="{{ route('login') }}"
               class="bg-white text-red-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 shadow transition"
             >
-              E-SPKT
+              BGN
             </a>
             <a
               href="{{ route('survey.index') }}"
@@ -129,7 +129,7 @@
           <div class="relative flex flex-col items-center z-10">
             <img
               src="{{ asset('homepage/assets/images/kapolrespacitan.png') }}"
-              alt="Kapolres Pacitan"
+              alt="KaMakan Sehat Bergizi"
               class="hero-img z-10 drop-shadow-2xl"
             />
 
@@ -139,7 +139,7 @@
                 AKBP Ayub Diponegoro Azhar, S.H., S.I.K., M.I.K.
               </h3>
               <p class="text-gray-700 text-sm italic text-center">
-                Kapolres Pacitan
+                KaMakan Sehat Bergizi
               </p>
             </div>
 
@@ -200,21 +200,21 @@
     <section id="profil" class="py-16 bg-white">
       <div class="container mx-auto px-6 text-center">
         <h2 class="text-3xl font-bold text-red-700 mb-6">
-          Profil SPKT Polres Pacitan
+          Profil BGN Makan Sehat Bergizi
         </h2>
         <p class="max-w-2xl mx-auto text-gray-600 leading-relaxed">
-          Sentra Pelayanan Kepolisian Terpadu (SPKT) Polres Pacitan berkomitmen
+          Sentra Pelayanan Kepolisian Terpadu (BGN) Makan Sehat Bergizi berkomitmen
           memberikan pelayanan prima kepada masyarakat dengan mengutamakan
           kecepatan, keterbukaan informasi, dan kenyamanan bagi seluruh warga.
         </p>
       </div>
     </section>
 
-    <!-- Profil SPKT -->
+    <!-- Profil BGN -->
     <section id="profil" class="py-16 bg-gray-50">
       <div class="container mx-auto px-6">
         <h2 class="text-3xl font-bold text-center text-red-900 mb-10">
-          Profil SPKT
+          Profil BGN
         </h2>
         <div class="grid md:grid-cols-2 gap-10">
           <div>
@@ -656,13 +656,13 @@
               Indeks Kepuasan Masyarakat
             </h3>
             <p class="text-red-900 font-bold mb-6 text-center">
-              SPKT POLRES PACITAN
+              BGN Makan Sehat Bergizi
             </p>
 
             <div class="w-full max-w-sm space-y-4">
               <div>
                 <p class="text-sm text-gray-600 mb-1 text-left">
-                  BPKB SPKT
+                  BPKB BGN
                 </p>
                 <div class="w-full bg-gray-200 rounded-full h-3">
                   <div
@@ -672,7 +672,7 @@
               </div>
               <div>
                 <p class="text-sm text-gray-600 mb-1 text-left">
-                  STNK SPKT
+                  STNK BGN
                 </p>
                 <div class="w-full bg-gray-200 rounded-full h-3">
                   <div
@@ -682,7 +682,7 @@
               </div>
               <div>
                 <p class="text-sm text-gray-600 mb-1 text-left">
-                  SKUKP SIM SPKT
+                  SKUKP SIM BGN
                 </p>
                 <div class="w-full bg-gray-200 rounded-full h-3">
                   <div
@@ -692,7 +692,7 @@
               </div>
               <div>
                 <p class="text-sm text-gray-600 mb-1 text-left">
-                  SPKT
+                  BGN
                 </p>
                 <div class="w-full bg-gray-200 rounded-full h-3">
                   <div
@@ -706,7 +706,7 @@
           <!-- === Kolom Kanan: Nilai & Komentar === -->
           <div>
             <div class="flex justify-between items-center mb-6">
-              <h3 class="text-lg font-bold text-gray-800">POLRES PACITAN</h3>
+              <h3 class="text-lg font-bold text-gray-800">Makan Sehat Bergizi</h3>
               <div class="flex items-center gap-2">
                 <!-- Filter Rentang Periode -->
                 <div
@@ -812,7 +812,7 @@
         <p>Call Center: <strong>110</strong></p>
         <p>Alamat: Jl. Jend. A. Yani No.60, Krajan, Pacitan, Jawa Timur</p>
         <p class="mt-4 text-sm">
-          © 2025 SPKT POLRES PACITAN. All Rights Reserved.
+          © 2025 BGN Makan Sehat Bergizi. All Rights Reserved.
         </p>
       </div>
     </footer>

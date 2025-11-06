@@ -50,7 +50,7 @@
                             </div>
                         </div>
                         <div class="card-body" id="modalContent">
-                            <div class="text-center py-5">
+                            <div class="text-center py-1">
                                 <div class="spinner-border text-primary" role="status">
                                     <span class="visually-hidden">Loading...</span>
                                 </div>
@@ -75,9 +75,9 @@
                     </div>
                     <div class="card-body">
                         <div class="custom-datatable-entries">
-                            <div class="col d-flex flex-wrap align-items-end gap-2 mb-4">
+                            <div class="col d-flex flex-wrap align-items-end gap-2 ">
                                 <div class="col-auto">
-                                    <label class="form-label mb-1">Rentang Periode</label>
+                                    <label class="form-label ">Rentang Periode</label>
                                     <input type="text" id="dateRange" class="form-control form-control-sm"
                                         placeholder="Pilih rentang tanggal" readonly />
                                 </div>
@@ -103,10 +103,10 @@
                                     @foreach ($rencanaMenus as $rencana)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $rencana->periode }}</td>
+                                            <td>{{ $rencana->start_date }}</td>
                                             <td>
                                                 <button class="btn btn-sm btn-info btn-detail" data-id="{{ $rencana->id }}"
-                                                    data-periode="{{ $rencana->periode }}">
+                                                    data-start_date="{{ $rencana->start_date }}">
                                                     Detail
                                                 </button>
                                             </td>
@@ -198,11 +198,11 @@
             // Handle Detail Button Click
             $(document).on('click', '.btn-detail', function() {
                 const id = $(this).data('id');
-                const periode = $(this).data('periode');
+                const start_date = $(this).data('start_date');
 
-                $('#modalPeriode').text(periode);
+                $('#modalPeriode').text(start_date);
                 $('#modalContent').html(`
-                <div class="text-center py-5">
+                <div class="text-center py-1">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
@@ -214,58 +214,59 @@
                 $.ajax({
                     url: `/rencanamenu/${id}`,
                     method: 'GET',
-                    success: function(data) {
-                        let html = '';
+success: function(data) {
+    let html = '';
 
-                        data.paket_menu.forEach((paket, index) => {
-                            html += `
-                            <form>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Menu</label>
-                                        <input type="text" class="form-control" value="${paket.nama}" disabled>
-                                    </div>
-                                </div>
-                                <hr class="hr-horizontal" />
-                        `;
+    data.paket_menu.forEach((paket, index) => {
+        html += `
+            <div class="paket-menu mb-1">
+                <h5 class="text-primary mb-1">${paket.nama}</h5>
+        `;
 
-                            paket.menus.forEach((menu, mIndex) => {
-                                menu.bahan_bakus.forEach((bahan, bIndex) => {
-                                    const totalKebutuhan = bahan.pivot
-                                        .energi * paket.pivot.porsi;
-                                    html += `
-                                    <div class="row itemRow">
-                                        <div class="form-group col-md-4">
-                                            ${bIndex === 0 && mIndex === 0 ? '<label class="form-label">Bahan Pokok</label>' : ''}
-                                            <input type="text" class="form-control" value="${bahan.nama}" disabled>
-                                        </div>
-                                        <div class="form-group col-md-3">
-                                            ${bIndex === 0 && mIndex === 0 ? '<label class="form-label">Per Porsi</label>' : ''}
-                                            <input type="text" class="form-control" value="${bahan.pivot.energi} ${bahan.satuan}" disabled>
-                                        </div>
-                                        <div class="form-group col-md-2">
-                                            ${bIndex === 0 && mIndex === 0 ? '<label class="form-label">Jmlh Porsi</label>' : ''}
-                                            <input type="text" class="form-control" value="${paket.pivot.porsi.toLocaleString('id-ID')}" disabled>
-                                        </div>
-                                        <div class="form-group col-md-3">
-                                            ${bIndex === 0 && mIndex === 0 ? '<label class="form-label">Ttl Kebutuhan</label>' : ''}
-                                            <input type="text" class="form-control" value="${totalKebutuhan.toLocaleString('id-ID', {minimumFractionDigits: 0, maximumFractionDigits: 3})} ${bahan.satuan}" disabled>
-                                        </div>
-                                    </div>
-                                `;
-                                });
-                            });
+        paket.menus.forEach((menu, mIndex) => {
+            html += `
+                <div class="menu-item mb-1">
+                    <h6 class="text-secondary mb-1">${menu.nama}</h6>
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Bahan Pokok</th>
+                                <th>Per Porsi</th>
+                                <th>Jmlh Porsi</th>
+                                <th>Ttl Kebutuhan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
 
-                            html += `</form>`;
+            menu.bahan_bakus.forEach((bahan) => {
+                const totalKebutuhan = bahan.pivot.energi * paket.pivot.porsi;
+                html += `
+                    <tr>
+                        <td>${bahan.nama}</td>
+                        <td>${bahan.pivot.energi} ${bahan.satuan}</td>
+                        <td>${paket.pivot.porsi.toLocaleString('id-ID')}</td>
+                        <td>${totalKebutuhan.toLocaleString('id-ID', {minimumFractionDigits: 0, maximumFractionDigits: 3})} ${bahan.satuan}</td>
+                    </tr>
+                `;
+            });
 
-                            if (index < data.paket_menu.length - 1) {
-                                html +=
-                                    `<hr class="border border-secondary border-2 opacity-50 my-4" />`;
-                            }
-                        });
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        });
 
-                        $('#modalContent').html(html);
-                    },
+        html += `</div>`;
+
+        if (index < data.paket_menu.length - 1) {
+            html += `<hr class="my-3" />`;
+        }
+    });
+
+    $('#modalContent').html(html);
+},
                     error: function() {
                         $('#modalContent').html(`
                         <div class="alert alert-danger">

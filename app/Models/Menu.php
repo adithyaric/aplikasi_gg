@@ -10,10 +10,11 @@ class Menu extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'paket_menu_id',
+        // 'paket_menu_id',
         'nama',
     ];
 
+    //TODO ganti ke Many to Many
     public function paketMenu()
     {
         return $this->belongsTo(PaketMenu::class);
