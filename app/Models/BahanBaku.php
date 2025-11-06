@@ -16,10 +16,19 @@ class BahanBaku extends Model
         'satuan',
     ];
 
+    // Template relationship (just which menus use this bahan baku)
     public function menus()
     {
+        return $this->belongsToMany(Menu::class, 'menu_bahan_baku')
+            ->withTimestamps();
+    }
+
+    // Actual data with weight/energy for specific paket
+    public function menusForPaket($paketMenuId)
+    {
         return $this->belongsToMany(Menu::class, 'bahan_baku_menu')
-            ->withPivot(['berat_bersih', 'energi'])
+            ->wherePivot('paket_menu_id', $paketMenuId)
+            ->withPivot(['paket_menu_id', 'berat_bersih', 'energi'])
             ->withTimestamps();
     }
 

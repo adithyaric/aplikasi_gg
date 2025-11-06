@@ -37,6 +37,7 @@ class MenuController extends Controller
                 'nama' => $request->nama,
             ]);
 
+            // Attach bahan bakus (template only, no weight/energy yet)
             $menu->bahanBakus()->attach($request->bahan_bakus);
 
             DB::commit();
@@ -56,8 +57,9 @@ class MenuController extends Controller
     public function show(Menu $menu)
     {
         $menu->load('bahanBakus');
-        $title = 'Detail Menu';
-        return view('menu.show', compact('menu', 'title'));
+        return $menu?->toArray();
+        // $title = 'Detail Menu';
+        // return view('menu.show', compact('menu', 'title'));
     }
 
     public function edit(Menu $menu)
@@ -82,6 +84,7 @@ class MenuController extends Controller
                 'nama' => $request->nama,
             ]);
 
+            // Sync bahan bakus (template only)
             $menu->bahanBakus()->sync($request->bahan_bakus);
 
             DB::commit();
@@ -100,10 +103,29 @@ class MenuController extends Controller
 
     public function destroy(Menu $menu)
     {
-        $menu->delete();
-        return response()->json([
-            'success' => true,
-            'message' => 'Menu berhasil dihapus'
-        ]);
+        DB::beginTransaction();
+        try {
+            // Check if menu is used in any paket
+            if ($menu->paketMenus()->count() > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Menu tidak dapat dihapus karena masih digunakan dalam paket menu'
+                ], 422);
+            }
+
+            $menu->delete();
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Menu berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

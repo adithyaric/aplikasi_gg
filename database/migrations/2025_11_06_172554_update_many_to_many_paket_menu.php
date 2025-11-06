@@ -21,10 +21,32 @@ class UpdateManyToManyPaketMenu extends Migration
             $table->dropForeign(['paket_menu_id']);
             $table->dropColumn('paket_menu_id');
         });
+
+        Schema::table('bahan_baku_menu', function (Blueprint $table) {
+            $table->foreignId('paket_menu_id')->after('id')->constrained()->onDelete('cascade');
+            $table->unique(['paket_menu_id', 'menu_id', 'bahan_baku_id'], 'unique_paket_menu_bahan');
+        });
+
+        // Store menu-bahan relationship without weight/energy (just template)
+        Schema::create('menu_bahan_baku', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('menu_id')->constrained()->onDelete('cascade');
+            $table->foreignId('bahan_baku_id')->constrained()->onDelete('cascade');
+            $table->timestamps();
+            $table->unique(['menu_id', 'bahan_baku_id']);
+        });
     }
 
     public function down()
     {
+        Schema::dropIfExists('menu_bahan_baku');
+
+        Schema::table('bahan_baku_menu', function (Blueprint $table) {
+            $table->dropUnique('unique_paket_menu_bahan');
+            $table->dropForeign(['paket_menu_id']);
+            $table->dropColumn('paket_menu_id');
+        });
+
         Schema::table('menus', function (Blueprint $table) {
             $table->foreignId('paket_menu_id')->nullable()->constrained()->onDelete('cascade');
         });

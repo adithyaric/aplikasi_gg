@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BahanBaku;
 use App\Models\Gizi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class GiziController extends Controller
 {
@@ -63,10 +64,28 @@ class GiziController extends Controller
 
     public function destroy(Gizi $gizi)
     {
-        $gizi->delete();
-        return response()->json([
-            'success' => true,
-            'message' => 'Data gizi berhasil dihapus'
-        ]);
+        DB::beginTransaction();
+        try {
+            if ($gizi->bahanBaku->menus()->count() > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gizi tidak dapat dihapus karena masih digunakan dalam Paket Menu'
+                ], 422);
+            }
+
+            $gizi->delete();
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Gizi berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

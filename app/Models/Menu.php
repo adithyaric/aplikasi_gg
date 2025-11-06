@@ -14,21 +14,25 @@ class Menu extends Model
         'nama',
     ];
 
-    // //TODO ganti ke Many to Many
-    // public function paketMenu()
-    // {
-    //     return $this->belongsTo(PaketMenu::class);
-    // }
     public function paketMenus()
     {
         return $this->belongsToMany(PaketMenu::class, 'menu_paket_menu')
             ->withTimestamps();
     }
 
+    // Template relationship (just which bahan bakus are in this menu)
     public function bahanBakus()
     {
+        return $this->belongsToMany(BahanBaku::class, 'menu_bahan_baku')
+            ->withTimestamps();
+    }
+
+    // Actual data with weight/energy for specific paket
+    public function bahanBakusForPaket($paketMenuId)
+    {
         return $this->belongsToMany(BahanBaku::class, 'bahan_baku_menu')
-            ->withPivot(['berat_bersih', 'energi'])
+            ->wherePivot('paket_menu_id', $paketMenuId)
+            ->withPivot(['paket_menu_id', 'berat_bersih', 'energi'])
             ->withTimestamps();
     }
 }

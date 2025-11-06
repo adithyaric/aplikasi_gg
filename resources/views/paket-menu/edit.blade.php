@@ -42,7 +42,7 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         <div class="header-title">
-                            <h4 class="card-title">Edit Paket Menu</h4>
+                            <h4 class="card-title">{{ $title }}</h4>
                         </div>
                     </div>
                     <div class="card-body">
@@ -50,102 +50,97 @@
                             @csrf
                             @method('PUT')
                             <div class="row">
-                                <div class="form-group col-4">
-                                    <label class="form-label">Paket Menu <span class="text-danger">*</span></label>
+                                <div class="form-group col-md-6 col-12">
+                                    <label class="form-label">Nama Paket Menu <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="nama_paket" name="nama_paket"
                                         placeholder="Masukkan nama paket menu" value="{{ $paketmenu->nama }}">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <hr class="hr-horizontal" />
-
                             <!-- Container Menu -->
                             <div id="menu-container">
-                                @foreach ($paketmenu->menus as $menu)
-                                    <div class="menu-item border p-3 mb-2">
-                                        <!-- Bagian Nama Menu -->
-                                        <div class="row mb-2">
-                                            <div class="col-md-3">
-                                                <label>Nama Menu <span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control nama-menu"
-                                                    placeholder="Masukkan nama menu" value="{{ $menu->nama }}">
+                                @foreach ($paketmenu->menus as $selectedMenu)
+                                    <div class="menu-item border p-3 mb-1">
+                                        <!-- Bagian Pilih Menu -->
+                                        <div class="row mb-1">
+                                            <div class="col-md-4">
+                                                <label>Pilih Menu <span class="text-danger">*</span></label>
+                                                <select class="form-select menu-select">
+                                                    <option value="">-- Pilih Menu --</option>
+                                                    @foreach ($menus as $menu)
+                                                        <option value="{{ $menu->id }}"
+                                                            data-bahan='@json($menu->bahanBakus)'
+                                                            {{ $selectedMenu->id == $menu->id ? 'selected' : '' }}>
+                                                            {{ $menu->nama }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
-                                            <div class="col-md-9 d-flex align-items-end justify-content-end">
+                                            <div class="col-md-8 d-flex align-items-end justify-content-end">
                                                 <button type="button" class="btn btn-outline-danger btn-sm remove-menu">
-                                                    Hapus Menu
+                                                    <i class="bi bi-trash"></i> Hapus Menu
                                                 </button>
                                             </div>
                                         </div>
-
                                         <!-- Daftar Bahan -->
                                         <div class="bahan-list">
-                                            @foreach ($menu->bahanBakus as $bahan)
-                                                <div class="row mb-2 align-items-end bahan-item">
-                                                    <div class="col-md-3 offset-md-3">
-                                                        @if ($loop->first)
+                                            @foreach ($selectedMenu->bahanBakusWithPaketData as $index => $bahan)
+                                                <div class="row mb-1 align-items-end bahan-item"
+                                                    data-bahan-id="{{ $bahan->id }}">
+                                                    <div class="col-md-4 offset-md-2">
+                                                        @if ($index === 0)
                                                             <label>Bahan Makanan</label>
                                                         @endif
-                                                        <select class="form-select bahan-select">
-                                                            <option value="">-- Pilih Bahan --</option>
-                                                            @foreach ($bahanbakus as $bb)
-                                                                <option value="{{ $bb->id }}"
-                                                                    data-kalori="{{ $bb->gizi?->energi ?? 0 }}"
-                                                                    {{ $bahan->id == $bb->id ? 'selected' : '' }}>
-                                                                    {{ $bb->nama }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
+                                                        <input type="text" class="form-control bg-light"
+                                                            value="{{ $bahan->nama }}" readonly>
                                                     </div>
-                                                    <div class="col-md-2">
-                                                        @if ($loop->first)
-                                                            <label>Berat Bersih (gram)</label>
+                                                    <div class="col-md-3">
+                                                        @if ($index === 0)
+                                                            <label>Berat Bersih (gram) <span
+                                                                    class="text-danger">*</span></label>
                                                         @endif
                                                         <input type="number" class="form-control berat-input"
-                                                            value="{{ $bahan->pivot->berat_bersih }}" min="0"
-                                                            step="0.01">
+                                                            value="{{ $bahan->berat_bersih }}" min="0"
+                                                            step="0.01" placeholder="0.00">
                                                     </div>
-                                                    <div class="col-md-2">
-                                                        @if ($loop->first)
-                                                            <label>Kalori</label>
+                                                    <div class="col-md-3">
+                                                        @if ($index === 0)
+                                                            <label>Kalori (kkal)</label>
                                                         @endif
-                                                        <input type="number" class="form-control kalori-input"
-                                                            value="{{ $bahan->pivot->energi }}" readonly>
-                                                    </div>
-                                                    <div class="col-md-2 d-flex gap-2">
-                                                        <button type="button"
-                                                            class="btn btn-outline-primary btn-sm add-bahan">
-                                                            +
-                                                        </button>
-                                                        <button type="button"
-                                                            class="btn btn-outline-danger btn-sm remove-bahan">
-                                                            -
-                                                        </button>
+                                                        <input type="number" class="form-control kalori-input bg-light"
+                                                            value="{{ $bahan->energi }}" readonly>
                                                     </div>
                                                 </div>
                                             @endforeach
                                         </div>
+                                        <!-- Total Kalori per Menu -->
+                                        <div class="menu-total-kalori text-end mt-2">
+                                            <strong>Total Kalori Menu: <span class="menu-kalori-value text-primary">0</span>
+                                                kkal</strong>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
-
-                            <!-- Total Kalori -->
+                            <!-- Total Kalori Keseluruhan -->
                             <hr class="hr-horizontal" />
                             <div class="text-end">
                                 <h5>
-                                    Total Kalori:
-                                    <span id="totalKalori" class="fw-bold text-primary">0</span>
+                                    <i class="bi bi-calculator"></i> Total Kalori Paket:
+                                    <span id="totalKalori" class="fw-bold text-success">0</span>
                                     kkal
                                 </h5>
                             </div>
-
                             <!-- Tombol Tambah Menu & Simpan -->
-                            <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="d-flex justify-content-between align-items-center mt-4">
                                 <button type="button" class="btn btn-primary" id="addMenu">
                                     <i class="bi bi-plus-circle"></i> Tambah Menu
                                 </button>
                                 <div class="d-flex gap-2">
-                                    <button type="submit" class="btn btn-success">Update</button>
-                                    <a href="{{ route('paketmenu.index') }}" class="btn btn-danger">Kembali</a>
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="bi bi-save"></i> Update
+                                    </button>
+                                    {{-- <a href="{{ route('paketmenu.index') }}" class="btn btn-danger"><i class="bi bi-x-circle"></i> Kembali</a> --}}
                                 </div>
                             </div>
                         </form>
@@ -155,32 +150,43 @@
         </div>
     </div>
 @endsection
-
 @push('js')
     <script>
         $(document).ready(function() {
-            // Data kalori per bahan (dari database)
+            // Data kalori per bahan
             const kaloriData = {};
-            @foreach ($bahanbakus as $bahan)
-                kaloriData[{{ $bahan->id }}] = {{ $bahan->gizi?->energi ?? 0 }};
+            @foreach ($menus as $menu)
+                @foreach ($menu->bahanBakus as $bahan)
+                    kaloriData[{{ $bahan->id }}] = {{ $bahan->gizi?->energi ?? 0 }};
+                @endforeach
             @endforeach
 
-            // Fungsi hitung kalori per baris
+            // Initial calculation
+            $('.menu-item').each(function() {
+                updateMenuTotalKalori($(this));
+            });
+            updateTotalKalori();
+
             function updateCalories(row) {
-                const select = row.find('.bahan-select');
                 const beratInput = row.find('.berat-input');
                 const kaloriInput = row.find('.kalori-input');
-
-                const bahanId = select.val();
+                const bahanId = row.data('bahan-id');
                 const berat = parseFloat(beratInput.val()) || 0;
                 const kaloriPer100 = kaloriData[bahanId] || 0;
-                const totalKalori = (berat * kaloriPer100);
-
+                const totalKalori = (berat * kaloriPer100) / 100;
                 kaloriInput.val(totalKalori.toFixed(2));
+                updateMenuTotalKalori(row.closest('.menu-item'));
                 updateTotalKalori();
             }
 
-            // Fungsi update total seluruh kalori
+            function updateMenuTotalKalori(menuItem) {
+                let menuTotal = 0;
+                menuItem.find('.kalori-input').each(function() {
+                    menuTotal += parseFloat($(this).val()) || 0;
+                });
+                menuItem.find('.menu-kalori-value').text(menuTotal.toFixed(2));
+            }
+
             function updateTotalKalori() {
                 let total = 0;
                 $('.kalori-input').each(function() {
@@ -189,119 +195,146 @@
                 $('#totalKalori').text(total.toFixed(2));
             }
 
-            // Initial calculation
-            updateTotalKalori();
-
-            // Event: perubahan berat
             $(document).on('input', '.berat-input', function() {
                 const row = $(this).closest('.bahan-item');
                 updateCalories(row);
             });
 
-            // Event: perubahan bahan
-            $(document).on('change', '.bahan-select', function() {
-                const row = $(this).closest('.bahan-item');
-                updateCalories(row);
-            });
+            $(document).on('change', '.menu-select', function() {
+                const menuItem = $(this).closest('.menu-item');
+                const bahanList = menuItem.find('.bahan-list');
+                const menuTotalKalori = menuItem.find('.menu-total-kalori');
+                const menuId = $(this).val();
+                const bahanDataAttr = $(this).find(':selected').attr('data-bahan');
 
-            // Event: tambah bahan
-            $(document).on('click', '.add-bahan', function() {
-                const currentItem = $(this).closest('.bahan-item');
-                const clone = currentItem.clone();
+                if (menuId && bahanDataAttr) {
+                    let bahanData;
+                    try {
+                        bahanData = JSON.parse(bahanDataAttr);
+                    } catch (e) {
+                        console.error('Error parsing bahan data:', e);
+                        return;
+                    }
 
-                clone.find('label').remove();
-                clone.find('input').val(0);
-                clone.find('.bahan-select').val('');
+                    bahanList.empty().show();
+                    menuTotalKalori.show();
 
-                currentItem.parent().append(clone);
-            });
+                    // bahanList.append(`
+                    //     <div class="alert alert-info mb-1">
+                    //         <i class="bi bi-info-circle"></i> <strong>Bahan Baku:</strong> Silakan isi berat bersih untuk setiap bahan
+                    //     </div>
+                    // `);
 
-            // Event: hapus bahan
-            $(document).on('click', '.remove-bahan', function() {
-                const bahanList = $(this).closest('.bahan-list');
-                const items = bahanList.find('.bahan-item');
+                    if (bahanData && bahanData.length > 0) {
+                        bahanData.forEach((bahan, index) => {
+                            const beratBersihLabel = index === 0 ?
+                                '<label>Berat Bersih (gram) <span class="text-danger">*</span></label>' :
+                                '';
+                            const kaloriLabel = index === 0 ? '<label>Kalori (kkal)</label>' : '';
 
-                if (items.length > 1) {
-                    $(this).closest('.bahan-item').remove();
-                    updateTotalKalori();
+                            bahanList.append(`
+                                <div class="row mb-1 align-items-end bahan-item" data-bahan-id="${bahan.id}">
+                                    <div class="col-md-4 offset-md-2">
+                                        ${index === 0 ? '<label>Bahan Makanan</label>' : ''}
+                                        <input type="text" class="form-control bg-light" value="${bahan.nama}" readonly>
+                                    </div>
+                                    <div class="col-md-3">
+                                        ${beratBersihLabel}
+                                        <input type="number" class="form-control berat-input" value="0" min="0" step="0.01" placeholder="0.00">
+                                    </div>
+                                    <div class="col-md-3">
+                                        ${kaloriLabel}
+                                        <input type="number" class="form-control kalori-input bg-light" value="0" readonly>
+                                    </div>
+                                </div>
+                            `);
+                        });
+                    } else {
+                        bahanList.append(`
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle"></i> Menu ini belum memiliki bahan baku.
+                            </div>
+                        `);
+                    }
+                } else {
+                    bahanList.hide().empty();
+                    menuTotalKalori.hide();
                 }
-            });
-
-            // Event: tambah menu
-            $('#addMenu').on('click', function() {
-                const menuContainer = $('#menu-container');
-                const menuTemplate = `
-                    <div class="menu-item border p-3 mb-2">
-                        <div class="row mb-2">
-                            <div class="col-md-3">
-                                <label>Nama Menu <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control nama-menu" placeholder="Masukkan nama menu">
-                            </div>
-                            <div class="col-md-9 d-flex align-items-end justify-content-end">
-                                <button type="button" class="btn btn-outline-danger btn-sm remove-menu">
-                                    Hapus Menu
-                                </button>
-                            </div>
-                        </div>
-                        <div class="bahan-list">
-                            <div class="row mb-2 align-items-end bahan-item">
-                                <div class="col-md-3 offset-md-3">
-                                    <label>Bahan Makanan</label>
-                                    <select class="form-select bahan-select">
-                                        <option value="">-- Pilih Bahan --</option>
-                                        @foreach ($bahanbakus as $bahan)
-                                            <option value="{{ $bahan->id }}" data-kalori="{{ $bahan->gizi?->energi ?? 0 }}">
-                                                {{ $bahan->nama }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <label>Berat Bersih (gram)</label>
-                                    <input type="number" class="form-control berat-input" value="0" min="0" step="0.01">
-                                </div>
-                                <div class="col-md-2">
-                                    <label>Kalori</label>
-                                    <input type="number" class="form-control kalori-input" value="0" readonly>
-                                </div>
-                                <div class="col-md-2 d-flex gap-2">
-                                    <button type="button" class="btn btn-outline-primary btn-sm add-bahan">+</button>
-                                    <button type="button" class="btn btn-outline-danger btn-sm remove-bahan">-</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                menuContainer.append(menuTemplate);
                 updateTotalKalori();
             });
 
-            // Event: hapus menu
+            $('#addMenu').on('click', function() {
+                const menuContainer = $('#menu-container');
+                const clone = `
+                    <div class="menu-item border p-3 mb-1">
+                        <div class="row mb-1">
+                            <div class="col-md-4">
+                                <label>Pilih Menu <span class="text-danger">*</span></label>
+                                <select class="form-select menu-select">
+                                    <option value="">-- Pilih Menu --</option>
+                                    @foreach ($menus as $menu)
+                                        <option value="{{ $menu->id }}" 
+                                            data-bahan='@json($menu->bahanBakus)'>
+                                            {{ $menu->nama }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-8 d-flex align-items-end justify-content-end">
+                                <button type="button" class="btn btn-outline-danger btn-sm remove-menu">
+                                    <i class="bi bi-trash"></i> Hapus Menu
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bahan-list" style="display: none;"></div>
+                        <div class="menu-total-kalori text-end mt-2" style="display: none;">
+                            <strong>Total Kalori Menu: <span class="menu-kalori-value text-primary">0</span> kkal</strong>
+                        </div>
+                    </div>
+                `;
+                menuContainer.append(clone);
+            });
+
             $(document).on('click', '.remove-menu', function() {
                 const menuItems = $('.menu-item');
                 if (menuItems.length > 1) {
                     $(this).closest('.menu-item').remove();
                     updateTotalKalori();
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Peringatan!',
+                        text: 'Minimal harus ada 1 menu dalam paket'
+                    });
                 }
             });
 
-            // Submit form
             $('#formPaketMenu').on('submit', function(e) {
                 e.preventDefault();
-
                 $('.form-control').removeClass('is-invalid');
                 $('.invalid-feedback').text('');
 
-                const namaPaket = $('#nama_paket').val();
+                const namaPaket = $('#nama_paket').val().trim();
                 const menus = [];
+                let hasError = false;
+
+                if (!namaPaket) {
+                    $('#nama_paket').addClass('is-invalid');
+                    $('#nama_paket').next('.invalid-feedback').text('Nama paket menu harus diisi');
+                    hasError = true;
+                }
 
                 $('.menu-item').each(function() {
-                    const namaMenu = $(this).find('.nama-menu').val();
+                    const menuId = $(this).find('.menu-select').val();
                     const bahanBakus = [];
 
+                    if (!menuId) {
+                        hasError = true;
+                        return;
+                    }
+
                     $(this).find('.bahan-item').each(function() {
-                        const bahanId = $(this).find('.bahan-select').val();
+                        const bahanId = $(this).data('bahan-id');
                         const beratBersih = $(this).find('.berat-input').val();
                         const energiKalori = $(this).find('.kalori-input').val();
 
@@ -314,20 +347,47 @@
                         }
                     });
 
-                    if (namaMenu && bahanBakus.length > 0) {
+                    if (menuId && bahanBakus.length > 0) {
                         menus.push({
-                            nama: namaMenu,
+                            menu_id: menuId,
                             bahan_bakus: bahanBakus
                         });
                     }
                 });
 
+                if (menus.length === 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Validasi Gagal!',
+                        text: 'Pilih minimal 1 menu dan isi berat bersih bahan bakunya'
+                    });
+                    return;
+                }
+
+                if (hasError) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validasi Gagal!',
+                        text: 'Pastikan semua field terisi dengan benar'
+                    });
+                    return;
+                }
+
                 const formData = {
                     _token: "{{ csrf_token() }}",
-                    _method: "PUT",
+                    _method: 'PUT',
                     nama_paket: namaPaket,
                     menus: menus
                 };
+
+                Swal.fire({
+                    title: 'Mengupdate...',
+                    text: 'Mohon tunggu',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
 
                 $.ajax({
                     url: "{{ route('paketmenu.update', $paketmenu->id) }}",
@@ -355,7 +415,6 @@
                                         value[0]);
                                 }
                             });
-
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Validasi Gagal!',

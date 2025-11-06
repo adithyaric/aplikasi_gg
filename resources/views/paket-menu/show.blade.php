@@ -8,20 +8,22 @@
                     <div class="flex-wrap d-flex justify-content-between align-items-center">
                         <div>
                             <h3>{{ $title }}</h3>
-                            <p>Makan Sehat Bergizi</p>
+                            <p>{{ $paketmenu->nama }}</p>
                         </div>
                         <div>
-                            <a href="{{ route('paketmenu.index') }}" class="btn btn-link btn-soft-light">
-                                <svg class="icon-32" width="20" viewBox="0 0 24 24" fill="none"
+                            <a href="{{ route('paketmenu.edit', $paketmenu->id) }}" class="btn btn-link btn-soft-light">
+                                <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
-                                    <path opacity="0.4"
-                                        d="M16.084 2L7.916 2C4.377 2 2 4.276 2 7.665L2 16.335C2 19.724 4.377 22 7.916 22L16.084 22C19.622 22 22 19.723 22 16.334L22 7.665C22 4.276 19.622 2 16.084 2Z"
-                                        fill="currentColor"></path>
-                                    <path
-                                        d="M11.1445 7.72082L7.37954 11.4688C7.09654 11.7508 7.09654 12.2498 7.37954 12.5328L11.1445 16.2808C11.4385 16.5728 11.9135 16.5718 12.2055 16.2778C12.4975 15.9838 12.4975 15.5098 12.2035 15.2168L9.72654 12.7498H16.0815C16.4965 12.7498 16.8315 12.4138 16.8315 11.9998C16.8315 11.5858 16.4965 11.2498 16.0815 11.2498L9.72654 11.2498L12.2035 8.78382C12.3505 8.63682 12.4235 8.44482 12.4235 8.25182C12.4235 8.06082 12.3505 7.86882 12.2055 7.72282C11.9135 7.42982 11.4385 7.42882 11.1445 7.72082Z"
-                                        fill="currentColor"></path>
+                                    <path d="M13.7476 20.4428H21.0002" stroke="currentColor" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M12.78 3.79479C13.5557 2.86779 14.95 2.73186 15.8962 3.49173C15.9485 3.53296 17.6295 4.83879 17.6295 4.83879C18.669 5.46719 18.992 6.80311 18.3494 7.82259C18.3153 7.87718 8.81195 19.7645 8.81195 19.7645C8.49578 20.1589 8.01583 20.3918 7.50291 20.3973L3.86353 20.443L3.04353 16.9723C2.92866 16.4843 3.04353 15.9718 3.3597 15.5773L12.78 3.79479Z"
+                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round"></path>
+                                    <path d="M11.021 6.00098L16.4732 10.1881" stroke="currentColor" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round"></path>
                                 </svg>
-                                Kembali
+                                Edit Paket
                             </a>
                         </div>
                     </div>
@@ -42,84 +44,99 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         <div class="header-title">
-                            <h4 class="card-title">Detail Paket Menu</h4>
+                            <h4 class="card-title fw-bold">{{ $paketmenu->nama }}</h4>
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-4">
-                                <label class="form-label fw-bold">Paket Menu</label>
-                                <p class="form-control-plaintext">{{ $paketmenu->nama }}</p>
+                        @php
+                            $totalKaloriPaket = 0;
+                        @endphp
+
+                        @foreach ($paketmenu->menus as $index => $menu)
+                            <div class="menu-section mb-4">
+                                <h5 class="text-primary mb-3">
+                                    <i class="bi bi-bookmark-fill"></i> {{ $menu->nama }}
+                                </h5>
+
+                                @if ($menu->bahanBakusWithPaketData->count() > 0)
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="table-primary">
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Bahan Makanan</th>
+                                                    <th>Kelompok</th>
+                                                    <th>Berat Bersih (gram)</th>
+                                                    <th>Kalori (kkal)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php
+                                                    $totalKaloriMenu = 0;
+                                                @endphp
+                                                @foreach ($menu->bahanBakusWithPaketData as $bahan)
+                                                    @php
+                                                        $totalKaloriMenu += $bahan->energi;
+                                                        $totalKaloriPaket += $bahan->energi;
+                                                    @endphp
+                                                    <tr>
+                                                        <td>{{ $loop->iteration }}</td>
+                                                        <td>{{ $bahan->nama }}</td>
+                                                        <td>
+                                                            <span class="badge bg-info">{{ $bahan->kelompok }}</span>
+                                                        </td>
+                                                        <td>{{ number_format($bahan->berat_bersih, 2) }} gram</td>
+                                                        <td>{{ number_format($bahan->energi, 2) }} kkal</td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                            <tfoot class="table-light">
+                                                <tr>
+                                                    <th colspan="4" class="text-end">Total Kalori Menu:</th>
+                                                    <th>
+                                                        <span class="text-primary">
+                                                            {{ number_format($totalKaloriMenu, 2) }} kkal
+                                                        </span>
+                                                    </th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                @else
+                                    <div class="alert alert-warning">
+                                        <i class="bi bi-exclamation-triangle"></i> Menu ini belum memiliki data bahan baku
+                                    </div>
+                                @endif
+                            </div>
+
+                            @if (!$loop->last)
+                                <hr class="my-4">
+                            @endif
+                        @endforeach
+
+                        <!-- Total Kalori Paket -->
+                        <div class="alert alert-success mt-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h5 class="mb-0">
+                                        <i class="bi bi-calculator"></i> Total Kalori Paket Menu
+                                    </h5>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <h4 class="mb-0 fw-bold">
+                                        {{ number_format($totalKaloriPaket, 2) }} kkal
+                                    </h4>
+                                </div>
                             </div>
                         </div>
-                        <hr class="hr-horizontal" />
 
-                        <!-- Container Menu -->
-                        <div id="menu-container">
-                            @foreach ($paketmenu->menus as $menu)
-                                <div class="menu-item border p-3 mb-2">
-                                    <!-- Bagian Nama Menu -->
-                                    <div class="row mb-2">
-                                        <div class="col-md-12">
-                                            <label class="fw-bold">Nama Menu</label>
-                                            <p class="form-control-plaintext">{{ $menu->nama }}</p>
-                                        </div>
-                                    </div>
-
-                                    <!-- Daftar Bahan -->
-                                    <div class="bahan-list">
-                                        <div class="row mb-2">
-                                            <div class="col-md-3 offset-md-3">
-                                                <label class="fw-bold">Bahan Makanan</label>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <label class="fw-bold">Berat Bersih (gram)</label>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <label class="fw-bold">Kalori</label>
-                                            </div>
-                                        </div>
-
-                                        @foreach ($menu->bahanBakus as $bahan)
-                                            <div class="row mb-2 align-items-center bahan-item">
-                                                <div class="col-md-3 offset-md-3">
-                                                    <p class="form-control-plaintext">{{ $bahan->nama }}</p>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <p class="form-control-plaintext">{{ $bahan->pivot->berat_bersih }}</p>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <p class="form-control-plaintext">{{ $bahan->pivot->energi }}</p>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-
-                        <!-- Total Kalori -->
-                        <hr class="hr-horizontal" />
-                        <div class="text-end">
-                            @php
-                                $totalKalori = 0;
-                                foreach ($paketmenu->menus as $menu) {
-                                    foreach ($menu->bahanBakus as $bahan) {
-                                        $totalKalori += $bahan->pivot->energi;
-                                    }
-                                }
-                            @endphp
-                            <h5>
-                                Total Kalori:
-                                <span id="totalKalori"
-                                    class="fw-bold text-primary">{{ number_format($totalKalori, 2) }}</span>
-                                kkal
-                            </h5>
-                        </div>
-
-                        <!-- Tombol Kembali -->
-                        <div class="d-flex justify-content-end mt-3">
-                            <a href="{{ route('paketmenu.index') }}" class="btn btn-danger">Kembali</a>
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a href="{{ route('paketmenu.edit', $paketmenu->id) }}" class="btn btn-success">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                            <a href="{{ route('paketmenu.index') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Kembali
+                            </a>
                         </div>
                     </div>
                 </div>

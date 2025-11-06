@@ -256,11 +256,13 @@
                                 location.reload();
                             });
                         },
-                        error: function() {
+                        error: function(xhr) {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error!',
-                                text: 'Terjadi kesalahan saat menghapus data'
+                                title: 'Gagal!',
+                                text: xhr.responseJSON?.message ||
+                                    'Terjadi kesalahan saat menghapus data'
                             });
                         }
                     });

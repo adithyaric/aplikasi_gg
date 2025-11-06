@@ -45,12 +45,15 @@ class PaketMenuController extends Controller
 
             foreach ($request->menus as $menuData) {
                 $paketMenu->menus()->attach($menuData['menu_id']);
-
-                $menu = Menu::find($menuData['menu_id']);
                 foreach ($menuData['bahan_bakus'] as $bahanBaku) {
-                    $menu->bahanBakus()->updateExistingPivot($bahanBaku['bahan_baku_id'], [
+                    DB::table('bahan_baku_menu')->insert([
+                        'paket_menu_id' => $paketMenu->id,
+                        'menu_id' => $menuData['menu_id'],
+                        'bahan_baku_id' => $bahanBaku['bahan_baku_id'],
                         'berat_bersih' => $bahanBaku['berat_bersih'],
                         'energi' => $bahanBaku['energi'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ]);
                 }
             }
@@ -71,20 +74,39 @@ class PaketMenuController extends Controller
 
     public function show(PaketMenu $paketmenu)
     {
-        $paketmenu->load(['menus.bahanBakus']);
-        $bahanbakus = BahanBaku::orderBy('nama')->get(['id', 'nama', 'kelompok']);
+        $paketmenu->load('menus');
+
+        // Get bahan bakus with paket-specific data
+        foreach ($paketmenu->menus as $menu) {
+            $menu->bahanBakusWithPaketData = DB::table('bahan_baku_menu')
+                ->join('bahan_bakus', 'bahan_baku_menu.bahan_baku_id', '=', 'bahan_bakus.id')
+                ->where('bahan_baku_menu.paket_menu_id', $paketmenu->id)
+                ->where('bahan_baku_menu.menu_id', $menu->id)
+                ->select('bahan_bakus.*', 'bahan_baku_menu.berat_bersih', 'bahan_baku_menu.energi')
+                ->get();
+        }
+
         $title = 'Detail Paket Menu';
-        //TODO menunggu rumus
-        return view('paket-menu.show', compact('paketmenu', 'bahanbakus', 'title'));
+        return view('paket-menu.show', compact('paketmenu', 'title'));
     }
 
     public function edit(PaketMenu $paketmenu)
     {
-        $paketmenu->load(['menus.bahanBakus']);
+        $paketmenu->load('menus');
         $menus = Menu::with('bahanBakus')->orderBy('nama')->get();
+
+        // Get bahan bakus with paket-specific data
+        foreach ($paketmenu->menus as $menu) {
+            $menu->bahanBakusWithPaketData = DB::table('bahan_baku_menu')
+                ->join('bahan_bakus', 'bahan_baku_menu.bahan_baku_id', '=', 'bahan_bakus.id')
+                ->where('bahan_baku_menu.paket_menu_id', $paketmenu->id)
+                ->where('bahan_baku_menu.menu_id', $menu->id)
+                ->select('bahan_bakus.*', 'bahan_baku_menu.berat_bersih', 'bahan_baku_menu.energi')
+                ->get();
+        }
+
         $title = 'Edit Paket Menu';
-        return $menus?->toArray();
-        // return view('paket-menu.edit', compact('paketmenu', 'menus', 'title'));
+        return view('paket-menu.edit', compact('paketmenu', 'menus', 'title'));
     }
 
     public function update(Request $request, PaketMenu $paketmenu)
@@ -105,16 +127,21 @@ class PaketMenuController extends Controller
                 'nama' => $request->nama_paket,
             ]);
 
+            // Delete old relationships
             $paketmenu->menus()->detach();
+            DB::table('bahan_baku_menu')->where('paket_menu_id', $paketmenu->id)->delete();
 
             foreach ($request->menus as $menuData) {
                 $paketmenu->menus()->attach($menuData['menu_id']);
-
-                $menu = Menu::find($menuData['menu_id']);
                 foreach ($menuData['bahan_bakus'] as $bahanBaku) {
-                    $menu->bahanBakus()->updateExistingPivot($bahanBaku['bahan_baku_id'], [
+                    DB::table('bahan_baku_menu')->insert([
+                        'paket_menu_id' => $paketmenu->id,
+                        'menu_id' => $menuData['menu_id'],
+                        'bahan_baku_id' => $bahanBaku['bahan_baku_id'],
                         'berat_bersih' => $bahanBaku['berat_bersih'],
                         'energi' => $bahanBaku['energi'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ]);
                 }
             }
@@ -135,10 +162,28 @@ class PaketMenuController extends Controller
 
     public function destroy(PaketMenu $paketmenu)
     {
-        $paketmenu->delete();
-        return response()->json([
-            'success' => true,
-            'message' => 'Paket menu berhasil dihapus'
-        ]);
+        DB::beginTransaction();
+        try {
+            if ($paketmenu->rencanaMenu()->count() > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Paket Menu tidak dapat dihapus karena masih digunakan dalam Rencana Menu'
+                ], 422);
+            }
+
+            $paketmenu->delete();
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Paket Menu berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

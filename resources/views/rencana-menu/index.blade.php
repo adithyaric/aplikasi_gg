@@ -109,17 +109,18 @@
                                                     data-start_date="{{ $rencana->start_date }}">
                                                     Detail
                                                 </button>
+                                                <a href="{{ route('rencanamenu.edit', $rencana->id) }}"
+                                                    class="btn btn-sm btn-success">
+                                                    Edit
+                                                </a>
+                                                <button class="btn btn-sm btn-danger btn-delete"
+                                                    data-id="{{ $rencana->id }}">
+                                                    Hapus
+                                                </button>
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Tanggal</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </tfoot>
                             </table>
                         </div>
                     </div>
@@ -214,17 +215,16 @@
                 $.ajax({
                     url: `/rencanamenu/${id}`,
                     method: 'GET',
-success: function(data) {
-    let html = '';
-
-    data.paket_menu.forEach((paket, index) => {
-        html += `
+                    success: function(data) {
+                        let html = '';
+                        // Use paket_menu (singular) to match the relationship name
+                        data.paket_menu.forEach((paket, index) => {
+                            html += `
             <div class="paket-menu mb-1">
                 <h5 class="text-primary mb-1">${paket.nama}</h5>
         `;
-
-        paket.menus.forEach((menu, mIndex) => {
-            html += `
+                            paket.menus.forEach((menu) => {
+                                html += `
                 <div class="menu-item mb-1">
                     <h6 class="text-secondary mb-1">${menu.nama}</h6>
                     <table class="table table-sm table-bordered">
@@ -239,34 +239,34 @@ success: function(data) {
                         <tbody>
             `;
 
-            menu.bahan_bakus.forEach((bahan) => {
-                const totalKebutuhan = bahan.pivot.energi * paket.pivot.porsi;
-                html += `
+                                // Use bahanBakusWithPaketData (Laravel converts camelCase to snake_case)
+                                (menu.bahanBakusWithPaketData || []).forEach((
+                                    bahan) => {
+                                    const totalKebutuhan = bahan
+                                        .energi * paket.pivot.porsi;
+                                    html += `
                     <tr>
                         <td>${bahan.nama}</td>
-                        <td>${bahan.pivot.energi} ${bahan.satuan}</td>
+                        <td>${bahan.energi} ${bahan.satuan}</td>
                         <td>${paket.pivot.porsi.toLocaleString('id-ID')}</td>
                         <td>${totalKebutuhan.toLocaleString('id-ID', {minimumFractionDigits: 0, maximumFractionDigits: 3})} ${bahan.satuan}</td>
                     </tr>
                 `;
-            });
+                                });
 
-            html += `
+                                html += `
                         </tbody>
                     </table>
                 </div>
             `;
-        });
-
-        html += `</div>`;
-
-        if (index < data.paket_menu.length - 1) {
-            html += `<hr class="my-3" />`;
-        }
-    });
-
-    $('#modalContent').html(html);
-},
+                            });
+                            html += `</div>`;
+                            if (index < data.paket_menu.length - 1) {
+                                html += `<hr class="my-3" />`;
+                            }
+                        });
+                        $('#modalContent').html(html);
+                    },
                     error: function() {
                         $('#modalContent').html(`
                         <div class="alert alert-danger">
@@ -275,6 +275,50 @@ success: function(data) {
                     `);
                     }
                 });
+            });
+        });
+    </script>
+    <script>
+        // Add this to the existing script section
+        $(document).on('click', '.btn-delete', function() {
+            const id = $(this).data('id');
+
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Data yang dihapus tidak dapat dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/rencanamenu/${id}`,
+                        method: 'DELETE',
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil',
+                                text: response.message,
+                                showConfirmButton: true
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        },
+                        error: function(xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal',
+                                text: xhr.responseJSON?.message || 'Terjadi kesalahan'
+                            });
+                        }
+                    });
+                }
             });
         });
     </script>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BahanBaku;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BahanBakuController extends Controller
 {
@@ -81,10 +82,34 @@ class BahanBakuController extends Controller
 
     public function destroy(BahanBaku $bahanbaku)
     {
-        $bahanbaku->delete();
-        return response()->json([
-            'success' => true,
-            'message' => 'Bahan baku berhasil dihapus'
-        ]);
+        DB::beginTransaction();
+        try {
+            if ($bahanbaku->menus()->count() > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bahan Baku tidak dapat dihapus karena masih digunakan dalam Menu'
+                ], 422);
+            }
+            if ($bahanbaku->gizi()->count() > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bahan Baku tidak dapat dihapus karena masih digunakan dalam Gizi'
+                ], 422);
+            }
+
+            $bahanbaku->delete();
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Bahan Baku berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

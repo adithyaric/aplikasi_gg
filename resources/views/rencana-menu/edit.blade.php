@@ -41,16 +41,18 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Formulir Perencanaan Menu</h4>
+                        <h4 class="card-title">Formulir Edit Perencanaan Menu</h4>
                     </div>
                     <div class="card-body">
                         <form id="formRencanaMenu">
                             @csrf
+                            @method('PUT')
                             <div class="row">
                                 <div class="form-group col-md-6 col-12">
                                     <label class="form-label">Tanggal</label>
                                     <input type="text" id="start_date" class="form-control" name="start_date"
-                                        placeholder="Pilih tanggal">
+                                        placeholder="Pilih tanggal"
+                                        value="{{ \Carbon\Carbon::parse($rencana->start_date)->format('d/m/Y') }}">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -58,32 +60,36 @@
                             <hr class="hr-horizontal" />
 
                             <div id="itemContainer">
-                                <div class="row itemRow d-flex align-items-center">
-                                    <div class="form-group col-md-6 col-12">
-                                        <label class="form-label">Paket Menu</label>
-                                        <select class="form-select paket-select">
-                                            <option value="">Pilih Paket Menu</option>
-                                            @foreach ($paketmenus as $paket)
-                                                <option value="{{ $paket->id }}">{{ $paket->nama }}</option>
-                                            @endforeach
-                                        </select>
+                                @foreach ($rencana->paketMenu as $item)
+                                    <div class="row itemRow d-flex align-items-center">
+                                        <div class="form-group col-md-6 col-12">
+                                            <label class="form-label">Paket Menu</label>
+                                            <select class="form-select paket-select">
+                                                <option value="">Pilih Paket Menu</option>
+                                                @foreach ($paketmenus as $paket)
+                                                    <option value="{{ $paket->id }}"
+                                                        {{ $item->id == $paket->id ? 'selected' : '' }}>{{ $paket->nama }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-4 col-8">
+                                            <label class="form-label">Jumlah Porsi</label>
+                                            <input type="number" class="form-control porsi-input" min="1"
+                                                value="{{ $item->pivot->porsi }}">
+                                        </div>
+                                        <div class="form-group col-md-2 col-4 d-flex align-items-end mt-5">
+                                            <button type="button" class="btn btn-danger btn-sm removeRow">X</button>
+                                        </div>
                                     </div>
-                                    <div class="form-group col-md-4 col-8">
-                                        <label class="form-label">Jumlah Porsi</label>
-                                        <input type="number" class="form-control porsi-input" min="1"
-                                            value="1">
-                                    </div>
-                                    <div class="form-group col-md-2 col-4 d-flex align-items-end mt-5">
-                                        <button type="button" class="btn btn-danger btn-sm removeRow">X</button>
-                                    </div>
-                                </div>
+                                @endforeach
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center mt-3">
                                 <button type="button" class="btn btn-primary" id="tambah-item">
                                     <i class="bi bi-plus-circle"></i> Tambah Item
                                 </button>
-                                <button type="submit" class="btn btn-success">Simpan</button>
+                                <button type="submit" class="btn btn-success">Update</button>
                             </div>
                         </form>
                     </div>
@@ -107,7 +113,6 @@
                 if ($('.itemRow').length > 1) $(this).closest('.itemRow').remove();
             });
 
-            // Update form submission
             $('#formRencanaMenu').on('submit', function(e) {
                 e.preventDefault();
                 const items = [];
@@ -121,10 +126,11 @@
                 });
 
                 $.ajax({
-                    url: "{{ route('rencanamenu.store') }}",
+                    url: "{{ route('rencanamenu.update', $rencana->id) }}",
                     method: 'POST',
                     data: JSON.stringify({
                         _token: "{{ csrf_token() }}",
+                        _method: 'PUT',
                         start_date: $('#start_date').val(),
                         items: items
                     }),
@@ -152,7 +158,6 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-        // Replace the flatpickr initialization
         document.addEventListener("DOMContentLoaded", function() {
             flatpickr("#start_date", {
                 dateFormat: "d/m/Y",

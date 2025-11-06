@@ -21,7 +21,7 @@
                                         d="M11.1445 7.72082L7.37954 11.4688C7.09654 11.7508 7.09654 12.2498 7.37954 12.5328L11.1445 16.2808C11.4385 16.5728 11.9135 16.5718 12.2055 16.2778C12.4975 15.9838 12.4975 15.5098 12.2035 15.2168L9.72654 12.7498H16.0815C16.4965 12.7498 16.8315 12.4138 16.8315 11.9998C16.8315 11.5858 16.4965 11.2498 16.0815 11.2498L9.72654 11.2498L12.2035 8.78382C12.3505 8.63682 12.4235 8.44482 12.4235 8.25182C12.4235 8.06082 12.3505 7.86882 12.2055 7.72282C11.9135 7.42982 11.4385 7.42882 11.1445 7.72082Z"
                                         fill="currentColor"></path>
                                 </svg>
-                                Kembali
+                                Kemba1i
                             </a>
                         </div>
                     </div>
@@ -48,63 +48,65 @@
                         <form id="formPaketMenu">
                             @csrf
                             <div class="row">
-                                <div class="form-group col-4">
-                                    <label class="form-label">Paket Menu <span class="text-danger">*</span></label>
+                                <div class="form-group col-md-6 col-12">
+                                    <label class="form-label">Nama Paket Menu <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="nama_paket" name="nama_paket"
                                         placeholder="Masukkan nama paket menu">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <hr class="hr-horizontal" />
-
                             <!-- Container Menu -->
                             <div id="menu-container">
-                                <div class="menu-item border p-3 mb-2">
+                                <div class="menu-item border p-3 mb-1">
                                     <!-- Bagian Pilih Menu -->
-                                    <div class="row mb-2">
-                                        <div class="col-md-3">
+                                    <div class="row mb-1">
+                                        <div class="col-md-4">
                                             <label>Pilih Menu <span class="text-danger">*</span></label>
                                             <select class="form-select menu-select">
                                                 <option value="">-- Pilih Menu --</option>
                                                 @foreach ($menus as $menu)
                                                     <option value="{{ $menu->id }}"
-                                                        data-bahan="{{ json_encode($menu->bahanBakus) }}">
+                                                        data-bahan='@json($menu->bahanBakus)'>
                                                         {{ $menu->nama }}
                                                     </option>
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-9 d-flex align-items-end justify-content-end">
+                                        <div class="col-md-8 d-flex align-items-end justify-content-end">
                                             <button type="button" class="btn btn-outline-danger btn-sm remove-menu">
-                                                Hapus Menu
+                                                <i class="bi bi-trash"></i> Hapus Menu
                                             </button>
                                         </div>
                                     </div>
                                     <!-- Daftar Bahan (akan muncul setelah pilih menu) -->
-                                    <div class="bahan-list" style="display: none;">
-                                        <div class="alert alert-info mb-2">
-                                            <strong>Bahan Baku:</strong> Silakan isi berat bersih untuk setiap bahan
-                                        </div>
+                                    <div class="bahan-list" style="display: none;"></div>
+                                    <!-- Total Kalori per Menu -->
+                                    <div class="menu-total-kalori text-end mt-2" style="display: none;">
+                                        <strong>Total Kalori Menu: <span class="menu-kalori-value text-primary">0</span>
+                                            kkal</strong>
                                     </div>
                                 </div>
                             </div>
-                            <!-- Total Kalori -->
+                            <!-- Total Kalori Keseluruhan -->
                             <hr class="hr-horizontal" />
                             <div class="text-end">
                                 <h5>
-                                    Total Kalori:
-                                    <span id="totalKalori" class="fw-bold text-primary">0</span>
+                                    <i class="bi bi-calculator"></i> Total Kalori Paket:
+                                    <span id="totalKalori" class="fw-bold text-success">0</span>
                                     kkal
                                 </h5>
                             </div>
-                            <!-- Tombol Tambah Menu & Simpan -->
-                            <div class="d-flex justify-content-between align-items-center mt-3">
+                            <!-- Tombo1 Tambah Menu & Simpan -->
+                            <div class="d-flex justify-content-between align-items-center mt-4">
                                 <button type="button" class="btn btn-primary" id="addMenu">
                                     <i class="bi bi-plus-circle"></i> Tambah Menu
                                 </button>
                                 <div class="d-flex gap-2">
-                                    <button type="submit" class="btn btn-success">Simpan</button>
-                                    <a href="{{ route('paketmenu.index') }}" class="btn btn-danger">Kembali</a>
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="bi bi-save"></i> Simpan
+                                    </button>
+                                    {{-- <a href="{{ route('paketmenu.index') }}" class="btn btn-danger"><i class="bi bi-x-circle"></i> Kembali</a> --}}
                                 </div>
                             </div>
                         </form>
@@ -125,16 +127,27 @@
                 @endforeach
             @endforeach
 
-            // Fungsi hitung kalori per baris
+            // Fungsi hitung kalori per baris bahan
             function updateCalories(row) {
                 const beratInput = row.find('.berat-input');
                 const kaloriInput = row.find('.kalori-input');
                 const bahanId = row.data('bahan-id');
                 const berat = parseFloat(beratInput.val()) || 0;
                 const kaloriPer100 = kaloriData[bahanId] || 0;
-                const totalKalori = (berat * kaloriPer100);
+                const totalKalori = (berat * kaloriPer100) / 100;
                 kaloriInput.val(totalKalori.toFixed(2));
+
+                updateMenuTotalKalori(row.closest('.menu-item'));
                 updateTotalKalori();
+            }
+
+            // Fungsi update total kalori per menu
+            function updateMenuTotalKalori(menuItem) {
+                let menuTotal = 0;
+                menuItem.find('.kalori-input').each(function() {
+                    menuTotal += parseFloat($(this).val()) || 0;
+                });
+                menuItem.find('.menu-kalori-value').text(menuTotal.toFixed(2));
             }
 
             // Fungsi update total seluruh kalori
@@ -156,80 +169,94 @@
             $(document).on('change', '.menu-select', function() {
                 const menuItem = $(this).closest('.menu-item');
                 const bahanList = menuItem.find('.bahan-list');
+                const menuTotalKalori = menuItem.find('.menu-total-kalori');
                 const menuId = $(this).val();
-                const bahanData = $(this).find(':selected').data('bahan');
+                const bahanDataAttr = $(this).find(':selected').attr('data-bahan');
 
-                if (menuId && bahanData) {
+                if (menuId && bahanDataAttr) {
+                    let bahanData;
+                    try {
+                        bahanData = JSON.parse(bahanDataAttr);
+                    } catch (e) {
+                        console.error('Error parsing bahan data:', e);
+                        return;
+                    }
+
                     bahanList.empty().show();
-                    bahanList.append(`
-                        <div class="alert alert-info mb-2">
-                            <strong>Bahan Baku:</strong> Silakan isi berat bersih untuk setiap bahan
-                        </div>
-                    `);
+                    menuTotalKalori.show();
 
-                    bahanData.forEach((bahan, index) => {
-                        const labelHtml = index === 0 ? `
-                            <div class="col-md-3">
-                                <label>Bahan Makanan</label>
-                                <input type="text" class="form-control" value="${bahan.nama}" readonly>
-                            </div>
-                            <div class="col-md-2">
-                                <label>Berat Bersih (gram)</label>
-                                <input type="number" class="form-control berat-input" value="0" min="0" step="0.01">
-                            </div>
-                            <div class="col-md-2">
-                                <label>Kalori</label>
-                                <input type="number" class="form-control kalori-input" value="0" readonly>
-                            </div>
-                        ` : `
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" value="${bahan.nama}" readonly>
-                            </div>
-                            <div class="col-md-2">
-                                <input type="number" class="form-control berat-input" value="0" min="0" step="0.01">
-                            </div>
-                            <div class="col-md-2">
-                                <input type="number" class="form-control kalori-input" value="0" readonly>
-                            </div>
-                        `;
+                    // bahanList.append(`
+                    //     <div class="alert alert-info mb-1">
+                    //         <i class="bi bi-info-circle"></i> <strong>Bahan Baku:</strong> Silakan isi berat bersih untuk setiap bahan
+                    //     </div>
+                    // `);
 
+                    if (bahanData && bahanData.length > 0) {
+                        bahanData.forEach((bahan, index) => {
+                            const beratBersihLabel = index === 0 ?
+                                '<label>Berat Bersih (gram) <span class="text-danger">*</span></label>' :
+                                '';
+                            const kaloriLabel = index === 0 ? '<label>Kalori (kkal)</label>' : '';
+
+                            bahanList.append(`
+                                <div class="row mb-1 align-items-end bahan-item" data-bahan-id="${bahan.id}">
+                                    <div class="col-md-4 offset-md-2">
+                                        ${index === 0 ? '<label>Bahan Makanan</label>' : ''}
+                                        <input type="text" class="form-control bg-light" value="${bahan.nama}" readonly>
+                                    </div>
+                                    <div class="col-md-3">
+                                        ${beratBersihLabel}
+                                        <input type="numbe1" class="form-control berat-input" value="0" min="0" step="0.01" placeholder="0.00">
+                                    </div>
+                                    <div class="col-md-3">
+                                        ${kaloriLabel}
+                                        <input type="numbe1" class="form-control kalori-input bg-light" value="0" readonly>
+                                    </div>
+                                </div>
+                            `);
+                        });
+                    } else {
                         bahanList.append(`
-                            <div class="row mb-2 align-items-end bahan-item" data-bahan-id="${bahan.id}">
-                                ${labelHtml}
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle"></i> Menu ini belum memiliki bahan baku. Silakan edit menu terlebih dahulu.
                             </div>
                         `);
-                    });
+                    }
                 } else {
                     bahanList.hide().empty();
+                    menuTotalKalori.hide();
                 }
                 updateTotalKalori();
             });
 
-            // Event: tambah menu
+            // Event: tamba1 menu
             $('#addMenu').on('click', function() {
                 const menuContainer = $('#menu-container');
                 const clone = `
-                    <div class="menu-item border p-3 mb-2">
-                        <div class="row mb-2">
-                            <div class="col-md-3">
+                    <div class="menu-item border p-3 mb-1">
+                        <div class="row mb-1">
+                            <div class="col-md-4">
                                 <label>Pilih Menu <span class="text-danger">*</span></label>
                                 <select class="form-select menu-select">
                                     <option value="">-- Pilih Menu --</option>
                                     @foreach ($menus as $menu)
-                                        <option value="{{ $menu->id }}"
-                                            data-bahan='{{ json_encode($menu->bahanBakus) }}'>
+                                        <option value="{{ $menu->id }}" 
+                                            data-bahan='@json($menu->bahanBakus)'>
                                             {{ $menu->nama }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-9 d-flex align-items-end justify-content-end">
+                            <div class="col-md-8 d-flex align-items-end justify-content-end">
                                 <button type="button" class="btn btn-outline-danger btn-sm remove-menu">
-                                    Hapus Menu
+                                    <i class="bi bi-trash"></i> Hapus Menu
                                 </button>
                             </div>
                         </div>
                         <div class="bahan-list" style="display: none;"></div>
+                        <div class="menu-total-kalori text-end mt-2" style="display: none;">
+                            <strong>Total Kalori Menu: <span class="menu-kalori-value text-primary">0</span> kkal</strong>
+                        </div>
                     </div>
                 `;
                 menuContainer.append(clone);
@@ -241,22 +268,41 @@
                 if (menuItems.length > 1) {
                     $(this).closest('.menu-item').remove();
                     updateTotalKalori();
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Peringatan!',
+                        text: 'Minimal harus ada 1 menu dalam paket'
+                    });
                 }
             });
 
             // Submit form
             $('#formPaketMenu').on('submit', function(e) {
                 e.preventDefault();
-
                 $('.form-control').removeClass('is-invalid');
                 $('.invalid-feedback').text('');
 
-                const namaPaket = $('#nama_paket').val();
+                const namaPaket = $('#nama_paket').val().trim();
                 const menus = [];
+                let hasError = false;
 
+                // Validasi nama paket
+                if (!namaPaket) {
+                    $('#nama_paket').addClass('is-invalid');
+                    $('#nama_paket').next('.invalid-feedback').text('Nama paket menu harus diisi');
+                    hasError = true;
+                }
+
+                // Validasi dan kumpulkan data menu
                 $('.menu-item').each(function() {
                     const menuId = $(this).find('.menu-select').val();
                     const bahanBakus = [];
+
+                    if (!menuId) {
+                        hasError = true;
+                        return;
+                    }
 
                     $(this).find('.bahan-item').each(function() {
                         const bahanId = $(this).data('bahan-id');
@@ -280,11 +326,40 @@
                     }
                 });
 
+                // Validasi minimal 1 menu dengan bahan
+                if (menus.length === 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Validasi Gagal!',
+                        text: 'Pilih minimal 1 menu dan isi berat bersih bahan bakunya'
+                    });
+                    return;
+                }
+
+                if (hasError) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validasi Gagal!',
+                        text: 'Pastikan semua field terisi dengan benar'
+                    });
+                    return;
+                }
+
                 const formData = {
                     _token: "{{ csrf_token() }}",
                     nama_paket: namaPaket,
                     menus: menus
                 };
+
+                // Show loading
+                Swal.fire({
+                    title: 'Menyimpan...',
+                    text: 'Mohon tunggu',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
 
                 $.ajax({
                     url: "{{ route('paketmenu.store') }}",
@@ -297,7 +372,7 @@
                             title: 'Berhasil!',
                             text: response.message,
                             timer: 2000,
-                            showConfirmButton: false
+                            showConfirmBu1ton: false
                         }).then(() => {
                             window.location.href = "{{ route('paketmenu.index') }}";
                         });
@@ -312,7 +387,6 @@
                                         value[0]);
                                 }
                             });
-
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Validasi Gagal!',
