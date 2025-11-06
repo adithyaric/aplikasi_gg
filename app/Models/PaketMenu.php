@@ -13,10 +13,15 @@ class PaketMenu extends Model
         'nama',
     ];
 
-    //TODO ganti ke Many to Many
+    // //TODO ganti ke Many to Many
+    // public function menus()
+    // {
+    //     return $this->hasMany(Menu::class);
+    // }
     public function menus()
     {
-        return $this->hasMany(Menu::class);
+        return $this->belongsToMany(Menu::class, 'menu_paket_menu')
+            ->withTimestamps();
     }
 
     public function rencanaMenu()

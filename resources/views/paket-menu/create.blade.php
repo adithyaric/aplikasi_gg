@@ -60,12 +60,19 @@
                             <!-- Container Menu -->
                             <div id="menu-container">
                                 <div class="menu-item border p-3 mb-2">
-                                    <!-- Bagian Nama Menu -->
+                                    <!-- Bagian Pilih Menu -->
                                     <div class="row mb-2">
                                         <div class="col-md-3">
-                                            <label>Nama Menu <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control nama-menu"
-                                                placeholder="Masukkan nama menu">
+                                            <label>Pilih Menu <span class="text-danger">*</span></label>
+                                            <select class="form-select menu-select">
+                                                <option value="">-- Pilih Menu --</option>
+                                                @foreach ($menus as $menu)
+                                                    <option value="{{ $menu->id }}"
+                                                        data-bahan="{{ json_encode($menu->bahanBakus) }}">
+                                                        {{ $menu->nama }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                         <div class="col-md-9 d-flex align-items-end justify-content-end">
                                             <button type="button" class="btn btn-outline-danger btn-sm remove-menu">
@@ -73,45 +80,14 @@
                                             </button>
                                         </div>
                                     </div>
-
-                                    <!-- Daftar Bahan -->
-                                    <div class="bahan-list">
-                                        <div class="row mb-2 align-items-end bahan-item">
-                                            <div class="col-md-3 offset-md-3">
-                                                <label>Bahan Makanan</label>
-                                                <select class="form-select bahan-select">
-                                                    <option value="">-- Pilih Bahan --</option>
-                                                    @foreach ($bahanbakus as $bahan)
-                                                        <option value="{{ $bahan->id }}"
-                                                            data-kalori="{{ $bahan->gizi?->energi ?? 0 }}">
-                                                            {{ $bahan->nama }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <label>Berat Bersih (gram)</label>
-                                                <input type="number" class="form-control berat-input" value="0"
-                                                    min="0" step="0.01">
-                                            </div>
-                                            <div class="col-md-2">
-                                                <label>Kalori</label>
-                                                <input type="number" class="form-control kalori-input" value="0"
-                                                    readonly>
-                                            </div>
-                                            <div class="col-md-2 d-flex gap-2">
-                                                <button type="button" class="btn btn-outline-primary btn-sm add-bahan">
-                                                    +
-                                                </button>
-                                                <button type="button" class="btn btn-outline-danger btn-sm remove-bahan">
-                                                    -
-                                                </button>
-                                            </div>
+                                    <!-- Daftar Bahan (akan muncul setelah pilih menu) -->
+                                    <div class="bahan-list" style="display: none;">
+                                        <div class="alert alert-info mb-2">
+                                            <strong>Bahan Baku:</strong> Silakan isi berat bersih untuk setiap bahan
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
                             <!-- Total Kalori -->
                             <hr class="hr-horizontal" />
                             <div class="text-end">
@@ -121,7 +97,6 @@
                                     kkal
                                 </h5>
                             </div>
-
                             <!-- Tombol Tambah Menu & Simpan -->
                             <div class="d-flex justify-content-between align-items-center mt-3">
                                 <button type="button" class="btn btn-primary" id="addMenu">
@@ -139,28 +114,25 @@
         </div>
     </div>
 @endsection
-
 @push('js')
     <script>
         $(document).ready(function() {
             // Data kalori per bahan (dari database)
             const kaloriData = {};
-            @foreach ($bahanbakus as $bahan)
-                kaloriData[{{ $bahan->id }}] = {{ $bahan->gizi?->energi ?? 0 }};
+            @foreach ($menus as $menu)
+                @foreach ($menu->bahanBakus as $bahan)
+                    kaloriData[{{ $bahan->id }}] = {{ $bahan->gizi?->energi ?? 0 }};
+                @endforeach
             @endforeach
 
             // Fungsi hitung kalori per baris
             function updateCalories(row) {
-                const select = row.find('.bahan-select');
                 const beratInput = row.find('.berat-input');
                 const kaloriInput = row.find('.kalori-input');
-
-                const bahanId = select.val();
+                const bahanId = row.data('bahan-id');
                 const berat = parseFloat(beratInput.val()) || 0;
                 const kaloriPer100 = kaloriData[bahanId] || 0;
-                // const totalKalori = (berat * kaloriPer100) / 100;
                 const totalKalori = (berat * kaloriPer100);
-
                 kaloriInput.val(totalKalori.toFixed(2));
                 updateTotalKalori();
             }
@@ -180,50 +152,87 @@
                 updateCalories(row);
             });
 
-            // Event: perubahan bahan
-            $(document).on('change', '.bahan-select', function() {
-                const row = $(this).closest('.bahan-item');
-                updateCalories(row);
-            });
+            // Event: perubahan menu
+            $(document).on('change', '.menu-select', function() {
+                const menuItem = $(this).closest('.menu-item');
+                const bahanList = menuItem.find('.bahan-list');
+                const menuId = $(this).val();
+                const bahanData = $(this).find(':selected').data('bahan');
 
-            // Event: tambah bahan
-            $(document).on('click', '.add-bahan', function() {
-                const currentItem = $(this).closest('.bahan-item');
-                const clone = currentItem.clone();
+                if (menuId && bahanData) {
+                    bahanList.empty().show();
+                    bahanList.append(`
+                        <div class="alert alert-info mb-2">
+                            <strong>Bahan Baku:</strong> Silakan isi berat bersih untuk setiap bahan
+                        </div>
+                    `);
 
-                clone.find('label').remove();
-                clone.find('input').val(0);
-                clone.find('.bahan-select').val('');
+                    bahanData.forEach((bahan, index) => {
+                        const labelHtml = index === 0 ? `
+                            <div class="col-md-3">
+                                <label>Bahan Makanan</label>
+                                <input type="text" class="form-control" value="${bahan.nama}" readonly>
+                            </div>
+                            <div class="col-md-2">
+                                <label>Berat Bersih (gram)</label>
+                                <input type="number" class="form-control berat-input" value="0" min="0" step="0.01">
+                            </div>
+                            <div class="col-md-2">
+                                <label>Kalori</label>
+                                <input type="number" class="form-control kalori-input" value="0" readonly>
+                            </div>
+                        ` : `
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" value="${bahan.nama}" readonly>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control berat-input" value="0" min="0" step="0.01">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control kalori-input" value="0" readonly>
+                            </div>
+                        `;
 
-                currentItem.parent().append(clone);
-            });
-
-            // Event: hapus bahan
-            $(document).on('click', '.remove-bahan', function() {
-                const bahanList = $(this).closest('.bahan-list');
-                const items = bahanList.find('.bahan-item');
-
-                if (items.length > 1) {
-                    $(this).closest('.bahan-item').remove();
-                    updateTotalKalori();
+                        bahanList.append(`
+                            <div class="row mb-2 align-items-end bahan-item" data-bahan-id="${bahan.id}">
+                                ${labelHtml}
+                            </div>
+                        `);
+                    });
+                } else {
+                    bahanList.hide().empty();
                 }
+                updateTotalKalori();
             });
 
             // Event: tambah menu
             $('#addMenu').on('click', function() {
                 const menuContainer = $('#menu-container');
-                const firstMenu = $('.menu-item').first();
-                const clone = firstMenu.clone();
-
-                clone.find('input').val('');
-                clone.find('.kalori-input').val(0);
-                clone.find('.bahan-select').val('');
-
-                const bahanList = clone.find('.bahan-list');
-                bahanList.find('.bahan-item').not(':first').remove();
-
+                const clone = `
+                    <div class="menu-item border p-3 mb-2">
+                        <div class="row mb-2">
+                            <div class="col-md-3">
+                                <label>Pilih Menu <span class="text-danger">*</span></label>
+                                <select class="form-select menu-select">
+                                    <option value="">-- Pilih Menu --</option>
+                                    @foreach ($menus as $menu)
+                                        <option value="{{ $menu->id }}"
+                                            data-bahan='{{ json_encode($menu->bahanBakus) }}'>
+                                            {{ $menu->nama }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-9 d-flex align-items-end justify-content-end">
+                                <button type="button" class="btn btn-outline-danger btn-sm remove-menu">
+                                    Hapus Menu
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bahan-list" style="display: none;"></div>
+                    </div>
+                `;
                 menuContainer.append(clone);
-                updateTotalKalori();
             });
 
             // Event: hapus menu
@@ -246,11 +255,11 @@
                 const menus = [];
 
                 $('.menu-item').each(function() {
-                    const namaMenu = $(this).find('.nama-menu').val();
+                    const menuId = $(this).find('.menu-select').val();
                     const bahanBakus = [];
 
                     $(this).find('.bahan-item').each(function() {
-                        const bahanId = $(this).find('.bahan-select').val();
+                        const bahanId = $(this).data('bahan-id');
                         const beratBersih = $(this).find('.berat-input').val();
                         const energiKalori = $(this).find('.kalori-input').val();
 
@@ -263,9 +272,9 @@
                         }
                     });
 
-                    if (namaMenu && bahanBakus.length > 0) {
+                    if (menuId && bahanBakus.length > 0) {
                         menus.push({
-                            nama: namaMenu,
+                            menu_id: menuId,
                             bahan_bakus: bahanBakus
                         });
                     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Menu;
 use App\Models\PaketMenu;
 use App\Models\BahanBaku;
 use Illuminate\Http\Request;
@@ -19,19 +20,17 @@ class PaketMenuController extends Controller
 
     public function create()
     {
-        $bahanbakus = BahanBaku::orderBy('nama')->get(['id', 'nama', 'kelompok']);
+        $menus = Menu::with('bahanBakus')->orderBy('nama')->get();
         $title = 'Formulir Paket Menu';
-        return view('paket-menu.create', compact('bahanbakus', 'title'));
+        return view('paket-menu.create', compact('menus', 'title'));
     }
 
-    //TODO pindah Input Menu ke crud tersendiri,
-    //di CRUD Menu pilih bahan baku
     public function store(Request $request)
     {
         $request->validate([
             'nama_paket' => 'required|string|max:255',
             'menus' => 'required|array|min:1',
-            'menus.*.nama' => 'required|string|max:255',
+            'menus.*.menu_id' => 'required|exists:menus,id',
             'menus.*.bahan_bakus' => 'required|array|min:1',
             'menus.*.bahan_bakus.*.bahan_baku_id' => 'required|exists:bahan_bakus,id',
             'menus.*.bahan_bakus.*.berat_bersih' => 'required|numeric|min:0',
@@ -45,12 +44,11 @@ class PaketMenuController extends Controller
             ]);
 
             foreach ($request->menus as $menuData) {
-                $menu = $paketMenu->menus()->create([
-                    'nama' => $menuData['nama'],
-                ]);
+                $paketMenu->menus()->attach($menuData['menu_id']);
 
+                $menu = Menu::find($menuData['menu_id']);
                 foreach ($menuData['bahan_bakus'] as $bahanBaku) {
-                    $menu->bahanBakus()->attach($bahanBaku['bahan_baku_id'], [
+                    $menu->bahanBakus()->updateExistingPivot($bahanBaku['bahan_baku_id'], [
                         'berat_bersih' => $bahanBaku['berat_bersih'],
                         'energi' => $bahanBaku['energi'],
                     ]);
@@ -83,9 +81,10 @@ class PaketMenuController extends Controller
     public function edit(PaketMenu $paketmenu)
     {
         $paketmenu->load(['menus.bahanBakus']);
-        $bahanbakus = BahanBaku::orderBy('nama')->get(['id', 'nama', 'kelompok']);
+        $menus = Menu::with('bahanBakus')->orderBy('nama')->get();
         $title = 'Edit Paket Menu';
-        return view('paket-menu.edit', compact('paketmenu', 'bahanbakus', 'title'));
+        return $menus?->toArray();
+        // return view('paket-menu.edit', compact('paketmenu', 'menus', 'title'));
     }
 
     public function update(Request $request, PaketMenu $paketmenu)
@@ -93,7 +92,7 @@ class PaketMenuController extends Controller
         $request->validate([
             'nama_paket' => 'required|string|max:255',
             'menus' => 'required|array|min:1',
-            'menus.*.nama' => 'required|string|max:255',
+            'menus.*.menu_id' => 'required|exists:menus,id',
             'menus.*.bahan_bakus' => 'required|array|min:1',
             'menus.*.bahan_bakus.*.bahan_baku_id' => 'required|exists:bahan_bakus,id',
             'menus.*.bahan_bakus.*.berat_bersih' => 'required|numeric|min:0',
@@ -106,15 +105,14 @@ class PaketMenuController extends Controller
                 'nama' => $request->nama_paket,
             ]);
 
-            $paketmenu->menus()->delete();
+            $paketmenu->menus()->detach();
 
             foreach ($request->menus as $menuData) {
-                $menu = $paketmenu->menus()->create([
-                    'nama' => $menuData['nama'],
-                ]);
+                $paketmenu->menus()->attach($menuData['menu_id']);
 
+                $menu = Menu::find($menuData['menu_id']);
                 foreach ($menuData['bahan_bakus'] as $bahanBaku) {
-                    $menu->bahanBakus()->attach($bahanBaku['bahan_baku_id'], [
+                    $menu->bahanBakus()->updateExistingPivot($bahanBaku['bahan_baku_id'], [
                         'berat_bersih' => $bahanBaku['berat_bersih'],
                         'energi' => $bahanBaku['energi'],
                     ]);
