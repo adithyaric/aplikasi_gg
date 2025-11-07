@@ -148,5 +148,16 @@
                 </div>
             </div>
         </div>
-
 @endsection
+@push('js')
+@if (session('welcome'))
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: '{{ session('welcome') }}',
+        showConfirmButton: false,
+        timer: 2000
+    });
+</script>
+@endif
+@endpush

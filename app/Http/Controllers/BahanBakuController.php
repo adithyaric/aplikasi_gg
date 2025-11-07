@@ -23,7 +23,7 @@ class BahanBakuController extends Controller
 
     public function create()
     {
-        //
+        //using modal create on index.blade.php
     }
 
     public function store(Request $request)
@@ -50,7 +50,7 @@ class BahanBakuController extends Controller
 
     public function show(BahanBaku $bahanbaku)
     {
-        //
+        return response()->json($bahanbaku);
     }
 
     public function edit(BahanBaku $bahanbaku)

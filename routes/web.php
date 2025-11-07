@@ -13,6 +13,7 @@ use App\Http\Controllers\PaketMenuController;
 use App\Http\Controllers\PaketSurveyController;
 use App\Http\Controllers\RencanaMenuController;
 use App\Http\Controllers\RespondenController;
+use App\Http\Controllers\SekolahController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\SurveyController;
 use App\Http\Controllers\UserController;
@@ -39,12 +40,12 @@ Route::middleware('guest')->group(function () {
     Route::post('/authenticate', [AuthController::class, 'login'])->name('authenticate');
     Route::get('/welcome', [DashboardController::class, 'welcome'])->name('welcome');
 
-    Route::prefix('survey')->name('survey.')->group(function () {
-        Route::get('/', [SurveyController::class, 'index'])->name('index');
-        Route::get('/paket/{kategori_id}', [SurveyController::class, 'getPaket']);
-        Route::get('/kuesioner/{paket_id}', [SurveyController::class, 'getKuesioner']);
-        Route::post('/submit', [SurveyController::class, 'submit'])->name('submit');
-    });
+    // Route::prefix('survey')->name('survey.')->group(function () {
+    //     Route::get('/', [SurveyController::class, 'index'])->name('index');
+    //     Route::get('/paket/{kategori_id}', [SurveyController::class, 'getPaket']);
+    //     Route::get('/kuesioner/{paket_id}', [SurveyController::class, 'getKuesioner']);
+    //     Route::post('/submit', [SurveyController::class, 'submit'])->name('submit');
+    // });
 });
 
 Route::middleware('auth')->group(function () {
@@ -52,22 +53,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('users', UserController::class);
+    Route::resource('categories', CategoryController::class);
+
+    //master data
     Route::resource('bahanbaku', BahanBakuController::class);
     Route::resource('bahanoperasional', BahanOperasionalController::class);
     Route::resource('gizi', GiziController::class);
     Route::resource('menu', MenuController::class);
     Route::resource('paketmenu', PaketMenuController::class);
     Route::resource('rencanamenu', RencanaMenuController::class);
+    Route::resource('sekolah', SekolahController::class);
 
-    Route::resource('categories', CategoryController::class);
-    Route::resource('surats', SuratController::class);
-    Route::get('/surats/{id}/cetak', [SuratController::class, 'cetak'])->name('surats.cetak');
-    Route::prefix('skm')->name('skm.')->group(function () {
-        Route::resource('kategori', KategoriSkmController::class);
-        Route::resource('paket', PaketSurveyController::class);
-        Route::resource('kuesioner', KuesionerController::class);
-    });
 
+    // Route::resource('surats', SuratController::class);
+    // Route::get('/surats/{id}/cetak', [SuratController::class, 'cetak'])->name('surats.cetak');
+    // Route::prefix('skm')->name('skm.')->group(function () {
+    //     Route::resource('kategori', KategoriSkmController::class);
+    //     Route::resource('paket', PaketSurveyController::class);
+    //     Route::resource('kuesioner', KuesionerController::class);
+    // });
 });
 
 
