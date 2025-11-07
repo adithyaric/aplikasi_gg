@@ -14,6 +14,7 @@ class CreateSekolahsTable extends Migration
             $table->string('nama_pic')->nullable();
             $table->string('nomor')->nullable();
             $table->string('jarak')->nullable();
+            $table->text('alamat')->nullable();
             $table->string('long')->nullable();
             $table->string('lat')->nullable();
             $table->timestamps();

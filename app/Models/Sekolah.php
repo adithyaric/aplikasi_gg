@@ -14,6 +14,7 @@ class Sekolah extends Model
         'nama_pic',
         'nomor',
         'jarak',
+        'alamat',
         'long',
         'lat',
     ];

@@ -35,6 +35,7 @@ class SekolahController extends Controller
             'nama_pic' => 'required|string|max:255',
             'nomor' => 'required|string|max:255',
             'jarak' => 'required|numeric',
+            'alamat' => 'nullable|string',
             'long' => 'nullable|numeric',
             'lat' => 'nullable|numeric',
         ]);
@@ -44,6 +45,7 @@ class SekolahController extends Controller
             'nama_pic' => $request->nama_pic,
             'nomor' => $request->nomor,
             'jarak' => $request->jarak,
+            'alamat' => $request->alamat,
             'long' => $request->long,
             'lat' => $request->lat,
         ]);
@@ -71,6 +73,7 @@ class SekolahController extends Controller
             'nama_pic' => 'required|string|max:255',
             'nomor' => 'required|string|max:255',
             'jarak' => 'required|numeric',
+            'alamat' => 'nullable|string',
             'long' => 'nullable|numeric',
             'lat' => 'nullable|numeric',
         ]);
@@ -80,6 +83,7 @@ class SekolahController extends Controller
             'nama_pic' => $request->nama_pic,
             'nomor' => $request->nomor,
             'jarak' => $request->jarak,
+            'alamat' => $request->alamat,
             'long' => $request->long,
             'lat' => $request->lat,
         ]);
