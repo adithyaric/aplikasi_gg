@@ -32,13 +32,13 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 */
 
 Route::get('/', function () {
-    return redirect(route('welcome'));
+    return redirect(route('dashboard'));
 });
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');
     Route::post('/authenticate', [AuthController::class, 'login'])->name('authenticate');
-    Route::get('/welcome', [DashboardController::class, 'welcome'])->name('welcome');
+    // Route::get('/welcome', [DashboardController::class, 'welcome'])->name('welcome');
 
     // Route::prefix('survey')->name('survey.')->group(function () {
     //     Route::get('/', [SurveyController::class, 'index'])->name('index');
@@ -51,6 +51,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/titik-distribusi', [DashboardController::class, 'titikDistribusi'])->name('titik-distribusi');
 
     Route::resource('users', UserController::class);
     Route::resource('categories', CategoryController::class);

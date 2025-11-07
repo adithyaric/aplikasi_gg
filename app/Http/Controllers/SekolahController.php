@@ -18,6 +18,8 @@ class SekolahController extends Controller
             'jarak',
             'long',
             'lat',
+            'porsi_8k',
+            'porsi_10k',
         ]);
         $title = 'Master Sekolah';
         return view('sekolah.index', compact('sekolahs', 'title'));
@@ -38,6 +40,8 @@ class SekolahController extends Controller
             'alamat' => 'nullable|string',
             'long' => 'nullable|numeric',
             'lat' => 'nullable|numeric',
+            'porsi_8k' => 'nullable|numeric',
+            'porsi_10k' => 'nullable|numeric',
         ]);
 
         Sekolah::create([
@@ -48,6 +52,8 @@ class SekolahController extends Controller
             'alamat' => $request->alamat,
             'long' => $request->long,
             'lat' => $request->lat,
+            'porsi_8k' => $request->porsi_8k,
+            'porsi_10k' => $request->porsi_10k,
         ]);
 
         return response()->json([
@@ -76,6 +82,8 @@ class SekolahController extends Controller
             'alamat' => 'nullable|string',
             'long' => 'nullable|numeric',
             'lat' => 'nullable|numeric',
+            'porsi_8k' => 'nullable|numeric',
+            'porsi_10k' => 'nullable|numeric',
         ]);
 
         $sekolah->update([
@@ -86,6 +94,8 @@ class SekolahController extends Controller
             'alamat' => $request->alamat,
             'long' => $request->long,
             'lat' => $request->lat,
+            'porsi_8k' => $request->porsi_8k,
+            'porsi_10k' => $request->porsi_10k,
         ]);
 
         return response()->json([

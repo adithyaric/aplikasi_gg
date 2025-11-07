@@ -52,6 +52,8 @@
                                         <th>Nama PIC</th>
                                         <th>Nomor</th>
                                         <th>Jarak</th>
+                                        <th>Porsi 8K</th>
+                                        <th>Porsi 10K</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -63,6 +65,8 @@
                                             <td>{{ $sekolah->nama_pic }}</td>
                                             <td>{{ $sekolah->nomor }}</td>
                                             <td>{{ $sekolah->jarak }}</td>
+                                            <td>{{ $sekolah->porsi_8k }}</td>
+                                            <td>{{ $sekolah->porsi_10k }}</td>
                                             <td>
                                                 <button type="button" class="btn btn-sm btn-success"
                                                     onclick="editSekolah({{ $sekolah->id }})">
@@ -139,6 +143,18 @@
                                     <label class="form-label">Jarak <span class="text-danger">*</span></label>
                                     <input type="number" class="form-control" id="jarak" name="jarak"
                                         placeholder="Masukkan jarak">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="form-group mb-1">
+                                    <label class="form-label">Porsi 8K <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" id="porsi_8k" name="porsi_8k"
+                                        placeholder="Masukkan Porsi 8K">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="form-group mb-1">
+                                    <label class="form-label">Porsi 10K <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" id="porsi_10k" name="porsi_10k"
+                                        placeholder="Masukkan Porsi 10K">
                                     <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group mb-1">
@@ -253,6 +269,8 @@
                     $('#nama_pic').val(response.nama_pic);
                     $('#nomor').val(response.nomor);
                     $('#jarak').val(response.jarak);
+                    $('#porsi_8k').val(response.porsi_8k);
+                    $('#porsi_10k').val(response.porsi_10k);
                     $('#form_method').val('PUT');
                     $('#modalSekolahLabel').text('Edit Sekolah');
                     $('#modalSekolah').modal('show');
@@ -604,6 +622,8 @@
                     $('#nama_pic').val(response.nama_pic);
                     $('#nomor').val(response.nomor);
                     $('#jarak').val(response.jarak);
+                    $('#porsi_8k').val(response.porsi_8k);
+                    $('#porsi_10k').val(response.porsi_10k);
                     $('#lat').val(response.lat);
                     $('#long').val(response.long);
                     $('#alamat').val(response.alamat);

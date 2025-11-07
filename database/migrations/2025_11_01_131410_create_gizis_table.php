@@ -16,7 +16,7 @@ class CreateGizisTable extends Migration
         Schema::create('gizis', function (Blueprint $table) {
             $table->id();
             $table->foreignId('bahan_baku_id')->constrained()->onDelete('cascade');
-            $table->string('nomor_pangan');
+            $table->bigInteger('nomor_pangan')->nullable()->default(0);
             // $table->string('rincian_bahan_makanan');
             $table->decimal('bdd', 8, 2)->default(0)->nullable();
             $table->decimal('air', 8, 2)->default(0)->nullable();

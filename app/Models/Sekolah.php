@@ -17,5 +17,13 @@ class Sekolah extends Model
         'alamat',
         'long',
         'lat',
+        'porsi_8k',
+        'porsi_10k',
+    ];
+
+    protected $casts = [
+        'nomor' => 'integer',
+        'porsi_8k' => 'integer',
+        'porsi_10k' => 'integer',
     ];
 }
