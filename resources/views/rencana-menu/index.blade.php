@@ -75,7 +75,7 @@
                     </div>
                     <div class="card-body">
                         <div class="custom-datatable-entries">
-                            <div class="col d-flex flex-wrap align-items-end gap-2 ">
+                            <div class="col d-flex flex-wrap align-items-end gap-2 mb-1">
                                 <div class="col-auto">
                                     <label class="form-label ">Rentang Periode</label>
                                     <input type="text" id="dateRange" class="form-control form-control-sm"

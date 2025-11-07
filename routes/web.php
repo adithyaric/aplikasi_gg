@@ -14,6 +14,7 @@ use App\Http\Controllers\PaketSurveyController;
 use App\Http\Controllers\RencanaMenuController;
 use App\Http\Controllers\RespondenController;
 use App\Http\Controllers\SekolahController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\SurveyController;
 use App\Http\Controllers\UserController;
@@ -64,6 +65,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('paketmenu', PaketMenuController::class);
     Route::resource('rencanamenu', RencanaMenuController::class);
     Route::resource('sekolah', SekolahController::class);
+    Route::resource('supplier', SupplierController::class);
 
 
     // Route::resource('surats', SuratController::class);
