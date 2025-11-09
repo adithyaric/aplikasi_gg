@@ -50,8 +50,9 @@
                                         <th>No</th>
                                         <th>Nama</th>
                                         <th>No HP</th>
-                                        <th>Bank - No Rek</th>
+                                        <th>No Rek</th>
                                         <th>Nama Bank</th>
+                                        <th>Produk</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -63,6 +64,7 @@
                                             <td>{{ $supplier->no_hp }}</td>
                                             <td>{{ $supplier->bank_no_rek }}</td>
                                             <td>{{ $supplier->bank_nama }}</td>
+                                            <td>{{ $supplier->products }}</td>
                                             <td>
                                                 <button type="button" class="btn btn-sm btn-success"
                                                     onclick="editSupplier({{ $supplier->id }})">
@@ -130,7 +132,7 @@
                                     <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group mb-1">
-                                    <label class="form-label">Bank - No Rek</label>
+                                    <label class="form-label">No Rek</label>
                                     <input type="text" class="form-control" id="bank_no_rek" name="bank_no_rek"
                                         placeholder="Masukkan nomor rekening bank">
                                     <div class="invalid-feedback"></div>
@@ -139,6 +141,12 @@
                                     <label class="form-label">Nama Bank</label>
                                     <input type="text" class="form-control" id="bank_nama" name="bank_nama"
                                         placeholder="Masukkan nama bank">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="form-group mb-1">
+                                    <label class="form-label">Produk</label>
+                                    <textarea class="form-control" id="products" name="products" rows="2"
+                                        placeholder="Masukkan nama product"></textarea>
                                     <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group mb-1">
@@ -253,6 +261,7 @@
                     $('#no_hp').val(response.no_hp);
                     $('#bank_no_rek').val(response.bank_no_rek);
                     $('#bank_nama').val(response.bank_nama);
+                    $('#products').val(response.products);
                     $('#lat').val(response.lat);
                     $('#long').val(response.long);
                     $('#alamat').val(response.alamat);

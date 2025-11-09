@@ -7,6 +7,6 @@
 <!-- click peta -> dapat long lat, select sekolah -->
 
 sebelum PO :
-Tambahkan menu supplier (nama, no hp, products, no rekening dan bank)
-Tambah menu titik supplier (tampilan seluruh supplier masing-masing dapur)
+<!-- Tambahkan menu supplier (nama, no hp, products, no rekening dan bank) -->
+Tambah menu titik supplier (tampilan seluruh supplier masing-masing dapur) -> mirip titik distribusi
 Tambah supplier di formulir PO

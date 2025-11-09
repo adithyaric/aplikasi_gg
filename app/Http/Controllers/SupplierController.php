@@ -10,7 +10,7 @@ class SupplierController extends Controller
 {
     public function index()
     {
-        $suppliers = Supplier::latest()->get(['id', 'nama', 'no_hp', 'bank_no_rek', 'bank_nama', 'alamat', 'long', 'lat']);
+        $suppliers = Supplier::latest()->get(['id', 'nama', 'no_hp', 'bank_no_rek', 'bank_nama', 'products', 'alamat', 'long', 'lat']);
         $title = 'Master Supplier';
         return view('supplier.index', compact('suppliers', 'title'));
     }
@@ -30,6 +30,7 @@ class SupplierController extends Controller
             'alamat' => 'nullable|string',
             'long' => 'nullable|numeric',
             'lat' => 'nullable|numeric',
+            'products' => 'nullable|string',
         ]);
 
         Supplier::create([
@@ -40,6 +41,7 @@ class SupplierController extends Controller
             'alamat' => $request->alamat,
             'long' => $request->long,
             'lat' => $request->lat,
+            'products' => $request->products,
         ]);
 
         return response()->json([
@@ -68,6 +70,7 @@ class SupplierController extends Controller
             'alamat' => 'nullable|string',
             'long' => 'nullable|numeric',
             'lat' => 'nullable|numeric',
+            'products' => 'nullable|string',
         ]);
 
         $supplier->update([
@@ -78,6 +81,7 @@ class SupplierController extends Controller
             'alamat' => $request->alamat,
             'long' => $request->long,
             'lat' => $request->lat,
+            'products' => $request->products,
         ]);
 
         return response()->json([
