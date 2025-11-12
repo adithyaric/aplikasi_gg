@@ -1,0 +1,185 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Order;
+use App\Models\BahanBaku;
+use App\Models\Supplier;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class OrderController extends Controller
+{
+    public function index()
+    {
+        $orders = Order::with(['supplier', 'items.bahanBaku', 'transaction'])->latest()->get();
+        $title = 'Purchase Order';
+        // dd($orders?->toArray());
+        return view('order.index', compact('orders', 'title'));
+    }
+
+    public function create()
+    {
+        $bahanbakus = BahanBaku::orderBy('nama')->get(['id', 'nama', 'satuan']);
+        $suppliers = Supplier::orderBy('nama')->get(['id', 'nama']);
+        $title = 'Tambah Purchase Order';
+        return view('order.create', compact('bahanbakus', 'suppliers', 'title'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'supplier_id' => 'required|exists:suppliers,id',
+            'tanggal_po' => 'required|date',
+            'tanggal_penerimaan' => 'required|date',
+            'items' => 'required|array|min:1',
+            'items.*.bahan_baku_id' => 'required|exists:bahan_bakus,id',
+            'items.*.quantity' => 'required|numeric|min:0.01',
+            'items.*.satuan' => 'required|string',
+            'items.*.unit_cost' => 'required|numeric|min:0',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Generate order number
+            $latestOrder = Order::latest()->first();
+            $number = $latestOrder ? (int)substr($latestOrder->order_number, 2) + 1 : 1;
+            $orderNumber = 'PO' . str_pad($number, 3, '0', STR_PAD_LEFT);
+
+            // Calculate grand total
+            $grandTotal = 0;
+            foreach ($request->items as $item) {
+                $grandTotal += $item['quantity'] * $item['unit_cost'];
+            }
+
+            $order = Order::create([
+                'order_number' => $orderNumber,
+                'supplier_id' => $request->supplier_id,
+                'tanggal_po' => $request->tanggal_po,
+                'tanggal_penerimaan' => $request->tanggal_penerimaan,
+                'grand_total' => $grandTotal,
+                'status' => 'draft',
+            ]);
+
+            // Create order items
+            foreach ($request->items as $item) {
+                $subtotal = $item['quantity'] * $item['unit_cost'];
+                $order->items()->create([
+                    'bahan_baku_id' => $item['bahan_baku_id'],
+                    'quantity' => $item['quantity'],
+                    'satuan' => $item['satuan'],
+                    'unit_cost' => $item['unit_cost'],
+                    'subtotal' => $subtotal,
+                ]);
+            }
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Purchase Order berhasil ditambahkan'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function show(Order $order)
+    {
+        $order->load(['supplier', 'items.bahanBaku', 'transaction']);
+        return $order->toArray();
+    }
+
+    public function edit(Order $order)
+    {
+        $order->load(['items.bahanBaku']);
+        $bahanbakus = BahanBaku::orderBy('nama')->get(['id', 'nama', 'satuan']);
+        $suppliers = Supplier::orderBy('nama')->get(['id', 'nama']);
+        $title = 'Edit Purchase Order';
+        return view('order.edit', compact('order', 'bahanbakus', 'suppliers', 'title'));
+    }
+
+    public function update(Request $request, Order $order)
+    {
+        $request->validate([
+            'supplier_id' => 'required|exists:suppliers,id',
+            'tanggal_po' => 'required|date',
+            'tanggal_penerimaan' => 'required|date',
+            'items' => 'required|array|min:1',
+            'items.*.bahan_baku_id' => 'required|exists:bahan_bakus,id',
+            'items.*.quantity' => 'required|numeric|min:0.01',
+            'items.*.satuan' => 'required|string',
+            'items.*.unit_cost' => 'required|numeric|min:0',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Calculate grand total
+            $grandTotal = 0;
+            foreach ($request->items as $item) {
+                $grandTotal += $item['quantity'] * $item['unit_cost'];
+            }
+
+            $order->update([
+                'supplier_id' => $request->supplier_id,
+                'tanggal_po' => $request->tanggal_po,
+                'tanggal_penerimaan' => $request->tanggal_penerimaan,
+                'grand_total' => $grandTotal,
+            ]);
+
+            // Delete old items and create new ones
+            $order->items()->delete();
+            foreach ($request->items as $item) {
+                $subtotal = $item['quantity'] * $item['unit_cost'];
+                $order->items()->create([
+                    'bahan_baku_id' => $item['bahan_baku_id'],
+                    'quantity' => $item['quantity'],
+                    'satuan' => $item['satuan'],
+                    'unit_cost' => $item['unit_cost'],
+                    'subtotal' => $subtotal,
+                ]);
+            }
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Purchase Order berhasil diupdate'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroy(Order $order)
+    {
+        DB::beginTransaction();
+        try {
+            if ($order->transactions()->count() > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Order tidak dapat dihapus karena sudah memiliki transaksi pembayaran'
+                ], 422);
+            }
+
+            $order->delete();
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Purchase Order berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+}

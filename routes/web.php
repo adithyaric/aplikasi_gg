@@ -9,6 +9,7 @@ use App\Http\Controllers\GiziController;
 use App\Http\Controllers\KategoriSkmController;
 use App\Http\Controllers\KuesionerController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaketMenuController;
 use App\Http\Controllers\PaketSurveyController;
 use App\Http\Controllers\RencanaMenuController;
@@ -67,6 +68,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('sekolah', SekolahController::class);
     Route::resource('supplier', SupplierController::class);
 
+    Route::resource('orders', OrderController::class);
 
     // Route::resource('surats', SuratController::class);
     // Route::get('/surats/{id}/cetak', [SuratController::class, 'cetak'])->name('surats.cetak');
