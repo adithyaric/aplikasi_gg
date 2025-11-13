@@ -41,7 +41,7 @@ class Order extends Model
 
     public function getPaidAmountAttribute()
     {
-        return $this->transactions()->sum('amount');
+        return $this->transaction?->amount ?? 0;
     }
 
     public function getOutstandingBalanceAttribute()

@@ -69,6 +69,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('supplier', SupplierController::class);
 
     Route::resource('orders', OrderController::class);
+    Route::get('/penerimaan', [OrderController::class, 'penerimaanIndex'])->name('penerimaan.index');
+    Route::get('/pembayaran', [OrderController::class, 'pembayaranIndex'])->name('pembayaran.index');
 
     // Route::resource('surats', SuratController::class);
     // Route::get('/surats/{id}/cetak', [SuratController::class, 'cetak'])->name('surats.cetak');

@@ -161,12 +161,12 @@ class OrderController extends Controller
     {
         DB::beginTransaction();
         try {
-            if ($order->transactions()->count() > 0) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Order tidak dapat dihapus karena sudah memiliki transaksi pembayaran'
-                ], 422);
-            }
+            // if ($order->transaction->exists() > 0) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Order tidak dapat dihapus karena sudah memiliki transaksi pembayaran'
+            //     ], 422);
+            // }
 
             $order->delete();
             DB::commit();
@@ -181,5 +181,27 @@ class OrderController extends Controller
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    //another pages
+    public function penerimaanIndex()
+    {
+        $orders = Order::with(['supplier', 'items.bahanBaku'])
+            ->whereNotNull('tanggal_penerimaan')
+            ->latest()
+            ->get();
+
+        $title = 'Penerimaan Barang';
+        return view('order.penerimaan.index', compact('orders', 'title'));
+    }
+
+    public function pembayaranIndex()
+    {
+        $orders = Order::with(['supplier', 'items.bahanBaku', 'transaction'])
+            ->latest()
+            ->get();
+
+        $title = 'Pembayaran';
+        return view('order.pembayaran.index', compact('orders', 'title'));
     }
 }
