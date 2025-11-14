@@ -15,7 +15,9 @@ class Order extends Model
         'tanggal_po',
         'tanggal_penerimaan',
         'grand_total',
-        'status', // draft, confirmed
+        'status', // draft, posted
+        'status_penerimaan', // draft, confirmed
+        'notes',
     ];
 
     protected $casts = [

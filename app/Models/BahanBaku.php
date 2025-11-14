@@ -13,7 +13,10 @@ class BahanBaku extends Model
         'nama',
         'kelompok',
         'jenis',
+        'kategori',
         'satuan',
+        'merek',
+        'ukuran',
     ];
 
     // Template relationship (just which menus use this bahan baku)

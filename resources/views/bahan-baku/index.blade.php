@@ -50,7 +50,10 @@
                                         <th>Nama</th>
                                         <th>Kelompok</th>
                                         <th>Jenis</th>
+                                        <th>Kategori</th>
                                         <th>Satuan</th>
+                                        <th>Merek</th>
+                                        <th>Ukuran</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -61,7 +64,10 @@
                                             <td>{{ $bahanbaku->nama }}</td>
                                             <td>{{ $bahanbaku->kelompok }}</td>
                                             <td>{{ $bahanbaku->jenis }}</td>
+                                            <td>{{ $bahanbaku->kategori }}</td>
                                             <td>{{ $bahanbaku->satuan }}</td>
+                                            <td>{{ $bahanbaku->merek }}</td>
+                                            <td>{{ $bahanbaku->ukuran }}</td>
                                             <td>
                                                 <button type="button" class="btn btn-sm btn-success"
                                                     onclick="editBahanBaku({{ $bahanbaku->id }})">
@@ -137,6 +143,21 @@
                                     <input type="text" class="form-control" id="satuan" name="satuan"
                                         placeholder="Masukkan satuan">
                                     <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Kategori</label>
+                                    <input type="text" class="form-control" id="kategori" name="kategori"
+                                        placeholder="Masukkan kategori">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Merek</label>
+                                    <input type="text" class="form-control" id="merek" name="merek"
+                                        placeholder="Masukkan merek">
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label class="form-label">Ukuran</label>
+                                    <input type="text" class="form-control" id="ukuran" name="ukuran"
+                                        placeholder="Masukkan ukuran">
                                 </div>
                                 <div class="d-flex justify-content-end gap-2">
                                     <button type="submit" class="btn btn-success">Simpan</button>
@@ -220,6 +241,9 @@
                     $('#kelompok').val(response.kelompok);
                     $('#jenis').val(response.jenis);
                     $('#satuan').val(response.satuan);
+                    $('#kategori').val(response.kategori);
+                    $('#merek').val(response.merek);
+                    $('#ukuran').val(response.ukuran);
                     $('#form_method').val('PUT');
                     $('#modalBahanBakuLabel').text('Edit Bahan Baku');
                     $('#modalBahanBaku').modal('show');

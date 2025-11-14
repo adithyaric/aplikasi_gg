@@ -40,8 +40,8 @@
                         <h4 class="card-title fw-bold">Paket Menu</h4>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped" id="tablePaketMenu">
+                        <div class="table-responsive text-nowrap">
+                            <table class="table table-bordered table-sm" id="tablePaketMenu">
                                 <thead>
                                     <tr>
                                         <th>No</th>
@@ -79,7 +79,7 @@
                                                     @endif
                                                     <td>{{ $bahan->nama }}</td>
                                                     @if ($firstMenu && $firstBahan)
-                                                        <td
+                                                        <td class="text-center"
                                                             rowspan="{{ $paket->menus->sum(fn($m) => $m->bahanBakus->count()) }}">
                                                             <a href="{{ route('paketmenu.show', $paket->id) }}"
                                                                 class="btn btn-sm btn-info">

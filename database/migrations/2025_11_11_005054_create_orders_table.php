@@ -15,7 +15,9 @@ class CreateOrdersTable extends Migration
             $table->date('tanggal_po')->nullable();
             $table->date('tanggal_penerimaan')->nullable();
             $table->decimal('grand_total', 15, 2)->nullable()->default(0);
-            $table->string('status')->nullable()->default('draft'); //'draft', 'confirmed'
+            $table->string('status')->nullable()->default('draft'); //'draft', 'posted'
+            $table->string('status_penerimaan')->nullable()->default('draft'); //'draft', 'confirmed'
+            $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -25,9 +27,11 @@ class CreateOrdersTable extends Migration
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->foreignId('bahan_baku_id')->constrained()->onDelete('cascade');
             $table->decimal('quantity', 10, 2)->nullable()->default(0);
+            $table->boolean('quantity_diterima')->default(false)->nullable(); //true-false
             $table->string('satuan')->nullable();
             $table->decimal('unit_cost', 15, 2)->nullable()->default(0);
             $table->decimal('subtotal', 15, 2)->nullable()->default(0);
+            $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -37,7 +41,7 @@ class CreateOrdersTable extends Migration
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->date('payment_date')->nullable();
             $table->string('payment_method')->nullable();
-            $table->string('payment_reference')->nullable();
+            $table->string('payment_reference')->nullable(); // ambil dari no rek supplier
             $table->decimal('amount', 15, 2)->nullable()->default(0);
             $table->text('notes')->nullable();
             $table->timestamps();

@@ -145,8 +145,7 @@
                                 </div>
                                 <div class="form-group mb-1">
                                     <label class="form-label">Produk</label>
-                                    <textarea class="form-control" id="products" name="products" rows="2"
-                                        placeholder="Masukkan nama product"></textarea>
+                                    <textarea class="form-control" id="products" name="products" rows="2" placeholder="Masukkan nama product"></textarea>
                                     <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group mb-1">
@@ -155,24 +154,24 @@
                                         placeholder="Alamat akan terisi otomatis dari peta"></textarea>
                                     <div class="invalid-feedback"></div>
                                 </div>
-                                <div class="form-group mb-1">
-                                    <label class="form-label">Cari Lokasi Supplier</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="search-location"
-                                            placeholder="Cari nama supplier atau alamat...">
-                                        <a href="#" class="btn btn-outline-primary" id="btn-search">Cari</a>
-                                    </div>
-                                    <div id="search-results" style="display: none;">
-                                        <div class="card">
-                                            <div class="card-header py-2">
-                                                <small class="fw-bold">Hasil Pencarian:</small>
-                                            </div>
-                                            <div class="card-body p-0">
-                                                <div id="results-list" style="max-height: 200px; overflow-y: auto;"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                {{-- <div class="form-group mb-1"> --}}
+                                {{-- <label class="form-label">Cari Lokasi Supplier</label> --}}
+                                {{-- <div class="input-group"> --}}
+                                {{-- <input type="text" class="form-control" id="search-location" --}}
+                                {{-- placeholder="Cari nama supplier atau alamat..."> --}}
+                                {{-- <a href="#" class="btn btn-outline-primary" id="btn-search">Cari</a> --}}
+                                {{-- </div> --}}
+                                {{-- <div id="search-results" style="display: none;"> --}}
+                                {{-- <div class="card"> --}}
+                                {{-- <div class="card-header py-2"> --}}
+                                {{-- <small class="fw-bold">Hasil Pencarian:</small> --}}
+                                {{-- </div> --}}
+                                {{-- <div class="card-body p-0"> --}}
+                                {{-- <div id="results-list" style="max-height: 200px; overflow-y: auto;"></div> --}}
+                                {{-- </div> --}}
+                                {{-- </div> --}}
+                                {{-- </div> --}}
+                                {{-- </div> --}}
                                 <div class="form-group mb-4">
                                     <label class="form-label">Pilih Lokasi di Peta <span
                                             class="text-danger">*</span></label>

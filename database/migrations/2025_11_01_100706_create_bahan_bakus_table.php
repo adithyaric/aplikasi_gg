@@ -18,7 +18,10 @@ class CreateBahanBakusTable extends Migration
             $table->string('nama')->nullable();
             $table->string('kelompok')->nullable();
             $table->string('jenis')->nullable();
+            $table->string('kategori')->nullable();
             $table->string('satuan')->nullable();
+            $table->string('merek')->nullable();
+            $table->string('ukuran')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

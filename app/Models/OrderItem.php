@@ -13,9 +13,11 @@ class OrderItem extends Model
         'order_id',
         'bahan_baku_id',
         'quantity',
+        'quantity_diterima',
         'satuan',
         'unit_cost',
         'subtotal',
+        'notes',
     ];
 
     protected $casts = [

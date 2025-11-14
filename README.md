@@ -10,3 +10,10 @@
 <!-- Tambahkan menu supplier (nama, no hp, products, no rekening dan bank) -->
 <!-- Tambah menu titik supplier (tampilan seluruh supplier masing-masing dapur) -> mirip titik distribusi -->
 <!-- Tambah supplier di formulir PO -->
+
+PO :
+Tambah Menu -> Pilih Periode dan Tambahkan Menu
+ambil data dari rencana menu -> input bahan" & satuan ke Bahan Baku PO
+satuan ambil dari jumlah prosi (rencana menu) x Berat Bersih (paket menu)
+
+status order draft : halaman edit penerimaan & edit pembayaran

@@ -67,7 +67,7 @@
                                         </h5>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-success"
+                                        <button type="button" class="btn btn-sm btn-info"
                                             onclick="showPembayaranDetail({{ $order->id }})">
                                             Detail
                                         </button>

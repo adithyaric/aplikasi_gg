@@ -72,8 +72,8 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="custom-datatable-entries">
-                            <table id="datatable" class="table table-striped" data-toggle="data-table">
+                        <div class="table-responsive text-nowrap custom-datatable-entries">
+                            <table id="datatable" class="table table-bordered table-sm" data-toggle="data-table">
                                 <thead>
                                     <tr>
                                         <th>No</th>
@@ -88,7 +88,7 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $menu->nama }}</td>
                                             <td>{{ $menu->bahanBakus->count() }} bahan</td>
-                                            <td>
+                                            <td class="text-center">
                                                 <button class="btn btn-sm btn-info btn-detail" data-id="{{ $menu->id }}"
                                                     data-nama="{{ $menu->nama }}">
                                                     <i class="bi bi-eye"></i> Detail

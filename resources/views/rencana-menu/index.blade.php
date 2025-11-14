@@ -74,7 +74,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="custom-datatable-entries">
+                        <div class="table-responsive text-nowrap custom-datatable-entries">
                             <div class="col d-flex flex-wrap align-items-end gap-2 mb-1">
                                 <div class="col-auto">
                                     <label class="form-label ">Rentang Periode</label>
@@ -91,7 +91,7 @@
                                 </div>
                             </div>
 
-                            <table id="datatable" class="table table-striped" data-toggle="data-table">
+                            <table id="datatable" class="table table-bordered table-sm" data-toggle="data-table">
                                 <thead>
                                     <tr>
                                         <th>No</th>
@@ -104,7 +104,7 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $rencana->start_date }}</td>
-                                            <td>
+                                            <td class="text-center">
                                                 <button class="btn btn-sm btn-info btn-detail" data-id="{{ $rencana->id }}"
                                                     data-start_date="{{ $rencana->start_date }}">
                                                     Detail

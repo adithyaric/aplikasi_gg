@@ -11,8 +11,8 @@ class Category extends Model
 
     protected $guarded = ['id'];
 
-    public function surats()
-    {
-        return $this->hasMany(Surat::class);
-    }
+    // public function surats()
+    // {
+    //     return $this->hasMany(Surat::class);
+    // }
 }

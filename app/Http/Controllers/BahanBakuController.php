@@ -15,7 +15,10 @@ class BahanBakuController extends Controller
             'nama',
             'kelompok',
             'jenis',
+            'kategori',
             'satuan',
+            'merek',
+            'ukuran',
         ]);
         $title = 'Master Bahan Baku';
         return view('bahan-baku.index', compact('bahanbakus', 'title'));
@@ -40,6 +43,9 @@ class BahanBakuController extends Controller
             'kelompok' => $request->kelompok,
             'jenis' => $request->jenis,
             'satuan' => $request->satuan,
+            'kategori' => $request->kategori,
+            'merek' => $request->merek,
+            'ukuran' => $request->ukuran,
         ]);
 
         return response()->json([
@@ -72,6 +78,9 @@ class BahanBakuController extends Controller
             'kelompok' => $request->kelompok,
             'jenis' => $request->jenis,
             'satuan' => $request->satuan,
+            'kategori' => $request->kategori,
+            'merek' => $request->merek,
+            'ukuran' => $request->ukuran,
         ]);
 
         return response()->json([

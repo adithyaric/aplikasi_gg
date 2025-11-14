@@ -12,7 +12,7 @@ class CreateSekolahsTable extends Migration
             $table->id();
             $table->string('nama')->nullable();
             $table->string('nama_pic')->nullable();
-            $table->bigInteger('nomor')->nullable()->default(0);
+            $table->string('nomor')->nullable()->default(0);
             $table->string('jarak')->nullable();
             $table->text('alamat')->nullable();
             $table->string('long')->nullable();
