@@ -24,6 +24,7 @@ class OrderItem extends Model
         'quantity' => 'float',
         'unit_cost' => 'float',
         'subtotal' => 'float',
+        'quantity_diterima' => 'boolean',
     ];
 
     public function order()

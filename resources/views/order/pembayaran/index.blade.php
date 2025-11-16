@@ -67,10 +67,17 @@
                                         </h5>
                                     </td>
                                     <td>
+                                        {{-- @if ($order->status == 'draft') --}}
+                                        <a href="{{ route('pembayaran.edit', $order->id) }}"
+                                            class="btn btn-sm btn-success">
+                                            Edit
+                                        </a>
+                                        {{-- @else --}}
                                         <button type="button" class="btn btn-sm btn-info"
                                             onclick="showPembayaranDetail({{ $order->id }})">
                                             Detail
                                         </button>
+                                        {{-- @endif --}}
                                     </td>
                                 </tr>
                                 @endforeach

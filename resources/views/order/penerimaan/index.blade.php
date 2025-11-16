@@ -66,10 +66,17 @@
                                                 </h5>
                                             </td>
                                             <td>
+                                                {{-- @if ($order->status_penerimaan == 'draft') --}}
+                                                <a href="{{ route('penerimaan.edit', $order->id) }}"
+                                                    class="btn btn-sm btn-success">
+                                                    Edit
+                                                </a>
+                                                {{-- @else --}}
                                                 <button type="button" class="btn btn-sm btn-info"
                                                     onclick="showPenerimaanDetail({{ $order->id }})">
                                                     Detail
                                                 </button>
+                                                {{-- @endif --}}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -183,8 +190,7 @@
                                     <tbody id="penerimaan_items"></tbody>
                                 </table>
                                 <div class="d-flex justify-content-end align-items-center mb-3">
-                                    <p class="h4">Subtotal: <span class="badge bg-success"
-                                            id="penerimaan_grand_total"></span></p>
+                                    <p class="h4">Subtotal: <span class="badge bg-success" id="penerimaan_grand_total"></span></p>
                                 </div>
                             </div>
                         </div>
@@ -223,6 +229,7 @@
                     $('#penerimaan_tanggal').val(response.tanggal_penerimaan ? new Date(response
                         .tanggal_penerimaan).toLocaleDateString('id-ID') : '-');
                     $('#penerimaan_supplier').val(response.supplier?.nama || '-');
+                    $('#penerimaan_catatan').val(response.notes || '-');
                     $('#penerimaan_grand_total').text('Rp ' + new Intl.NumberFormat('id-ID').format(response
                         .grand_total || 0));
 

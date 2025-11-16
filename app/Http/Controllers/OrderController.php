@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\BahanBaku;
+use App\Models\RencanaMenu;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +21,7 @@ class OrderController extends Controller
 
     public function create()
     {
+        $rencanaMenus = RencanaMenu::with(['paketMenu.menus.bahanBakus'])->get(['start_date']);
         $bahanbakus = BahanBaku::orderBy('nama')->get(['id', 'nama', 'satuan']);
         $suppliers = Supplier::orderBy('nama')->get(['id', 'nama']);
         $title = 'Tambah Purchase Order';
@@ -183,7 +185,7 @@ class OrderController extends Controller
         }
     }
 
-    //another pages
+    //Penerimaan
     public function penerimaanIndex()
     {
         $orders = Order::with(['supplier', 'items.bahanBaku'])
@@ -195,6 +197,53 @@ class OrderController extends Controller
         return view('order.penerimaan.index', compact('orders', 'title'));
     }
 
+    public function editPenerimaan(Order $order)
+    {
+        $order->load(['supplier', 'items.bahanBaku']);
+        $title = 'Edit Penerimaan Barang';
+        return view('order.penerimaan.edit', compact('order', 'title'));
+    }
+
+    public function updatePenerimaan(Request $request, Order $order)
+    {
+        $request->validate([
+            'status_penerimaan' => 'required|in:draft,confirmed',
+            'notes' => 'nullable|string',
+            'items' => 'required|array|min:1',
+            'items.*.id' => 'required|exists:order_items,id',
+            'items.*.quantity_diterima' => 'required|boolean',
+            'items.*.notes' => 'nullable|string',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $order->update([
+                'status_penerimaan' => $request->status_penerimaan,
+                'notes' => $request->notes,
+            ]);
+
+            foreach ($request->items as $itemData) {
+                $order->items()->where('id', $itemData['id'])->update([
+                    'quantity_diterima' => $itemData['quantity_diterima'],
+                    'notes' => $itemData['notes'],
+                ]);
+            }
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Penerimaan Barang berhasil diupdate'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    //Pembayaran
     public function pembayaranIndex()
     {
         $orders = Order::with(['supplier', 'items.bahanBaku', 'transaction'])
@@ -203,5 +252,56 @@ class OrderController extends Controller
 
         $title = 'Pembayaran';
         return view('order.pembayaran.index', compact('orders', 'title'));
+    }
+
+    public function editPembayaran(Order $order)
+    {
+        $order->load(['supplier', 'items.bahanBaku', 'transaction']);
+        $title = 'Edit Pembayaran';
+        return view('order.pembayaran.edit', compact('order', 'title'));
+    }
+
+    public function updatePembayaran(Request $request, Order $order)
+    {
+        $request->validate([
+            'payment_date' => 'required|date',
+            'payment_method' => 'required|in:cash,bank_transfer,giro_cek,lainnya',
+            'payment_reference' => 'nullable|string',
+            'amount' => 'required|numeric|min:0|max:' . $order->grand_total,
+            'notes' => 'nullable|string',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            if ($order->transaction) {
+                $order->transaction->update([
+                    'payment_date' => $request->payment_date,
+                    'payment_method' => $request->payment_method,
+                    'payment_reference' => $request->payment_reference,
+                    'amount' => $request->amount,
+                    'notes' => $request->notes,
+                ]);
+            } else {
+                $order->transaction()->create([
+                    'payment_date' => $request->payment_date,
+                    'payment_method' => $request->payment_method,
+                    'payment_reference' => $request->payment_reference,
+                    'amount' => $request->amount,
+                    'notes' => $request->notes,
+                ]);
+            }
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Pembayaran berhasil disimpan'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

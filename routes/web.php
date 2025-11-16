@@ -70,7 +70,12 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('orders', OrderController::class);
     Route::get('/penerimaan', [OrderController::class, 'penerimaanIndex'])->name('penerimaan.index');
+    Route::get('/penerimaan/{order}/edit', [OrderController::class, 'editPenerimaan'])->name('penerimaan.edit');
+    Route::put('/penerimaan/{order}', [OrderController::class, 'updatePenerimaan'])->name('penerimaan.update');
+
     Route::get('/pembayaran', [OrderController::class, 'pembayaranIndex'])->name('pembayaran.index');
+    Route::get('/pembayaran/{order}/edit', [OrderController::class, 'editPembayaran'])->name('pembayaran.edit');
+    Route::put('/pembayaran/{order}', [OrderController::class, 'updatePembayaran'])->name('pembayaran.update');
 
     // Route::resource('surats', SuratController::class);
     // Route::get('/surats/{id}/cetak', [SuratController::class, 'cetak'])->name('surats.cetak');
