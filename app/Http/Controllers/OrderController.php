@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\BahanBaku;
 use App\Models\RencanaMenu;
 use App\Models\Supplier;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -21,11 +22,71 @@ class OrderController extends Controller
 
     public function create()
     {
-        $rencanaMenus = RencanaMenu::with(['paketMenu.menus.bahanBakus'])->get(['start_date']);
+        $rencanaMenus = RencanaMenu::with(['paketMenu.menus.bahanBakus'])
+            ->orderBy('start_date', 'desc')
+            ->get();
         $bahanbakus = BahanBaku::orderBy('nama')->get(['id', 'nama', 'satuan']);
         $suppliers = Supplier::orderBy('nama')->get(['id', 'nama']);
         $title = 'Tambah Purchase Order';
-        return view('order.create', compact('bahanbakus', 'suppliers', 'title'));
+        return view('order.create', compact('bahanbakus', 'suppliers', 'title', 'rencanaMenus'));
+    }
+
+    public function addMenuItems(Request $request)
+    {
+        $request->validate([
+            'rencana_menu_id' => 'required|exists:rencana_menus,id',
+        ]);
+
+        $rencanaMenu = RencanaMenu::with(['paketMenu.menus.bahanBakus'])
+            ->findOrFail($request->rencana_menu_id);
+
+        $items = [];
+
+        foreach ($rencanaMenu->paketMenu as $paket) {
+            $porsi = $paket->pivot->porsi;
+
+            foreach ($paket->menus as $menu) {
+                // Get bahan bakus with their berat_bersih from bahan_baku_menu pivot table
+                $bahanBakusWithWeight = DB::table('bahan_baku_menu')
+                    ->where('paket_menu_id', $paket->id)
+                    ->where('menu_id', $menu->id)
+                    ->get();
+
+                foreach ($bahanBakusWithWeight as $pivotData) {
+                    $bahanBaku = BahanBaku::find($pivotData->bahan_baku_id);
+
+                    if ($bahanBaku) {
+                        $beratBersih = (float) $pivotData->berat_bersih ?? 0;
+                        $totalQuantity = ($porsi * $beratBersih); // Convert gram to kg
+
+                        $items[] = [
+                            'bahan_baku_id' => $bahanBaku->id,
+                            'nama' => $bahanBaku->nama,
+                            'quantity' => $totalQuantity,
+                            'prosi' => $porsi,
+                            'berat_bersih' => $beratBersih,
+                            'satuan' => $bahanBaku->satuan,
+                        ];
+                    }
+                }
+            }
+        }
+
+        // Group by bahan_baku_id and sum quantities
+        $groupedItems = [];
+        foreach ($items as $item) {
+            $id = $item['bahan_baku_id'];
+            if (isset($groupedItems[$id])) {
+                $groupedItems[$id]['quantity'] += $item['quantity'];
+            } else {
+                $groupedItems[$id] = $item;
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'items' => array_values($groupedItems)
+        ]);
     }
 
     public function store(Request $request)
@@ -43,6 +104,7 @@ class OrderController extends Controller
 
         DB::beginTransaction();
         try {
+            $supplier = Supplier::find($request->supplier_id);
             // Generate order number
             $latestOrder = Order::latest()->first();
             $number = $latestOrder ? (int)substr($latestOrder->order_number, 2) + 1 : 1;
@@ -74,6 +136,17 @@ class OrderController extends Controller
                     'subtotal' => $subtotal,
                 ]);
             }
+
+            // Create Transaction
+            Transaction::create([
+                'order_id' => $order->id,
+                'payment_date' => null,
+                'payment_method' => 'bank_transfer',
+                'payment_reference' => $supplier->bank_no_rek . '-' . $supplier->bank_nama ?? 'TRX-' . now(),
+                'amount' => $grandTotal,
+                'status' => 'unpaid',
+                'notes' => null,
+            ]);
 
             DB::commit();
             return response()->json([
@@ -188,8 +261,7 @@ class OrderController extends Controller
     //Penerimaan
     public function penerimaanIndex()
     {
-        $orders = Order::with(['supplier', 'items.bahanBaku'])
-            ->whereNotNull('tanggal_penerimaan')
+        $orders = Order::with(['supplier', 'items.bahanBaku', 'transaction'])
             ->latest()
             ->get();
 
@@ -278,6 +350,7 @@ class OrderController extends Controller
                     'payment_date' => $request->payment_date,
                     'payment_method' => $request->payment_method,
                     'payment_reference' => $request->payment_reference,
+                    'status' => $request->status,
                     'amount' => $request->amount,
                     'notes' => $request->notes,
                 ]);

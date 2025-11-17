@@ -41,9 +41,9 @@
                                 </div>
                                 <div class="ms-auto align-self-start">
                                     <h5>
-                                        @if ($order->payment_status == 'unpaid')
+                                        @if ($order->transaction?->status == 'unpaid')
                                             <span class="badge rounded bg-danger">Unpaid</span>
-                                        @elseif($order->payment_status == 'partial')
+                                        @elseif($order->transaction?->status == 'partial')
                                             <span class="badge rounded bg-warning">Partial</span>
                                         @else
                                             <span class="badge rounded bg-success">Paid</span>
@@ -154,6 +154,22 @@
                                         required />
                                     <small class="text-muted">Max:
                                         Rp.{{ number_format($order->grand_total, 0, ',', '.') }}</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Status</label>
+                                    <select name="status" class="form-select shadow-none" id="paymentStatus" required>
+                                        <option value="">Pilih Status Pembayaran</option>
+                                        <option value="Unpaid"
+                                            {{ $order->transaction?->status == 'unpaid' ? 'selected' : '' }}>
+                                            Unpaid</option>
+                                        <option value="paid"
+                                            {{ $order->transaction?->status == 'paid' ? 'selected' : '' }}>
+                                            Paid</option>
+                                        <option value="partial"
+                                            {{ $order->transaction?->status == 'partial' ? 'selected' : '' }}>
+                                            Partial</option>
+                                    </select>
                                 </div>
 
                                 <div class="form-group">

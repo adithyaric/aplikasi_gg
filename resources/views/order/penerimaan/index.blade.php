@@ -203,22 +203,22 @@
 
 @push('js')
     <script>
-        $(document).ready(function() {
-            const table = $('#tablePenerimaanBarang').DataTable();
+        // $(document).ready(function() {
+        //     const table = $('#tablePenerimaanBarang').DataTable();
 
-            $('#statusButtons button').on('click', function() {
-                $('#statusButtons button').removeClass('active btn-primary').addClass(
-                    'btn-white btn-outline-primary');
-                $(this).removeClass('btn-white btn-outline-primary').addClass('active btn-primary');
+        //     $('#statusButtons button').on('click', function() {
+        //         $('#statusButtons button').removeClass('active btn-primary').addClass(
+        //             'btn-white btn-outline-primary');
+        //         $(this).removeClass('btn-white btn-outline-primary').addClass('active btn-primary');
 
-                const status = $(this).data('status');
-                if (status === 'all') {
-                    table.column(3).search('').draw();
-                } else {
-                    table.column(3).search(status, false, false).draw();
-                }
-            });
-        });
+        //         const status = $(this).data('status');
+        //         if (status === 'all') {
+        //             table.column(3).search('').draw();
+        //         } else {
+        //             table.column(3).search(status, false, false).draw();
+        //         }
+        //     });
+        // });
 
         function showPenerimaanDetail(id) {
             $.ajax({

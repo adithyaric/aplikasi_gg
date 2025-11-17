@@ -47,6 +47,18 @@
                                     <input type="text" class="form-control"
                                         value="{{ $order->tanggal_penerimaan->format('d/m/Y') }}" disabled />
                                 </div>
+                                <div class="form-group col-md-12">
+                                    <label class="form-label">Status</label>
+                                    <select name="status" class="form-select shadow-none" id="paymentMethod" required>
+                                        <option value="">Pilih Status Penerimaan</option>
+                                        <option value="confirmed"
+                                            {{ $order->status_penerimaan == 'confirmed' ? 'selected' : '' }}>
+                                            Confirmed</option>
+                                        <option value="draft"
+                                            {{ $order->status_penerimaan == 'draft' ? 'selected' : '' }}>
+                                            Draft</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="row">

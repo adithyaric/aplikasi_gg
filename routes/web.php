@@ -69,6 +69,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('supplier', SupplierController::class);
 
     Route::resource('orders', OrderController::class);
+    Route::get('/orders-add-menu-items', [OrderController::class, 'addMenuItems'])->name('orders.addMenuItems');
+
     Route::get('/penerimaan', [OrderController::class, 'penerimaanIndex'])->name('penerimaan.index');
     Route::get('/penerimaan/{order}/edit', [OrderController::class, 'editPenerimaan'])->name('penerimaan.edit');
     Route::put('/penerimaan/{order}', [OrderController::class, 'updatePenerimaan'])->name('penerimaan.update');

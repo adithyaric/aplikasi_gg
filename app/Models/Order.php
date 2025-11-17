@@ -51,10 +51,10 @@ class Order extends Model
         return $this->grand_total - $this->paid_amount;
     }
 
-    public function getPaymentStatusAttribute()
-    {
-        if ($this->paid_amount == 0) return 'unpaid';
-        if ($this->paid_amount >= $this->grand_total) return 'paid';
-        return 'partial';
-    }
+    // public function getPaymentStatusAttribute()
+    // {
+    //     if ($this->paid_amount == 0) return 'unpaid';
+    //     if ($this->paid_amount >= $this->grand_total) return 'paid';
+    //     return 'partial';
+    // }
 }

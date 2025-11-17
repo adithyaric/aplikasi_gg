@@ -14,6 +14,7 @@ class Transaction extends Model
         'payment_date',
         'payment_method',
         'payment_reference',
+        'status', //'paid', 'unpaid', 'partial'
         'amount',
         'notes',
     ];

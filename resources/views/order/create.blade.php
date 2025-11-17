@@ -11,6 +11,14 @@
                             <p>Makan Sehat Bergizi</p>
                         </div>
                         <div>
+                            <a href="#" class="btn btn-link btn-soft-light" data-bs-toggle="modal" data-bs-target="#modalTambahBahan">
+                                <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M12.5495 13.73H14.2624C14.6683 13.73 15.005 13.4 15.005 12.99C15.005 12.57 14.6683 12.24 14.2624 12.24H12.5495V10.51C12.5495 10.1 12.2228 9.77 11.8168 9.77C11.4109 9.77 11.0743 10.1 11.0743 10.51V12.24H9.37129C8.96535 12.24 8.62871 12.57 8.62871 12.99C8.62871 13.4 8.96535 13.73 9.37129 13.73H11.0743V15.46C11.0743 15.87 11.4109 16.2 11.8168 16.2C12.2228 16.2 12.5495 15.87 12.5495 15.46V13.73ZM19.3381 9.02561C19.5708 9.02292 19.8242 9.02 20.0545 9.02C20.302 9.02 20.5 9.22 20.5 9.47V17.51C20.5 19.99 18.5099 22 16.0446 22H8.17327C5.59901 22 3.5 19.89 3.5 17.29V6.51C3.5 4.03 5.5 2 7.96535 2H13.2525C13.5099 2 13.7079 2.21 13.7079 2.46V5.68C13.7079 7.51 15.203 9.01 17.0149 9.02C17.4381 9.02 17.8112 9.02316 18.1377 9.02593C18.3917 9.02809 18.6175 9.03 18.8168 9.03C18.9578 9.03 19.1405 9.02789 19.3381 9.02561ZM19.61 7.5662C18.7961 7.5692 17.8367 7.5662 17.1466 7.5592C16.0516 7.5592 15.1496 6.6482 15.1496 5.5422V2.9062C15.1496 2.4752 15.6674 2.2612 15.9635 2.5722C16.4995 3.1351 17.2361 3.90891 17.9693 4.67913C18.7002 5.44689 19.4277 6.21108 19.9496 6.7592C20.2387 7.0622 20.0268 7.5652 19.61 7.5662Z"
+                                        fill="currentColor"></path>
+                                </svg>
+                                Tambah Menu
+                            </a>
                             <a href="{{ route('orders.index') }}" class="btn btn-link btn-soft-light">
                                 <svg class="icon-32" width="20" viewBox="0 0 24 24" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
@@ -31,6 +39,55 @@
         <div class="iq-header-img">
             <img src="{{ asset('assets/images/dashboard/top-header.png') }}" alt="header"
                 class="theme-color-default-img img-fluid w-100 h-100 animated-scaleX">
+        </div>
+    </div>
+    <!-- Modal Tambah Menu -->
+    <div class="modal fade" id="modalTambahBahan" tabindex="-1" aria-labelledby="modalTambahBahanLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content"
+                style="border-radius: 15px; border: 1px solid #ddd; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title text-white" id="modalTambahBahanLabel">Tambah Menu PO</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Pilih Periode dan Tambahkan Menu</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="container-fluid px-5">
+                                <div class="row fw-bold border-bottom pb-2 mb-2">
+                                    <div class="col-6">Tanggal</div>
+                                    <div class="col-6 text-center">Aksi</div>
+                                </div>
+                                @forelse($rencanaMenus as $rencana)
+                                <div class="row align-items-center py-3 border-bottom">
+                                    <div class="col-6">
+                                        {{ \Carbon\Carbon::parse($rencana->start_date)->format('d/m/Y') }}
+                                    </div>
+                                    <div class="col-6 text-center">
+                                        <button class="btn btn-sm btn-success add-menu-btn"
+                                            data-rencana-id="{{ $rencana->id }}" type="button">
+                                            Add Menu
+                                        </button>
+                                    </div>
+                                </div>
+                                @empty
+                                <div class="row align-items-center py-3">
+                                    <div class="col-12 text-center text-muted">
+                                        Tidak ada rencana menu tersedia
+                                    </div>
+                                </div>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -232,6 +289,53 @@
                 error: function(xhr) {
                     const errors = xhr.responseJSON?.message || 'Terjadi kesalahan';
                     alert(errors);
+                }
+            });
+        });
+    </script>
+    <script>
+        // Handle Add Menu button click
+        $(document).on('click', '.add-menu-btn', function() {
+            const rencanaId = $(this).data('rencana-id');
+
+            $.ajax({
+                url: '{{ route("orders.addMenuItems") }}',
+                method: 'GET',
+                data: {
+                    rencana_menu_id: rencanaId
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Clear existing items
+                        $('#itemContainer').empty();
+                        itemIndex = 0;
+
+                        // Add new items from menu
+                        response.items.forEach(function(item) {
+                            const newRow = createItemRow(itemIndex);
+                            $('#itemContainer').append(newRow);
+
+                            const $row = $('#itemContainer .itemRow').last();
+                            $row.find('.bahan-select').val(item.bahan_baku_id).trigger('change');
+                            $row.find('.quantity-input').val(item.quantity.toFixed(2));
+                            $row.find('.satuan-input').val(item.satuan);
+
+                            itemIndex++;
+                        });
+
+                        calculateTotal();
+
+                        // Close modal
+                        $('#modalTambahBahan').modal('hide');
+
+                        alert('Menu berhasil ditambahkan ke PO');
+                    }
+                },
+                error: function(xhr) {
+                    alert('Gagal menambahkan menu: ' + (xhr.responseJSON?.message || 'Terjadi kesalahan'));
                 }
             });
         });

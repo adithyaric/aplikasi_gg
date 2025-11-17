@@ -341,17 +341,19 @@ class DatabaseSeeder extends Seeder
             [
                 'order_id' => $orderIds[0],
                 'payment_date' => '2024-01-20',
-                'payment_method' => 'transfer',
+                'payment_method' => 'bank_transfer',
                 'payment_reference' => 'TRX-001',
                 'amount' => 2500000,
+                'status' => 'unpaid',
                 'notes' => 'Pembayaran lunas untuk PO-001-2024',
             ],
             [
                 'order_id' => $orderIds[1],
                 'payment_date' => '2024-01-18',
-                'payment_method' => 'transfer',
+                'payment_method' => 'bank_transfer',
                 'payment_reference' => 'TRX-002',
                 'amount' => 900000,
+                'status' => 'unpaid',
                 'notes' => 'DP 50% untuk PO-002-2024',
             ],
         ];

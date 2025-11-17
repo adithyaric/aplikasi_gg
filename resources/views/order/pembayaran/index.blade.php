@@ -53,7 +53,7 @@
                             </thead>
                             <tbody>
                                 @foreach($orders as $order)
-                                <tr data-status="{{ $order->payment_status }}">
+                                <tr data-status="{{ $order->transaction?->status }}">
                                     <td>{{ $order->order_number }}</td>
                                     <td>{{ $order->supplier->nama }}</td>
                                     <td>Rp {{ number_format($order->grand_total, 0, ',', '.') }}</td>
@@ -61,8 +61,8 @@
                                     <td>
                                         <h5>
                                             <span
-                                                class="badge bg-{{ $order->payment_status == 'unpaid' ? 'danger' : ($order->payment_status == 'paid' ? 'success' : 'warning') }}">
-                                                {{ ucfirst($order->payment_status) }}
+                                                class="badge bg-{{ $order->transaction?->status == 'unpaid' ? 'danger' : ($order->transaction?->status == 'paid' ? 'success' : 'warning') }}">
+                                                {{ ucfirst($order->transaction?->status) }}
                                             </span>
                                         </h5>
                                     </td>
@@ -179,21 +179,21 @@
 
 @push('js')
 <script>
-    $(document).ready(function() {
-    const table = $('#tablePayment').DataTable();
+// $(document).ready(function() {
+//     const table = $('#tablePayment').DataTable();
 
-    $('#statusButtons button').on('click', function() {
-        $('#statusButtons button').removeClass('active btn-primary').addClass('btn-white btn-outline-primary');
-        $(this).removeClass('btn-white btn-outline-primary').addClass('active btn-primary');
+//     $('#statusButtons button').on('click', function() {
+//         $('#statusButtons button').removeClass('active btn-primary').addClass('btn-white btn-outline-primary');
+//         $(this).removeClass('btn-white btn-outline-primary').addClass('active btn-primary');
 
-        const status = $(this).data('status');
-        if (status === 'all') {
-            table.column(4).search('').draw();
-        } else {
-            table.column(4).search(status, false, false).draw();
-        }
-    });
-});
+//         const status = $(this).data('status');
+//         if (status === 'all') {
+//             table.column(4).search('').draw();
+//         } else {
+//             table.column(4).search(status, false, false).draw();
+//         }
+//     });
+// });
 
 function showPembayaranDetail(id) {
     $.ajax({
@@ -204,7 +204,7 @@ function showPembayaranDetail(id) {
             $('#pembayaran_tanggal_terima').text('Tanggal Terima: ' + (response.tanggal_penerimaan ? new Date(response.tanggal_penerimaan).toLocaleDateString('id-ID') : '-'));
             $('#pembayaran_supplier').text('Pemasok: ' + (response.supplier?.nama || '-'));
 
-            const paymentStatus = response.payment_status;
+            const paymentStatus = response.transaction?.status;
             const badgeClass = paymentStatus == 'paid' ? 'bg-success' : 'bg-danger';
             $('#pembayaran_status_badge').removeClass().addClass('badge rounded ' + badgeClass).text(paymentStatus ? paymentStatus.charAt(0).toUpperCase() + paymentStatus.slice(1) : 'Unpaid');
 
