@@ -48,7 +48,9 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Nama</th>
+                                        <th>Kategori</th>
                                         <th>Satuan</th>
+                                        <th>Merek</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -57,7 +59,9 @@
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $bahanoperasional->nama }}</td>
+                                            <td>{{ $bahanoperasional->kategori }}</td>
                                             <td>{{ $bahanoperasional->satuan }}</td>
+                                            <td>{{ $bahanoperasional->merek }}</td>
                                             <td>
                                                 <button type="button" class="btn btn-sm btn-success"
                                                     onclick="editBahanOperasional({{ $bahanoperasional->id }})">
@@ -121,6 +125,16 @@
                                     <input type="text" class="form-control" id="satuan" name="satuan"
                                         placeholder="Masukkan satuan">
                                     <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Kategori</label>
+                                    <input type="text" class="form-control" id="kategori" name="kategori"
+                                        placeholder="Masukkan kategori">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Merek</label>
+                                    <input type="text" class="form-control" id="merek" name="merek"
+                                        placeholder="Masukkan merek">
                                 </div>
                                 <div class="d-flex justify-content-end gap-2">
                                     <button type="submit" class="btn btn-success">Simpan</button>
@@ -202,6 +216,8 @@
                     $('#bahanoperasional_id').val(response.id);
                     $('#nama').val(response.nama);
                     $('#satuan').val(response.satuan);
+                    $('#kategori').val(response.kategori);
+                    $('#merek').val(response.merek);
                     $('#form_method').val('PUT');
                     $('#modalBahanOperasionalLabel').text('Edit Bahan Operasional');
                     $('#modalBahanOperasional').modal('show');

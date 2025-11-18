@@ -136,9 +136,9 @@ class DatabaseSeeder extends Seeder
 
         // Bahan Operasional
         $bahanOperasionals = [
-            ['nama' => 'Gas LPG', 'satuan' => 'tabung'],
-            ['nama' => 'Sabun Cuci Piring', 'satuan' => 'botol'],
-            ['nama' => 'Plastik Kemasan', 'satuan' => 'roll'],
+            ['nama' => 'Gas LPG', 'satuan' => 'tabung', 'kategori' => 'abc', 'merek' => 'def'],
+            ['nama' => 'Sabun Cuci Piring', 'satuan' => 'botol', 'kategori' => 'abc', 'merek' => 'def'],
+            ['nama' => 'Plastik Kemasan', 'satuan' => 'roll', 'kategori' => 'abc', 'merek' => 'def'],
         ];
 
         foreach ($bahanOperasionals as $bahan) {

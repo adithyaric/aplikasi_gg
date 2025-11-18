@@ -11,6 +11,8 @@ class BahanOperasional extends Model
 
     protected $fillable = [
         'nama',
+        'kategori',
         'satuan',
+        'merek',
     ];
 }

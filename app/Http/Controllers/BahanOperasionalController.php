@@ -12,7 +12,9 @@ class BahanOperasionalController extends Controller
         $bahanoperasionals = BahanOperasional::latest()->get([
             'id',
             'nama',
+            'kategori',
             'satuan',
+            'merek',
         ]);
         $title = 'Master Bahan Operasional';
         return view('bahan-operasional.index', compact('bahanoperasionals', 'title'));
@@ -33,6 +35,8 @@ class BahanOperasionalController extends Controller
         BahanOperasional::create([
             'nama' => $request->nama,
             'satuan' => $request->satuan,
+            'kategori' => $request->kategori,
+            'merek' => $request->merek,
         ]);
 
         return response()->json([
@@ -61,6 +65,8 @@ class BahanOperasionalController extends Controller
         $bahanoperasional->update([
             'nama' => $request->nama,
             'satuan' => $request->satuan,
+            'kategori' => $request->kategori,
+            'merek' => $request->merek,
         ]);
 
         return response()->json([
