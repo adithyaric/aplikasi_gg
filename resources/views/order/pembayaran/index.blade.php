@@ -39,7 +39,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="custom-datatable-entries">
+                    <div class="custom-datatable-entries table-responsive text-nowrap">
                         <table id="tablePayment" class="table table-striped">
                             <thead>
                                 <tr>
@@ -57,7 +57,7 @@
                                     <td>{{ $order->order_number }}</td>
                                     <td>{{ $order->supplier->nama }}</td>
                                     <td>Rp {{ number_format($order->grand_total, 0, ',', '.') }}</td>
-                                    <td>Rp {{ number_format($order->paid_amount, 0, ',', '.') }}</td>
+                                    <td>Rp {{ number_format($order->transaction?->amount, 0, ',', '.') }}</td>
                                     <td>
                                         <h5>
                                             <span
@@ -209,8 +209,8 @@ function showPembayaranDetail(id) {
             $('#pembayaran_status_badge').removeClass().addClass('badge rounded ' + badgeClass).text(paymentStatus ? paymentStatus.charAt(0).toUpperCase() + paymentStatus.slice(1) : 'Unpaid');
 
             $('#pembayaran_grand_total').text('Rp ' + new Intl.NumberFormat('id-ID').format(response.grand_total || 0));
-            $('#pembayaran_paid_amount').text('Rp ' + new Intl.NumberFormat('id-ID').format(response.paid_amount || 0));
-            $('#pembayaran_outstanding').text('Rp ' + new Intl.NumberFormat('id-ID').format(response.outstanding_balance || 0));
+            $('#pembayaran_paid_amount').text('Rp ' + new Intl.NumberFormat('id-ID').format(response.transaction?.amount || 0));
+            $('#pembayaran_outstanding').text('Rp ' + new Intl.NumberFormat('id-ID').format(response.grand_total - response.transaction?.amount  || 0));
 
             $('#pembayaran_items').empty();
             if (response.items && response.items.length > 0) {

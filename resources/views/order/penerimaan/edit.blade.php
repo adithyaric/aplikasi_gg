@@ -49,7 +49,7 @@
                                 </div>
                                 <div class="form-group col-md-12">
                                     <label class="form-label">Status</label>
-                                    <select name="status" class="form-select shadow-none" id="paymentMethod" required>
+                                    <select name="status" class="select2 form-select shadow-none" id="paymentMethod" required>
                                         <option value="">Pilih Status Penerimaan</option>
                                         <option value="confirmed"
                                             {{ $order->status_penerimaan == 'confirmed' ? 'selected' : '' }}>
@@ -125,7 +125,7 @@
                             <hr class="hr-horizontal" />
 
                             <div class="d-flex justify-content-end align-items-center mb-3">
-                                <p class="h4">Subtotal: <span class="badge bg-success" id="penerimaan_grand_total">{{ $order->grand_total }}</span></p>
+                                <p class="h4">Subtotal: <span class="badge bg-success" id="penerimaan_grand_total">Rp.{{ number_format($order->grand_total, 0, ',', '.') }}</span></p>
                             </div>
 
                             <div class="d-flex justify-content-end gap-2">

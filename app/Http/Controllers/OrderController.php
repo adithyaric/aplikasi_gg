@@ -9,6 +9,7 @@ use App\Models\Supplier;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -57,7 +58,7 @@ class OrderController extends Controller
 
                     if ($bahanBaku) {
                         $beratBersih = (float) $pivotData->berat_bersih ?? 0;
-                        $totalQuantity = ($porsi * $beratBersih); // Convert gram to kg
+                        $totalQuantity = ($porsi * $beratBersih);
 
                         $items[] = [
                             'bahan_baku_id' => $bahanBaku->id,
@@ -341,27 +342,35 @@ class OrderController extends Controller
             'payment_reference' => 'nullable|string',
             'amount' => 'required|numeric|min:0|max:' . $order->grand_total,
             'notes' => 'nullable|string',
+            'bukti_transfer' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
         DB::beginTransaction();
         try {
+            $transactionData = [
+                'payment_date' => $request->payment_date,
+                'payment_method' => $request->payment_method,
+                'payment_reference' => $request->payment_reference,
+                'amount' => $request->amount,
+                'notes' => $request->notes,
+            ];
+
+            if ($request->hasFile('bukti_transfer')) {
+                // Delete old file if exists
+                if ($order->transaction && $order->transaction->bukti_transfer) {
+                    Storage::delete($order->transaction->bukti_transfer);
+                }
+
+                $file = $request->file('bukti_transfer');
+                $filename = 'bukti_' . time() . '_' . $order->id . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs('public/bukti_transfer', $filename);
+                $transactionData['bukti_transfer'] = $path;
+            }
+
             if ($order->transaction) {
-                $order->transaction->update([
-                    'payment_date' => $request->payment_date,
-                    'payment_method' => $request->payment_method,
-                    'payment_reference' => $request->payment_reference,
-                    'status' => $request->status,
-                    'amount' => $request->amount,
-                    'notes' => $request->notes,
-                ]);
+                $order->transaction->update($transactionData);
             } else {
-                $order->transaction()->create([
-                    'payment_date' => $request->payment_date,
-                    'payment_method' => $request->payment_method,
-                    'payment_reference' => $request->payment_reference,
-                    'amount' => $request->amount,
-                    'notes' => $request->notes,
-                ]);
+                $order->transaction()->create($transactionData);
             }
 
             DB::commit();

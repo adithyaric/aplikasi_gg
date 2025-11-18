@@ -273,7 +273,7 @@
                                 <select class="form-select menu-select">
                                     <option value="">-- Pilih Menu --</option>
                                     @foreach ($menus as $menu)
-                                        <option value="{{ $menu->id }}" 
+                                        <option value="{{ $menu->id }}"
                                             data-bahan='@json($menu->bahanBakus)'>
                                             {{ $menu->nama }}
                                         </option>

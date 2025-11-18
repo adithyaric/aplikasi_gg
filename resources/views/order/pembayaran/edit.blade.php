@@ -31,13 +31,17 @@
                         </div>
                     </div>
                     <div class="card-body d-flex gap-2 align-items-start">
-                        <div class="col-8 border border-2 d-flex flex-column gap-2 rounded-3 overflow-hidden">
+                        <div class="row">
+                        <div class="col-md-8 col-sm-12">
+                        <div class="border border-2 d-flex flex-column gap-2 rounded-3 overflow-hidden">
                             <div class="d-flex p-3 border-bottom border-bottom-1">
                                 <div class="d-flex flex-column">
                                     <strong>{{ $order->order_number }}</strong>
                                     <h4 class="fw-bold">{{ $order->order_number }}</h4>
                                     <strong>Tanggal Terima : {{ $order->tanggal_penerimaan->format('d/m/Y') }}</strong>
-                                    <strong>Pemasok : {{ $order->supplier->nama }}</strong>
+                                    <strong>Pemasok : {{ $order->supplier?->nama }}</strong>
+                                    <small>Bank & No Rek : {{ $order->supplier?->bank_nama }}
+                                        {{ $order->supplier?->bank_no_rek }}</small>
                                 </div>
                                 <div class="ms-auto align-self-start">
                                     <h5>
@@ -87,23 +91,26 @@
                                     <strong>Paid Amount: </strong>
                                     <h5>
                                         <span class="badge bg-success">Rp.
-                                            {{ number_format($order->paid_amount, 0, ',', '.') }}</span>
+                                            {{ number_format($order->transaction?->amount, 0, ',', '.') }}</span>
                                     </h5>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <strong>Outstanding Balance: </strong>
                                     <h5>
                                         <span
-                                            class="badge bg-danger">Rp.{{ number_format($order->outstanding_balance, 0, ',', '.') }}</span>
+                                            class="badge bg-danger">Rp.{{ number_format($order->grand_total - $order->transaction?->amount, 0, ',', '.') }}</span>
                                     </h5>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-4 border border-2 d-flex flex-column gap-2 rounded-3 overflow-hidden">
+                        </div>
+
+                        <div class="col-md-4 col-sm-12">
+                        <div class="border border-2 d-flex flex-column gap-2 rounded-3 overflow-hidden">
                             <h4 class="fw-bold p-3 border-bottom border-bottom-1">
                                 Pembayaran
                             </h4>
-                            <form id="pembayaranForm" class="p-3">
+                            <form id="pembayaranForm" class="p-3" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
 
@@ -115,7 +122,7 @@
 
                                 <div class="form-group">
                                     <label class="form-label">Metode Pembayaran</label>
-                                    <select name="payment_method" class="form-select shadow-none" id="paymentMethod"
+                                    <select name="payment_method" class="select2 form-select shadow-none" id="paymentMethod"
                                         required>
                                         <option value="">Pilih Metode Pembayaran</option>
                                         <option value="cash"
@@ -152,13 +159,27 @@
                                         value="{{ $order->transaction?->amount }}" step="0.01" min="0"
                                         max="{{ $order->grand_total }}" placeholder="Masukkan jumlah yang dibayar"
                                         required />
-                                    <small class="text-muted">Max:
-                                        Rp.{{ number_format($order->grand_total, 0, ',', '.') }}</small>
+                                    <small class="text-muted">
+                                        Max: Rp.{{ number_format($order->grand_total, 0, ',', '.') }}
+                                    </small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Bukti Transfer</label>
+                                    <input type="file" name="bukti_transfer" class="form-control"
+                                        accept="image/*,.pdf" />
+                                    @if ($order->transaction?->bukti_transfer)
+                                        <small class="text-muted">
+                                            <a href="{{ Storage::url($order->transaction->bukti_transfer) }}"
+                                                target="_blank">Lihat bukti saat ini</a>
+                                        </small>
+                                    @endif
                                 </div>
 
                                 <div class="form-group">
                                     <label class="form-label">Status</label>
-                                    <select name="status" class="form-select shadow-none" id="paymentStatus" required>
+                                    <select name="status" class="select2 form-select shadow-none" id="paymentStatus"
+                                        required>
                                         <option value="">Pilih Status Pembayaran</option>
                                         <option value="Unpaid"
                                             {{ $order->transaction?->status == 'unpaid' ? 'selected' : '' }}>
@@ -181,6 +202,8 @@
                                     <button type="submit" class="btn btn-success">Simpan Pembayaran</button>
                                 </div>
                             </form>
+                        </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -217,12 +240,14 @@
         $('#pembayaranForm').submit(function(e) {
             e.preventDefault();
 
-            const formData = $(this).serialize();
+            const formData = new FormData(this);
 
             $.ajax({
                 url: '{{ route('pembayaran.update', $order) }}',
                 method: 'POST',
                 data: formData,
+                processData: false,
+                contentType: false,
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },

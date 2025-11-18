@@ -48,13 +48,6 @@ class Order extends Model
 
     public function getOutstandingBalanceAttribute()
     {
-        return $this->grand_total - $this->paid_amount;
+        return $this->grand_total - $this->transaction?->amount;
     }
-
-    // public function getPaymentStatusAttribute()
-    // {
-    //     if ($this->paid_amount == 0) return 'unpaid';
-    //     if ($this->paid_amount >= $this->grand_total) return 'paid';
-    //     return 'partial';
-    // }
 }

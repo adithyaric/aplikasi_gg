@@ -44,6 +44,7 @@ class CreateOrdersTable extends Migration
             $table->string('payment_reference')->nullable(); // ambil dari no rek supplier
             $table->decimal('amount', 15, 2)->nullable()->default(0);
             $table->string('status')->nullable()->default('unpaid'); //'paid', 'unpaid', 'partial'
+            $table->text('bukti_transfer')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();

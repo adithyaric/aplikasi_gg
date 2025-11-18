@@ -67,7 +67,7 @@
                                                 <div class="col-md-4">
                                                     <label class="form-label small fw-semibold mb-0">Bahan Baku <span class="text-danger">*</span></label>
                                                     <select name="bahan_baku_id" id="bahan_baku_id"
-                                                        class="form-select form-select-sm @error('bahan_baku_id') is-invalid @enderror" required>
+                                                        class="select2 form-select form-select-sm @error('bahan_baku_id') is-invalid @enderror" required>
                                                         <option value="">-- Pilih Bahan Baku --</option>
                                                         @foreach ($bahanbakus as $bahan)
                                                             <option value="{{ $bahan->id }}" {{ old('bahan_baku_id') == $bahan->id ? 'selected' : '' }}>
@@ -282,20 +282,3 @@
         </div>
     </div>
 @endsection
-@push('js')
-{{-- Add Select2 CSS in head or after styles --}}
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
-
-{{-- Add Select2 JS before closing body or in scripts section --}}
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script>
-    $(document).ready(function() {
-    $('#bahan_baku_id').select2({
-        placeholder: '-- Pilih Bahan Baku --',
-        allowClear: true,
-        width: '100%'
-    });
-});
-</script>
-@endpush

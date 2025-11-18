@@ -40,7 +40,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="custom-datatable-entries">
+                        <div class="custom-datatable-entries table-responsive text-nowrap">
                             <table id="tablePenerimaanBarang" class="table table-striped">
                                 <thead>
                                     <tr>

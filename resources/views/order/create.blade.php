@@ -59,31 +59,71 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <div class="container-fluid px-5">
-                                <div class="row fw-bold border-bottom pb-2 mb-2">
-                                    <div class="col-6">Tanggal</div>
-                                    <div class="col-6 text-center">Aksi</div>
-                                </div>
-                                @forelse($rencanaMenus as $rencana)
-                                <div class="row align-items-center py-3 border-bottom">
-                                    <div class="col-6">
-                                        {{ \Carbon\Carbon::parse($rencana->start_date)->format('d/m/Y') }}
-                                    </div>
-                                    <div class="col-6 text-center">
-                                        <button class="btn btn-sm btn-success add-menu-btn"
-                                            data-rencana-id="{{ $rencana->id }}" type="button">
-                                            Add Menu
-                                        </button>
-                                    </div>
-                                </div>
-                                @empty
-                                <div class="row align-items-center py-3">
-                                    <div class="col-12 text-center text-muted">
-                                        Tidak ada rencana menu tersedia
-                                    </div>
-                                </div>
-                                @endforelse
-                            </div>
+<div class="table-responsive text-nowrap">
+    <table class="table table-bordered table-sm">
+        <thead>
+            <tr class="fw-bold border-bottom">
+                <th class="border-0">Tanggal</th>
+                <th class="border-0">Menu</th>
+                <th class="border-0 text-center">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($rencanaMenus as $rencana)
+            <tr>
+                <td class="align-middle">
+                    {{ \Carbon\Carbon::parse($rencana->start_date)->format('d/m/Y') }}
+                </td>
+                <td class="table-responsive text-nowrap">
+                    <table class="table table-sm table-bordered mb-0">
+                        @foreach ($rencana->paketMenu as $paket)
+                        <tr class="border-bottom">
+                            <td class="fw-bold ps-0">{{ $paket->nama }}</td>
+                            <td class="text-end pe-0">
+                                <small class="fw-bold">{{ $paket->pivot->porsi }} porsi</small>
+                            </td>
+                        </tr>
+                        @foreach ($paket->menus as $menu)
+                        <tr>
+                            <td class="ps-3">{{ $menu->nama }}</td>
+                            <td></td>
+                        </tr>
+                        @foreach ($menu->bahanBakus as $bahan)
+                        @php
+                        $pivotData = DB::table('bahan_baku_menu')
+                        ->where('paket_menu_id', $paket->id)
+                        ->where('menu_id', $menu->id)
+                        ->where('bahan_baku_id', $bahan->id)
+                        ->first();
+                        @endphp
+                        <tr>
+                            <td class="ps-5 text-muted">{{ $bahan->nama }}</td>
+                            <td class="fw-bold text-end">
+                                <small>{{ $pivotData->berat_bersih ?? 0 }} {{ $bahan->satuan }}</small>
+                            </td>
+                        </tr>
+                        @endforeach
+                        @endforeach
+                        @endforeach
+                    </table>
+                </td>
+                <td class="align-middle text-center">
+                    <button class="btn btn-sm btn-success add-menu-btn" data-rencana-id="{{ $rencana->id }}"
+                        type="button">
+                        Add Menu
+                    </button>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="3" class="text-center text-muted py-3">
+                    Tidak ada rencana menu tersedia
+                </td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
                         </div>
                     </div>
                 </div>
@@ -107,7 +147,7 @@
                 <div class="row">
                     <div class="form-group col-md-6">
                         <label class="form-label">Pemasok *</label>
-                        <select name="supplier_id" class="form-select shadow-none" required>
+                        <select name="supplier_id" class="select2 form-select shadow-none" required>
                             <option value="">-- Pilih Pemasok --</option>
                             @foreach ($suppliers as $supplier)
                                 <option value="{{ $supplier->id }}">{{ $supplier->nama }}</option>

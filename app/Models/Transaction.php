@@ -16,6 +16,7 @@ class Transaction extends Model
         'payment_reference',
         'status', //'paid', 'unpaid', 'partial'
         'amount',
+        'bukti_transfer', //path storage
         'notes',
     ];
 
