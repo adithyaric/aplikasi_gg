@@ -342,6 +342,7 @@ class OrderController extends Controller
             'payment_reference' => 'nullable|string',
             'amount' => 'required|numeric|min:0|max:' . $order->grand_total,
             'notes' => 'nullable|string',
+            'status' => 'nullable|string',
             'bukti_transfer' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
@@ -353,6 +354,7 @@ class OrderController extends Controller
                 'payment_reference' => $request->payment_reference,
                 'amount' => $request->amount,
                 'notes' => $request->notes,
+                'status' => $request->status,
             ];
 
             if ($request->hasFile('bukti_transfer')) {
