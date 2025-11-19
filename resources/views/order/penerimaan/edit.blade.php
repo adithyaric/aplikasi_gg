@@ -49,7 +49,7 @@
                                 </div>
                                 <div class="form-group col-md-12">
                                     <label class="form-label">Status</label>
-                                    <select name="status" class="select2 form-select shadow-none" id="paymentMethod" required>
+                                    <select name="status_penerimaan" class="select2 form-select shadow-none" id="paymentMethod" required>
                                         <option value="">Pilih Status Penerimaan</option>
                                         <option value="confirmed"
                                             {{ $order->status_penerimaan == 'confirmed' ? 'selected' : '' }}>
