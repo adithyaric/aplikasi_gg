@@ -108,7 +108,7 @@ class OrderController extends Controller
             $supplier = Supplier::find($request->supplier_id);
             // Generate order number
             $latestOrder = Order::latest()->first();
-            $number = $latestOrder ? (int)substr($latestOrder->order_number, 2) + 1 : 1;
+            $number = $latestOrder ? (int)substr($latestOrder->order_number, 2) + 1 : 1; //masih PO000
             $orderNumber = 'PO' . str_pad($number, 3, '0', STR_PAD_LEFT);
 
             // Calculate grand total

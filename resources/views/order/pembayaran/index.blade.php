@@ -179,21 +179,21 @@
 
 @push('js')
 <script>
-// $(document).ready(function() {
-//     const table = $('#tablePayment').DataTable();
+$(document).ready(function() {
+    const table = $('#tablePayment').DataTable();
 
-//     $('#statusButtons button').on('click', function() {
-//         $('#statusButtons button').removeClass('active btn-primary').addClass('btn-white btn-outline-primary');
-//         $(this).removeClass('btn-white btn-outline-primary').addClass('active btn-primary');
+    $('#statusButtons button').on('click', function() {
+        $('#statusButtons button').removeClass('active btn-primary').addClass('btn-white btn-outline-primary');
+        $(this).removeClass('btn-white btn-outline-primary').addClass('active btn-primary');
 
-//         const status = $(this).data('status');
-//         if (status === 'all') {
-//             table.column(4).search('').draw();
-//         } else {
-//             table.column(4).search(status, false, false).draw();
-//         }
-//     });
-// });
+        const status = $(this).data('status');
+        if (status === 'all') {
+            table.column(4).search('').draw();
+        } else {
+            table.column(4).search(status, false, false).draw();
+        }
+    });
+});
 
 function showPembayaranDetail(id) {
     $.ajax({

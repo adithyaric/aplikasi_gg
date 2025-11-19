@@ -17,3 +17,6 @@
 <!-- Quantity ambil dari jumlah prosi (rencana menu) x Berat Bersih (paket menu) -->
 <!--  -->
 <!-- status order draft : halaman edit penerimaan & edit pembayaran -->
+
+'kategori' => tersimpan di Category model, bisa digunakan next input kategori
+halaman penerimaan & pembayaran indexs, DataTable

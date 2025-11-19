@@ -145,7 +145,7 @@
             e.preventDefault();
 
             const formData = new FormData(this);
-            formData.append('status_penerimaan', 'confirmed');
+            // formData.append('status_penerimaan', 'confirmed');
 
             $.ajax({
                 url: '{{ route('penerimaan.update', $order) }}',
