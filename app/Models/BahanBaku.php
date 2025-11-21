@@ -19,6 +19,10 @@ class BahanBaku extends Model
         'ukuran',
     ];
 
+    protected $casts = [
+        'kategori' => 'array'
+    ];
+
     // Template relationship (just which menus use this bahan baku)
     public function menus()
     {

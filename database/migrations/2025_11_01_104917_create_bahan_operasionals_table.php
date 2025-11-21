@@ -16,7 +16,7 @@ class CreateBahanOperasionalsTable extends Migration
         Schema::create('bahan_operasionals', function (Blueprint $table) {
             $table->id();
             $table->string('nama')->nullable();
-            $table->string('kategori')->nullable();
+            $table->json('kategori')->nullable();
             $table->string('satuan')->nullable();
             $table->string('merek')->nullable();
             $table->timestamps();

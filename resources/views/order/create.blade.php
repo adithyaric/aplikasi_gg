@@ -147,7 +147,7 @@
                 <div class="row">
                     <div class="form-group col-md-6">
                         <label class="form-label">Pemasok *</label>
-                        <select name="supplier_id" class="select2 form-select shadow-none" required>
+                        <select name="supplier_id" class="select2-input form-select shadow-none" required>
                             <option value="">-- Pilih Pemasok --</option>
                             @foreach ($suppliers as $supplier)
                                 <option value="{{ $supplier->id }}">{{ $supplier->nama }}</option>

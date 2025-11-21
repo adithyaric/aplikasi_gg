@@ -66,17 +66,17 @@
                                                 </h5>
                                             </td>
                                             <td>
-                                                {{-- @if ($order->status_penerimaan == 'draft') --}}
+                                                @if ($order->status_penerimaan == 'draft')
                                                 <a href="{{ route('penerimaan.edit', $order->id) }}"
                                                     class="btn btn-sm btn-success">
                                                     Edit
                                                 </a>
-                                                {{-- @else --}}
+                                                @else
                                                 <button type="button" class="btn btn-sm btn-info"
                                                     onclick="showPenerimaanDetail({{ $order->id }})">
                                                     Detail
                                                 </button>
-                                                {{-- @endif --}}
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -226,13 +226,13 @@
                 method: 'GET',
                 success: function(response) {
                     $('#penerimaan_order_number').text(response.order_number);
-                    $('#penerimaan_tanggal').val(response.tanggal_penerimaan ? new Date(response
-                        .tanggal_penerimaan).toLocaleDateString('id-ID') : '-');
+                    $('#penerimaan_tanggal').val(response.tanggal_penerimaan ? new Date(response.tanggal_penerimaan).toLocaleDateString('id-ID') : '-');
                     $('#penerimaan_supplier').val(response.supplier?.nama || '-');
                     $('#penerimaan_catatan').val(response.notes || '-');
-                    $('#penerimaan_grand_total').text('Rp ' + new Intl.NumberFormat('id-ID').format(response
-                        .grand_total || 0));
+                    $('#penerimaan_status').val(response.status_penerimaan || '-');
+                    $('#penerimaan_grand_total').text('Rp ' + new Intl.NumberFormat('id-ID').format(response.grand_total || 0));
 
+                    //TODO tambah keterangan & status diterima/tidak diterima
                     $('#penerimaan_items').empty();
                     if (response.items && response.items.length > 0) {
                         response.items.forEach(function(item) {

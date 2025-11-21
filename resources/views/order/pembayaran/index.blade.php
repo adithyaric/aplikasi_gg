@@ -36,6 +36,8 @@
                             data-status="unpaid">Status Unpaid</button>
                         <button type="button" class="btn btn-white btn-outline-primary rounded-pill"
                             data-status="paid">Status Paid</button>
+                        <button type="button" class="btn btn-white btn-outline-primary rounded-pill"
+                            data-status="partial">Status Partial</button>
                     </div>
                 </div>
                 <div class="card-body">
@@ -67,17 +69,17 @@
                                         </h5>
                                     </td>
                                     <td>
-                                        {{-- @if ($order->status == 'draft') --}}
-                                        <a href="{{ route('pembayaran.edit', $order->id) }}"
-                                            class="btn btn-sm btn-success">
-                                            Edit
-                                        </a>
-                                        {{-- @else --}}
+                                        @if ($order->transaction?->status == 'paid')
                                         <button type="button" class="btn btn-sm btn-info"
                                             onclick="showPembayaranDetail({{ $order->id }})">
                                             Detail
                                         </button>
-                                        {{-- @endif --}}
+                                        @else
+                                        <a href="{{ route('pembayaran.edit', $order->id) }}"
+                                            class="btn btn-sm btn-success">
+                                            Edit
+                                        </a>
+                                        @endif
                                     </td>
                                 </tr>
                                 @endforeach
@@ -161,6 +163,11 @@
                                 <input type="text" class="form-control" id="pembayaran_payment_reference" disabled>
                             </div>
                             <div class="form-group">
+                                <label class="form-label">Bukti</label>
+                                <a href="#" id="pembayaran_bukti_tarnsfer" target="_blank" rel="noopener noreferrer">-</a>
+                                {{-- <input type="text" class="form-control" id="pembayaran_bukti_tarnsfer" disabled> --}}
+                            </div>
+                            <div class="form-group">
                                 <label class="form-label">Catatan</label>
                                 <textarea class="form-control" id="pembayaran_notes" disabled></textarea>
                             </div>
@@ -232,6 +239,16 @@ function showPembayaranDetail(id) {
                 $('#pembayaran_payment_date').val(response.transaction.payment_date ? new Date(response.transaction.payment_date).toLocaleDateString('id-ID') : '-');
                 $('#pembayaran_payment_method').val(response.transaction.payment_method || '-');
                 $('#pembayaran_payment_reference').val(response.transaction.payment_reference || '-');
+                if (response.transaction.bukti_transfer) {
+                    const url = "{{ Storage::url('') }}" + response.transaction.bukti_transfer;
+                    $('#pembayaran_bukti_tarnsfer')
+                        .attr('href', url)
+                        .text('Lihat Bukti');
+                } else {
+                    $('#pembayaran_bukti_tarnsfer')
+                        .attr('href', '#')
+                        .text('-');
+                }
                 $('#pembayaran_notes').val(response.transaction.notes || 'Tidak ada catatan...');
                 $('#pembayaran_amount').val('Rp ' + new Intl.NumberFormat('id-ID').format(response.transaction.amount || 0));
             } else {

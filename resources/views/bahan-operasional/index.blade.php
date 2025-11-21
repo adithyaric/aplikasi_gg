@@ -59,7 +59,13 @@
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $bahanoperasional->nama }}</td>
-                                            <td>{{ $bahanoperasional->kategori }}</td>
+                                            <td>
+                                                @if ($bahanoperasional->kategori && is_array($bahanoperasional->kategori))
+                                                    {{ implode(', ', $bahanoperasional->kategori) }}
+                                                @else
+                                                    {{ $bahanoperasional->kategori ?? '-' }}
+                                                @endif
+                                            </td>
                                             <td>{{ $bahanoperasional->satuan }}</td>
                                             <td>{{ $bahanoperasional->merek }}</td>
                                             <td>
@@ -98,7 +104,8 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="modalBahanOperasional" tabindex="-1" aria-labelledby="modalBahanOperasionalLabel" aria-hidden="true">
+    <div class="modal fade" id="modalBahanOperasional" tabindex="-1" aria-labelledby="modalBahanOperasionalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content"
                 style="border-radius:15px; border:1px solid #ddd; box-shadow:0 8px 20px rgba(0,0,0,0.2);">
@@ -128,8 +135,12 @@
                                 </div>
                                 <div class="form-group mb-3">
                                     <label class="form-label">Kategori</label>
-                                    <input type="text" class="form-control" id="kategori" name="kategori"
-                                        placeholder="Masukkan kategori">
+                                    <select class="form-control select2-multi" id="kategori" name="kategori[]" multiple
+                                        style="width: 100%;">
+                                        @foreach ($categories as $category)
+                                            <option value="{{ $category }}">{{ $category }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="form-group mb-3">
                                     <label class="form-label">Merek</label>
@@ -153,6 +164,11 @@
     <script>
         $(document).ready(function() {
             $('#tableBahanOperasional').DataTable();
+            $('#kategori').select2({
+                tags: true,
+                tokenSeparators: [','],
+                placeholder: "Pilih atau tambah kategori"
+            });
         });
 
         function resetForm() {
@@ -162,6 +178,7 @@
             $('#modalBahanOperasionalLabel').text('Tambah Bahan Operasional');
             $('.form-control').removeClass('is-invalid');
             $('.invalid-feedback').text('');
+            $('#kategori').val(null).trigger('change');
         }
 
         $('#formBahanOperasional').on('submit', function(e) {
@@ -216,10 +233,20 @@
                     $('#bahanoperasional_id').val(response.id);
                     $('#nama').val(response.nama);
                     $('#satuan').val(response.satuan);
-                    $('#kategori').val(response.kategori);
                     $('#merek').val(response.merek);
                     $('#form_method').val('PUT');
                     $('#modalBahanOperasionalLabel').text('Edit Bahan Operasional');
+
+                    // Set selected categories - ensure it's an array
+                    if (response.kategori && Array.isArray(response.kategori)) {
+                        $('#kategori').val(response.kategori).trigger('change');
+                    } else if (response.kategori) {
+                        // If it's string, convert to array
+                        $('#kategori').val([response.kategori]).trigger('change');
+                    } else {
+                        $('#kategori').val(null).trigger('change');
+                    }
+
                     $('#modalBahanOperasional').modal('show');
                 }
             });

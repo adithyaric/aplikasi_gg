@@ -67,7 +67,7 @@
                                                 <div class="col-md-4">
                                                     <label class="form-label small fw-semibold mb-0">Bahan Baku <span class="text-danger">*</span></label>
                                                     <select name="bahan_baku_id" id="bahan_baku_id"
-                                                        class="select2 form-select form-select-sm @error('bahan_baku_id') is-invalid @enderror" required>
+                                                        class="select2-input form-select form-select-sm @error('bahan_baku_id') is-invalid @enderror" required>
                                                         <option value="">-- Pilih Bahan Baku --</option>
                                                         @foreach ($bahanbakus as $bahan)
                                                             <option value="{{ $bahan->id }}" {{ old('bahan_baku_id') == $bahan->id ? 'selected' : '' }}>

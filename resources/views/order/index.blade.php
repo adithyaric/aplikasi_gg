@@ -114,6 +114,7 @@
                                         <th>No PO</th>
                                         <th>Tanggal PO</th>
                                         <th>Tanggal Penerimaan</th>
+                                        <th>Status</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -123,13 +124,20 @@
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $order->order_number }}</td>
                                             <td>{{ $order->tanggal_po->format('d/m/Y') }}</td>
-                                            <td>{{ $order->tanggal_penerimaan ? $order->tanggal_penerimaan->format('d/m/Y') : '-' }}
-                                            </td>
+                                            <td>{{ $order->tanggal_penerimaan ? $order->tanggal_penerimaan->format('d/m/Y') : '-' }}</td>
+                                            <td>{{ ucfirst($order->status) }}</td>
                                             <td>
+                                                @if ($order->status == 'draft')
+                                                <a href="{{ route('orders.edit', $order->id) }}"
+                                                    class="btn btn-sm btn-success">
+                                                    Edit
+                                                </a>
+                                                @else
                                                 <button type="button" class="btn btn-sm btn-info"
                                                     onclick="showOrderDetail({{ $order->id }})">
                                                     <span class="btn-inner">Detail</span>
                                                 </button>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach

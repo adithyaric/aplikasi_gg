@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BahanBaku;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -20,8 +21,9 @@ class BahanBakuController extends Controller
             'merek',
             'ukuran',
         ]);
+        $categories = Category::pluck('name')->all();
         $title = 'Master Bahan Baku';
-        return view('bahan-baku.index', compact('bahanbakus', 'title'));
+        return view('bahan-baku.index', compact('bahanbakus', 'categories', 'title'));
     }
 
     public function create()
@@ -35,8 +37,17 @@ class BahanBakuController extends Controller
             'nama' => 'required|string|max:255',
             'kelompok' => 'required|string|max:255',
             'jenis' => 'required|string|max:255',
+            'kategori' => 'nullable|array',
+            'merek' => 'required|string|max:255',
             'satuan' => 'required|string|max:255',
         ]);
+
+        // Save categories
+        if ($request->kategori) {
+            foreach ($request->kategori as $kat) {
+                Category::firstOrCreate(['name' => $kat]);
+            }
+        }
 
         BahanBaku::create([
             'nama' => $request->nama,
@@ -70,8 +81,17 @@ class BahanBakuController extends Controller
             'nama' => 'required|string|max:255',
             'kelompok' => 'required|string|max:255',
             'jenis' => 'required|string|max:255',
+            'kategori' => 'nullable|array',
+            'merek' => 'required|string|max:255',
             'satuan' => 'required|string|max:255',
         ]);
+
+        // Save categories
+        if ($request->kategori) {
+            foreach ($request->kategori as $kat) {
+                Category::firstOrCreate(['name' => $kat]);
+            }
+        }
 
         $bahanbaku->update([
             'nama' => $request->nama,

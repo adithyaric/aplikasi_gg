@@ -15,4 +15,8 @@ class BahanOperasional extends Model
         'satuan',
         'merek',
     ];
+
+    protected $casts = [
+        'kategori' => 'array'
+    ];
 }

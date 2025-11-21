@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BahanOperasional;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class BahanOperasionalController extends Controller
@@ -16,8 +17,9 @@ class BahanOperasionalController extends Controller
             'satuan',
             'merek',
         ]);
+        $categories = Category::pluck('name')->all();
         $title = 'Master Bahan Operasional';
-        return view('bahan-operasional.index', compact('bahanoperasionals', 'title'));
+        return view('bahan-operasional.index', compact('bahanoperasionals', 'categories', 'title'));
     }
 
     public function create()
@@ -30,7 +32,16 @@ class BahanOperasionalController extends Controller
         $request->validate([
             'nama' => 'required|string|max:255',
             'satuan' => 'required|string|max:255',
+            'kategori' => 'nullable|array',
+            'merek' => 'required|string|max:255',
         ]);
+
+        // Save categories
+        if ($request->kategori) {
+            foreach ($request->kategori as $kat) {
+                Category::firstOrCreate(['name' => $kat]);
+            }
+        }
 
         BahanOperasional::create([
             'nama' => $request->nama,
@@ -60,7 +71,16 @@ class BahanOperasionalController extends Controller
         $request->validate([
             'nama' => 'required|string|max:255',
             'satuan' => 'required|string|max:255',
+            'kategori' => 'nullable|array',
+            'merek' => 'required|string|max:255',
         ]);
+
+        // Save categories
+        if ($request->kategori) {
+            foreach ($request->kategori as $kat) {
+                Category::firstOrCreate(['name' => $kat]);
+            }
+        }
 
         $bahanoperasional->update([
             'nama' => $request->nama,

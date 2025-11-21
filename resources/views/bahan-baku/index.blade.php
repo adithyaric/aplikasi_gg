@@ -64,7 +64,13 @@
                                             <td>{{ $bahanbaku->nama }}</td>
                                             <td>{{ $bahanbaku->kelompok }}</td>
                                             <td>{{ $bahanbaku->jenis }}</td>
-                                            <td>{{ $bahanbaku->kategori }}</td>
+                                            <td>
+                                                @if ($bahanbaku->kategori && is_array($bahanbaku->kategori))
+                                                    {{ implode(', ', $bahanbaku->kategori) }}
+                                                @else
+                                                    {{ $bahanbaku->kategori ?? '-' }}
+                                                @endif
+                                            </td>
                                             <td>{{ $bahanbaku->satuan }}</td>
                                             <td>{{ $bahanbaku->merek }}</td>
                                             <td>{{ $bahanbaku->ukuran }}</td>
@@ -146,8 +152,12 @@
                                 </div>
                                 <div class="form-group mb-3">
                                     <label class="form-label">Kategori</label>
-                                    <input type="text" class="form-control" id="kategori" name="kategori"
-                                        placeholder="Masukkan kategori">
+                                    <select class="form-control select2-multi" id="kategori" name="kategori[]" multiple
+                                        style="width: 100%;">
+                                        @foreach ($categories as $category)
+                                            <option value="{{ $category }}">{{ $category }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="form-group mb-3">
                                     <label class="form-label">Merek</label>
@@ -176,6 +186,11 @@
     <script>
         $(document).ready(function() {
             $('#tableBahanBaku').DataTable();
+            $('#kategori').select2({
+                tags: true,
+                tokenSeparators: [','],
+                placeholder: "Pilih atau tambah kategori"
+            });
         });
 
         function resetForm() {
@@ -185,6 +200,7 @@
             $('#modalBahanBakuLabel').text('Tambah Bahan Baku');
             $('.form-control').removeClass('is-invalid');
             $('.invalid-feedback').text('');
+            $('#kategori').val(null).trigger('change');
         }
 
         $('#formBahanBaku').on('submit', function(e) {
@@ -241,11 +257,20 @@
                     $('#kelompok').val(response.kelompok);
                     $('#jenis').val(response.jenis);
                     $('#satuan').val(response.satuan);
-                    $('#kategori').val(response.kategori);
                     $('#merek').val(response.merek);
                     $('#ukuran').val(response.ukuran);
                     $('#form_method').val('PUT');
                     $('#modalBahanBakuLabel').text('Edit Bahan Baku');
+
+                    // Set selected categories
+                    if (response.kategori && Array.isArray(response.kategori)) {
+                        $('#kategori').val(response.kategori).trigger('change');
+                    } else if (response.kategori) {
+                        $('#kategori').val([response.kategori]).trigger('change');
+                    } else {
+                        $('#kategori').val(null).trigger('change');
+                    }
+
                     $('#modalBahanBaku').modal('show');
                 }
             });
