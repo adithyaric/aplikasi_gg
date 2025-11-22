@@ -197,67 +197,105 @@ class OrderController extends Controller
 
     public function edit(Order $order)
     {
-        $order->load(['items.bahanBaku', 'items.bahanOperasional',]);
+        $order->load(['items.bahanBaku', 'items.bahanOperasional', 'transaction']);
+        $rencanaMenus = RencanaMenu::with(['paketMenu.menus.bahanBakus'])
+            ->orderBy('start_date', 'desc')
+            ->get();
+
         $bahanbakus = BahanBaku::orderBy('nama')->get(['id', 'nama', 'satuan']);
         $bahanoperasionals = BahanOperasional::orderBy('nama')->get(['id', 'nama', 'satuan']);
+
+        // Combine both with type identifier
+        $bahans = $bahanbakus->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'nama' => $item->nama,
+                'satuan' => $item->satuan,
+                'type' => 'bahan_baku'
+            ];
+        })->merge($bahanoperasionals->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'nama' => $item->nama,
+                'satuan' => $item->satuan,
+                'type' => 'bahan_operasional'
+            ];
+        }));
+
         $suppliers = Supplier::orderBy('nama')->get(['id', 'nama']);
         $title = 'Edit Purchase Order';
-        return view('order.edit', compact('order', 'bahanbakus', 'suppliers', 'title'));
+        return view('order.edit', [
+            'order' => $order,
+            'bahans' => $bahans,
+            'suppliers' => $suppliers,
+            'rencanaMenus' => $rencanaMenus,
+            'title' => $title,
+        ]);
     }
 
     public function update(Request $request, Order $order)
     {
-        // $request->validate([
-        //     'supplier_id' => 'required|exists:suppliers,id',
-        //     'tanggal_po' => 'required|date',
-        //     'tanggal_penerimaan' => 'required|date',
-        //     'items' => 'required|array|min:1',
-        //     'items.*.bahan_baku_id' => 'required|exists:bahan_bakus,id',
-        //     'items.*.quantity' => 'required|numeric|min:0.01',
-        //     'items.*.satuan' => 'required|string',
-        //     'items.*.unit_cost' => 'required|numeric|min:0',
-        // ]);
+        $request->validate([
+            'supplier_id' => 'required|exists:suppliers,id',
+            'tanggal_po' => 'required|date',
+            'tanggal_penerimaan' => 'required|date',
+            'items' => 'required|array|min:1',
+            'items.*.bahan_id' => 'required',
+            'items.*.type' => 'required|in:bahan_baku,bahan_operasional',
+            'items.*.quantity' => 'required|numeric|min:0.01',
+            'items.*.satuan' => 'required|string',
+            'items.*.unit_cost' => 'required|numeric|min:0',
+        ]);
 
-        // DB::beginTransaction();
-        // try {
-        //     // Calculate grand total
-        //     $grandTotal = 0;
-        //     foreach ($request->items as $item) {
-        //         $grandTotal += $item['quantity'] * $item['unit_cost'];
-        //     }
+        DB::beginTransaction();
+        try {
+            $grandTotal = 0;
+            foreach ($request->items as $item) {
+                $grandTotal += $item['quantity'] * $item['unit_cost'];
+            }
 
-        //     $order->update([
-        //         'supplier_id' => $request->supplier_id,
-        //         'tanggal_po' => $request->tanggal_po,
-        //         'tanggal_penerimaan' => $request->tanggal_penerimaan,
-        //         'grand_total' => $grandTotal,
-        //     ]);
+            $order->update([
+                'supplier_id' => $request->supplier_id,
+                'tanggal_po' => $request->tanggal_po,
+                'tanggal_penerimaan' => $request->tanggal_penerimaan,
+                'grand_total' => $grandTotal,
+            ]);
 
-        //     // Delete old items and create new ones
-        //     $order->items()->delete();
-        //     foreach ($request->items as $item) {
-        //         $subtotal = $item['quantity'] * $item['unit_cost'];
-        //         $order->items()->create([
-        //             'bahan_baku_id' => $item['bahan_baku_id'],
-        //             'quantity' => $item['quantity'],
-        //             'satuan' => $item['satuan'],
-        //             'unit_cost' => $item['unit_cost'],
-        //             'subtotal' => $subtotal,
-        //         ]);
-        //     }
+            // Delete existing items
+            $order->items()->delete();
 
-        //     DB::commit();
-        //     return response()->json([
-        //         'success' => true,
-        //         'message' => 'Purchase Order berhasil diupdate'
-        //     ]);
-        // } catch (\Exception $e) {
-        //     DB::rollBack();
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-        //     ], 500);
-        // }
+            // Create new items
+            foreach ($request->items as $item) {
+                $subtotal = $item['quantity'] * $item['unit_cost'];
+                $order->items()->create([
+                    'bahan_baku_id' => $item['type'] === 'bahan_baku' ? $item['bahan_id'] : null,
+                    'bahan_operasional_id' => $item['type'] === 'bahan_operasional' ? $item['bahan_id'] : null,
+                    'quantity' => $item['quantity'],
+                    'satuan' => $item['satuan'],
+                    'unit_cost' => $item['unit_cost'],
+                    'subtotal' => $subtotal,
+                ]);
+            }
+
+            // Update transaction amount if exists
+            if ($order->transaction) {
+                $order->transaction->update([
+                    'amount' => $grandTotal,
+                ]);
+            }
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Purchase Order berhasil diupdate'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function destroy(Order $order)
