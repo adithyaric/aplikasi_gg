@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\BahanBaku;
+use App\Models\BahanOperasional;
 use App\Models\RencanaMenu;
 use App\Models\Supplier;
 use App\Models\Transaction;
@@ -15,7 +16,7 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::with(['supplier', 'items.bahanBaku', 'transaction'])->latest()->get();
+        $orders = Order::with(['supplier', 'items.bahanBaku', 'items.bahanOperasional', 'transaction'])->latest()->get();
         $title = 'Purchase Order';
         // dd($orders?->toArray());
         return view('order.index', compact('orders', 'title'));
@@ -26,10 +27,36 @@ class OrderController extends Controller
         $rencanaMenus = RencanaMenu::with(['paketMenu.menus.bahanBakus'])
             ->orderBy('start_date', 'desc')
             ->get();
+
         $bahanbakus = BahanBaku::orderBy('nama')->get(['id', 'nama', 'satuan']);
+        $bahanoperasionals = BahanOperasional::orderBy('nama')->get(['id', 'nama', 'satuan']);
+
+        // Combine both with type identifier
+        $bahans = $bahanbakus->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'nama' => $item->nama,
+                'satuan' => $item->satuan,
+                'type' => 'bahan_baku'
+            ];
+        })->merge($bahanoperasionals->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'nama' => $item->nama,
+                'satuan' => $item->satuan,
+                'type' => 'bahan_operasional'
+            ];
+        }));
+
         $suppliers = Supplier::orderBy('nama')->get(['id', 'nama']);
         $title = 'Tambah Purchase Order';
-        return view('order.create', compact('bahanbakus', 'suppliers', 'title', 'rencanaMenus'));
+
+        return view('order.create', [
+            'bahans' => $bahans,
+            'suppliers' => $suppliers,
+            'rencanaMenus' => $rencanaMenus,
+            'title' => $title,
+        ]);
     }
 
     public function addMenuItems(Request $request)
@@ -97,7 +124,8 @@ class OrderController extends Controller
             'tanggal_po' => 'required|date',
             'tanggal_penerimaan' => 'required|date',
             'items' => 'required|array|min:1',
-            'items.*.bahan_baku_id' => 'required|exists:bahan_bakus,id',
+            'items.*.bahan_id' => 'required',
+            'items.*.type' => 'required|in:bahan_baku,bahan_operasional',
             'items.*.quantity' => 'required|numeric|min:0.01',
             'items.*.satuan' => 'required|string',
             'items.*.unit_cost' => 'required|numeric|min:0',
@@ -106,12 +134,11 @@ class OrderController extends Controller
         DB::beginTransaction();
         try {
             $supplier = Supplier::find($request->supplier_id);
-            // Generate order number
+
             $latestOrder = Order::latest()->first();
-            $number = $latestOrder ? (int)substr($latestOrder->order_number, 2) + 1 : 1; //masih PO000
+            $number = $latestOrder ? (int)substr($latestOrder->order_number, 2) + 1 : 1;
             $orderNumber = 'PO' . str_pad($number, 3, '0', STR_PAD_LEFT);
 
-            // Calculate grand total
             $grandTotal = 0;
             foreach ($request->items as $item) {
                 $grandTotal += $item['quantity'] * $item['unit_cost'];
@@ -126,11 +153,11 @@ class OrderController extends Controller
                 'status' => 'draft',
             ]);
 
-            // Create order items
             foreach ($request->items as $item) {
                 $subtotal = $item['quantity'] * $item['unit_cost'];
                 $order->items()->create([
-                    'bahan_baku_id' => $item['bahan_baku_id'],
+                    'bahan_baku_id' => $item['type'] === 'bahan_baku' ? $item['bahan_id'] : null,
+                    'bahan_operasional_id' => $item['type'] === 'bahan_operasional' ? $item['bahan_id'] : null,
                     'quantity' => $item['quantity'],
                     'satuan' => $item['satuan'],
                     'unit_cost' => $item['unit_cost'],
@@ -138,7 +165,6 @@ class OrderController extends Controller
                 ]);
             }
 
-            // Create Transaction
             Transaction::create([
                 'order_id' => $order->id,
                 'payment_date' => null,
@@ -165,14 +191,15 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        $order->load(['supplier', 'items.bahanBaku', 'transaction']);
+        $order->load(['supplier', 'items.bahanBaku', 'items.bahanOperasional', 'transaction']);
         return $order->toArray();
     }
 
     public function edit(Order $order)
     {
-        $order->load(['items.bahanBaku']);
+        $order->load(['items.bahanBaku', 'items.bahanOperasional',]);
         $bahanbakus = BahanBaku::orderBy('nama')->get(['id', 'nama', 'satuan']);
+        $bahanoperasionals = BahanOperasional::orderBy('nama')->get(['id', 'nama', 'satuan']);
         $suppliers = Supplier::orderBy('nama')->get(['id', 'nama']);
         $title = 'Edit Purchase Order';
         return view('order.edit', compact('order', 'bahanbakus', 'suppliers', 'title'));
@@ -180,57 +207,57 @@ class OrderController extends Controller
 
     public function update(Request $request, Order $order)
     {
-        $request->validate([
-            'supplier_id' => 'required|exists:suppliers,id',
-            'tanggal_po' => 'required|date',
-            'tanggal_penerimaan' => 'required|date',
-            'items' => 'required|array|min:1',
-            'items.*.bahan_baku_id' => 'required|exists:bahan_bakus,id',
-            'items.*.quantity' => 'required|numeric|min:0.01',
-            'items.*.satuan' => 'required|string',
-            'items.*.unit_cost' => 'required|numeric|min:0',
-        ]);
+        // $request->validate([
+        //     'supplier_id' => 'required|exists:suppliers,id',
+        //     'tanggal_po' => 'required|date',
+        //     'tanggal_penerimaan' => 'required|date',
+        //     'items' => 'required|array|min:1',
+        //     'items.*.bahan_baku_id' => 'required|exists:bahan_bakus,id',
+        //     'items.*.quantity' => 'required|numeric|min:0.01',
+        //     'items.*.satuan' => 'required|string',
+        //     'items.*.unit_cost' => 'required|numeric|min:0',
+        // ]);
 
-        DB::beginTransaction();
-        try {
-            // Calculate grand total
-            $grandTotal = 0;
-            foreach ($request->items as $item) {
-                $grandTotal += $item['quantity'] * $item['unit_cost'];
-            }
+        // DB::beginTransaction();
+        // try {
+        //     // Calculate grand total
+        //     $grandTotal = 0;
+        //     foreach ($request->items as $item) {
+        //         $grandTotal += $item['quantity'] * $item['unit_cost'];
+        //     }
 
-            $order->update([
-                'supplier_id' => $request->supplier_id,
-                'tanggal_po' => $request->tanggal_po,
-                'tanggal_penerimaan' => $request->tanggal_penerimaan,
-                'grand_total' => $grandTotal,
-            ]);
+        //     $order->update([
+        //         'supplier_id' => $request->supplier_id,
+        //         'tanggal_po' => $request->tanggal_po,
+        //         'tanggal_penerimaan' => $request->tanggal_penerimaan,
+        //         'grand_total' => $grandTotal,
+        //     ]);
 
-            // Delete old items and create new ones
-            $order->items()->delete();
-            foreach ($request->items as $item) {
-                $subtotal = $item['quantity'] * $item['unit_cost'];
-                $order->items()->create([
-                    'bahan_baku_id' => $item['bahan_baku_id'],
-                    'quantity' => $item['quantity'],
-                    'satuan' => $item['satuan'],
-                    'unit_cost' => $item['unit_cost'],
-                    'subtotal' => $subtotal,
-                ]);
-            }
+        //     // Delete old items and create new ones
+        //     $order->items()->delete();
+        //     foreach ($request->items as $item) {
+        //         $subtotal = $item['quantity'] * $item['unit_cost'];
+        //         $order->items()->create([
+        //             'bahan_baku_id' => $item['bahan_baku_id'],
+        //             'quantity' => $item['quantity'],
+        //             'satuan' => $item['satuan'],
+        //             'unit_cost' => $item['unit_cost'],
+        //             'subtotal' => $subtotal,
+        //         ]);
+        //     }
 
-            DB::commit();
-            return response()->json([
-                'success' => true,
-                'message' => 'Purchase Order berhasil diupdate'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-            ], 500);
-        }
+        //     DB::commit();
+        //     return response()->json([
+        //         'success' => true,
+        //         'message' => 'Purchase Order berhasil diupdate'
+        //     ]);
+        // } catch (\Exception $e) {
+        //     DB::rollBack();
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+        //     ], 500);
+        // }
     }
 
     public function destroy(Order $order)
@@ -262,7 +289,7 @@ class OrderController extends Controller
     //Penerimaan
     public function penerimaanIndex()
     {
-        $orders = Order::with(['supplier', 'items.bahanBaku', 'transaction'])
+        $orders = Order::with(['supplier', 'items.bahanBaku', 'items.bahanOperasional', 'transaction'])
             ->latest()
             ->get();
 
@@ -272,7 +299,7 @@ class OrderController extends Controller
 
     public function editPenerimaan(Order $order)
     {
-        $order->load(['supplier', 'items.bahanBaku']);
+        $order->load(['supplier', 'items.bahanBaku', 'items.bahanOperasional',]);
         $title = 'Edit Penerimaan Barang';
         return view('order.penerimaan.edit', compact('order', 'title'));
     }
@@ -319,7 +346,7 @@ class OrderController extends Controller
     //Pembayaran
     public function pembayaranIndex()
     {
-        $orders = Order::with(['supplier', 'items.bahanBaku', 'transaction'])
+        $orders = Order::with(['supplier', 'items.bahanBaku', 'items.bahanOperasional', 'transaction'])
             ->latest()
             ->get();
 
@@ -329,7 +356,7 @@ class OrderController extends Controller
 
     public function editPembayaran(Order $order)
     {
-        $order->load(['supplier', 'items.bahanBaku', 'transaction']);
+        $order->load(['supplier', 'items.bahanBaku', 'items.bahanOperasional', 'transaction']);
         $title = 'Edit Pembayaran';
         return view('order.pembayaran.edit', compact('order', 'title'));
     }
@@ -359,14 +386,16 @@ class OrderController extends Controller
 
             if ($request->hasFile('bukti_transfer')) {
                 // Delete old file if exists
-                if ($order->transaction && $order->transaction->bukti_transfer) {
-                    Storage::delete($order->transaction->bukti_transfer);
-                }
+                // if ($order->transaction && $order->transaction->bukti_transfer) {
+                //     Storage::delete($order->transaction->bukti_transfer);
+                // }
 
                 $file = $request->file('bukti_transfer');
                 $filename = 'bukti_' . time() . '_' . $order->id . '.' . $file->getClientOriginalExtension();
                 $path = $file->storeAs('public/bukti_transfer', $filename);
                 $transactionData['bukti_transfer'] = $path;
+
+                // TODO log-activity simpan bukti_transfer sebelumnya
             }
 
             if ($order->transaction) {

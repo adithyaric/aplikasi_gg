@@ -18,5 +18,6 @@
 <!--  -->
 <!-- status order draft : halaman edit penerimaan & edit pembayaran -->
 
-'kategori' => tersimpan di Category model, bisa digunakan next input kategori
-halaman penerimaan & pembayaran indexs, DataTable
+<!-- 'kategori' => tersimpan di Category model, bisa digunakan next input kategori -->
+<!-- halaman penerimaan & pembayaran indexs, DataTable -->
+tambah log-acrivity, simpan history bukti_transfer (storage)

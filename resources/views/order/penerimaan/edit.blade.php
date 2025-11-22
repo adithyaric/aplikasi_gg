@@ -69,13 +69,13 @@
                             </div>
 
                             <hr class="hr-horizontal" />
-                            <h5>Bahan Pokok</h5>
+                            <h5>Bahan</h5>
 
                             <div class="table-responsive">
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th>Bahan Pokok</th>
+                                            <th>Bahan</th>
                                             <th>Satuan</th>
                                             <th>Brand</th>
                                             <th>Qty PO</th>
@@ -86,9 +86,9 @@
                                     <tbody>
                                         @foreach ($order->items as $item)
                                             <tr>
-                                                <td>{{ $item->bahanBaku->nama }}</td>
+                                                <td>{{ $item->bahanBaku?->nama ?? $item->bahanOperasional?->nama}}</td>
                                                 <td>{{ $item->satuan }}</td>
-                                                <td>{{ $item->bahanBaku->merek ?? '-' }}</td>
+                                                <td>{{ $item->bahanBaku?->merek ?? $item->bahanOperasional?->merek }}</td>
                                                 <td>{{ $item->quantity }}</td>
                                                 <td>{{ number_format($item->unit_cost, 0, ',', '.') }}</td>
                                                 <td>

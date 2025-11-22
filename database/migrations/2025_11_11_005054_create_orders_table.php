@@ -25,7 +25,8 @@ class CreateOrdersTable extends Migration
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
-            $table->foreignId('bahan_baku_id')->constrained()->onDelete('cascade');
+            $table->integer('bahan_baku_id')->nullable();
+            $table->integer('bahan_operasional_id')->nullable();
             $table->decimal('quantity', 10, 2)->nullable()->default(0);
             $table->boolean('quantity_diterima')->default(false)->nullable(); //true-false
             $table->string('satuan')->nullable();

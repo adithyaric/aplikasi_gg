@@ -238,7 +238,7 @@
                         response.items.forEach(function(item) {
                             $('#penerimaan_items').append(
                                 '<tr>' +
-                                '<td>' + (item.bahan_baku?.nama || '-') + '</td>' +
+                                '<td>' + (item.bahan_baku?.nama || item.bahan_operasional?.nama) + '</td>' +
                                 '<td>' + (item.satuan || '-') + '</td>' +
                                 '<td>' + (item.quantity || 0) + '</td>' +
                                 '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.unit_cost ||

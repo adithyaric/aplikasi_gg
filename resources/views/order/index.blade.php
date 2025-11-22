@@ -132,12 +132,13 @@
                                                     class="btn btn-sm btn-success">
                                                     Edit
                                                 </a>
-                                                @else
+                                                @endif
+                                                {{-- @else --}}
                                                 <button type="button" class="btn btn-sm btn-info"
                                                     onclick="showOrderDetail({{ $order->id }})">
                                                     <span class="btn-inner">Detail</span>
                                                 </button>
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -177,7 +178,7 @@
                         response.items.forEach(function(item) {
                             $('#detail_items').append(
                                 '<tr>' +
-                                '<td>' + (item.bahan_baku?.nama || '-') + '</td>' +
+                                '<td>' + (item.bahan_baku?.nama || item.bahan_operasional?.nama) + '</td>' +
                                 '<td>' + (item.quantity || 0) + '</td>' +
                                 '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.unit_cost || 0) + '</td>' +
                                 '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.subtotal || 0) + '</td>' +

@@ -128,6 +128,23 @@ class DatabaseSeeder extends Seeder
                 'natrium' => 70,
                 'kalium' => 290,
             ],
+            [
+                'bahan_baku_id' => $bahanBakuIds[2],
+                'nomor_pangan' => '003',
+                'bdd' => 76,
+                'air' => 67,
+                'energi' => 166,
+                'protein' => 11.2,
+                'lemak' => 10.8,
+                'karbohidrat' => 2,
+                'serat' => 1,
+                'abu' => 3.0,
+                'kalsium' => 12,
+                'fosfor' => 180,
+                'besi' => 1.2,
+                'natrium' => 70,
+                'kalium' => 290,
+            ],
         ];
 
         foreach ($gizis as $gizi) {

@@ -12,6 +12,7 @@ class OrderItem extends Model
     protected $fillable = [
         'order_id',
         'bahan_baku_id',
+        'bahan_operasional_id',
         'quantity',
         'quantity_diterima',
         'satuan',
@@ -34,6 +35,11 @@ class OrderItem extends Model
 
     public function bahanBaku()
     {
-        return $this->belongsTo(BahanBaku::class);
+        return $this->belongsTo(BahanBaku::class, 'bahan_baku_id');
+    }
+
+    public function bahanOperasional()
+    {
+        return $this->belongsTo(BahanOperasional::class, 'bahan_operasional_id');
     }
 }

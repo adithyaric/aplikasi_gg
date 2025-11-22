@@ -70,9 +70,9 @@
                                         <tbody>
                                             @foreach ($order->items as $item)
                                                 <tr>
-                                                    <td>{{ $item->bahanBaku->nama }}</td>
+                                                    <td>{{ $item->bahanBaku?->nama ?? $item->bahanOperasional?->nama}}</td>
                                                     <td>{{ $item->satuan }}</td>
-                                                    <td>{{ $item->bahanBaku->merek ?? '-' }}</td>
+                                                    <td>{{ $item->bahanBaku?->merek ?? $item->bahanOperasional?->merek }}</td>
                                                     <td>Rp.{{ number_format($item->unit_cost, 0, ',', '.') }}</td>
                                                     <td>{{ $item->quantity }}</td>
                                                 </tr>

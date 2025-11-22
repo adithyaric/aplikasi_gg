@@ -167,39 +167,48 @@
                 </div>
 
                 <hr class="hr-horizontal" />
-                <h5>Bahan Baku</h5>
-
+                <h5>Bahan Baku & Operasional</h5>
                 <div id="itemContainer">
                     <div class="row itemRow align-items-end mb-3">
                         <div class="form-group col-4">
-                            <label class="form-label">Jenis Bahan Pokok *</label>
-                            <select name="items[0][bahan_baku_id]" class="form-select shadow-none bahan-select" required>
-                                <option value="">Pilih Bahan Pokok</option>
-                                @foreach ($bahanbakus as $bahan)
-                                    <option value="{{ $bahan->id }}" data-satuan="{{ $bahan->satuan }}">
-                                        {{ $bahan->nama }}
+                            <label class="form-label">Jenis Bahan *</label>
+                            <select name="items[0][bahan_id]" class="form-select shadow-none bahan-select" data-type="" required>
+                                <option value="">Pilih Bahan</option>
+                                <optgroup label="Bahan Baku">
+                                    @foreach ($bahans->where('type', 'bahan_baku') as $bahan)
+                                    <option value="{{ $bahan['id'] }}" data-satuan="{{ $bahan['satuan'] }}" data-type="bahan_baku">
+                                        {{ $bahan['nama'] }}
                                     </option>
-                                @endforeach
+                                    @endforeach
+                                </optgroup>
+                                <optgroup label="Bahan Operasional">
+                                    @foreach ($bahans->where('type', 'bahan_operasional') as $bahan)
+                                    <option value="{{ $bahan['id'] }}" data-satuan="{{ $bahan['satuan'] }}"
+                                        data-type="bahan_operasional">
+                                        {{ $bahan['nama'] }}
+                                    </option>
+                                    @endforeach
+                                </optgroup>
                             </select>
                         </div>
                         <div class="form-group col-2">
                             <label class="form-label">Quantity *</label>
-                            <input type="number" name="items[0][quantity]" class="form-control quantity-input"
-                                step="0.01" min="0.01" required />
+                            <input type="number" name="items[0][quantity]" class="form-control quantity-input" step="0.01" min="0.01"
+                                required />
                         </div>
                         <div class="form-group col-2">
                             <label class="form-label">Satuan *</label>
-                            <input type="text" name="items[0][satuan]" class="form-control satuan-input" readonly
-                                required />
+                            <input type="text" name="items[0][satuan]" class="form-control satuan-input" readonly required />
                         </div>
                         <div class="form-group col-3">
                             <label class="form-label">Harga *</label>
-                            <input type="number" name="items[0][unit_cost]" class="form-control price-input" step="0.01"
-                                min="0" required />
+                            <input type="number" name="items[0][unit_cost]" class="form-control price-input" step="0.01" min="0"
+                                required />
                         </div>
                         <div class="form-group col-1">
                             <button type="button" class="btn btn-danger btn-sm removeRow">X</button>
                         </div>
+                        <input type="hidden" name="items[0][type]" class="type-input" value="" />
                     </div>
                 </div>
 
@@ -232,7 +241,7 @@
 @push('js')
     <script>
         let itemIndex = 1;
-        const bahanbakus = @json($bahanbakus);
+        const bahans = @json($bahans);
 
         function formatRupiah(number) {
             return new Intl.NumberFormat('id-ID', {
@@ -253,17 +262,30 @@
         }
 
         function createItemRow(index) {
-            let options = '<option value="">Pilih Bahan Pokok</option>';
-            bahanbakus.forEach(bahan => {
-                options += `<option value="${bahan.id}" data-satuan="${bahan.satuan}">${bahan.nama}</option>`;
+            let optionsBahanBaku = '';
+            let optionsBahanOperasional = '';
+
+            bahans.forEach(bahan => {
+                const option = `<option value="${bahan.id}" data-satuan="${bahan.satuan}" data-type="${bahan.type}">${bahan.nama}</option>`;
+                if (bahan.type === 'bahan_baku') {
+                    optionsBahanBaku += option;
+                } else {
+                    optionsBahanOperasional += option;
+                }
             });
 
             return `
             <div class="row itemRow align-items-end mb-3">
                 <div class="form-group col-4">
-                    <label class="form-label">Jenis Bahan Pokok *</label>
-                    <select name="items[${index}][bahan_baku_id]" class="form-select shadow-none bahan-select" required>
-                        ${options}
+                    <label class="form-label">Jenis Bahan *</label>
+                    <select name="items[${index}][bahan_id]" class="form-select shadow-none bahan-select" data-type="" required>
+                        <option value="">Pilih Bahan</option>
+                        <optgroup label="Bahan Baku">
+                            ${optionsBahanBaku}
+                        </optgroup>
+                        <optgroup label="Bahan Operasional">
+                            ${optionsBahanOperasional}
+                        </optgroup>
                     </select>
                 </div>
                 <div class="form-group col-2">
@@ -281,8 +303,9 @@
                 <div class="form-group col-1">
                     <button type="button" class="btn btn-danger btn-sm removeRow">X</button>
                 </div>
+                <input type="hidden" name="items[${index}][type]" class="type-input" value="" />
             </div>
-        `;
+            `;
         }
 
         $('#tambah-item').click(function() {
@@ -300,8 +323,14 @@
         });
 
         $(document).on('change', '.bahan-select', function() {
-            const satuan = $(this).find(':selected').data('satuan');
-            $(this).closest('.itemRow').find('.satuan-input').val(satuan || '');
+            const $selected = $(this).find(':selected');
+            const satuan = $selected.data('satuan');
+            const type = $selected.data('type');
+            const $row = $(this).closest('.itemRow');
+
+            $row.find('.satuan-input').val(satuan || '');
+            $row.find('.type-input').val(type || '');
+            $(this).attr('data-type', type);
         });
 
         $(document).on('input', '.quantity-input, .price-input', function() {

@@ -224,7 +224,7 @@ function showPembayaranDetail(id) {
                 response.items.forEach(function(item) {
                     $('#pembayaran_items').append(
                         '<tr>' +
-                        '<td>' + (item.bahan_baku?.nama || '-') + '</td>' +
+                        '<td>' + (item.bahan_baku?.nama || item.bahan_operasional?.nama) + '</td>' +
                         '<td>' + (item.satuan || '-') + '</td>' +
                         '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.unit_cost || 0) + '</td>' +
                         '<td>' + (item.quantity || 0) + '</td>' +
