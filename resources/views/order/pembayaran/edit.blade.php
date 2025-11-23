@@ -30,7 +30,7 @@
                             <h4 class="card-title">{{ $title }}</h4>
                         </div>
                     </div>
-                    <div class="card-body d-flex gap-2 align-items-start">
+                    <div class="card-body gap-2 align-items-start">
                         <div class="row">
                         <div class="col-md-8 col-sm-12">
                         <div class="border border-2 d-flex flex-column gap-2 rounded-3 overflow-hidden">

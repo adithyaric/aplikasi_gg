@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Transaction extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'order_id',
@@ -28,5 +30,21 @@ class Transaction extends Model
     public function order()
     {
         return $this->belongsTo(Order::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'payment_date',
+                'payment_method',
+                'payment_reference',
+                'status', //'paid', 'unpaid', 'partial'
+                'amount',
+                'bukti_transfer', //path storage
+                'notes',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }

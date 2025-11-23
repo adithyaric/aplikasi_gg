@@ -11,12 +11,13 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Activitylog\Models\Activity;
 
 class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::with(['supplier', 'items.bahanBaku', 'items.bahanOperasional', 'transaction'])->latest()->get();
+        $orders = Order::with(['supplier', 'items.bahanBaku', 'items.bahanOperasional', 'transaction.activities'])->latest()->get();
         $title = 'Purchase Order';
         // dd($orders?->toArray());
         return view('order.index', compact('orders', 'title'));
@@ -191,7 +192,13 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        $order->load(['supplier', 'items.bahanBaku', 'items.bahanOperasional', 'transaction']);
+        $transaction = $order->transaction;
+        // dd([
+        //     'bukti_transfer' => Activity::forSubject($transaction)->get()?->toArray(),
+        //     'transaction' => $transaction->activities?->pluck('properties')->toArray()
+        // ]);
+
+        $order->load(['supplier', 'items.bahanBaku', 'items.bahanOperasional', 'transaction.activities']);
         return $order->toArray();
     }
 
@@ -394,6 +401,12 @@ class OrderController extends Controller
 
     public function editPembayaran(Order $order)
     {
+        // $transaction = $order->transaction;
+        // dd([
+        //     'bukti_transfer' => Activity::forSubject($transaction)->get()?->toArray(),
+        //     'transaction' =>$transaction->activities?->pluck('properties')->toArray()
+        // ]);
+
         $order->load(['supplier', 'items.bahanBaku', 'items.bahanOperasional', 'transaction']);
         $title = 'Edit Pembayaran';
         return view('order.pembayaran.edit', compact('order', 'title'));
@@ -423,17 +436,24 @@ class OrderController extends Controller
             ];
 
             if ($request->hasFile('bukti_transfer')) {
-                // Delete old file if exists
                 // if ($order->transaction && $order->transaction->bukti_transfer) {
-                //     Storage::delete($order->transaction->bukti_transfer);
+                //     activity()
+                //         ->performedOn($order->transaction)
+                //         ->withProperties([
+                //             'old_bukti_transfer' => $order->transaction->bukti_transfer,
+                //             'old_file_url' => Storage::url($order->transaction->bukti_transfer),
+                //         ])
+                //         ->log('Bukti transfer replaced');
+                //         // Delete old file if exists
+                //         // if ($order->transaction && $order->transaction->bukti_transfer) {
+                //         //     Storage::delete($order->transaction->bukti_transfer);
+                //         // }
                 // }
 
                 $file = $request->file('bukti_transfer');
                 $filename = 'bukti_' . time() . '_' . $order->id . '.' . $file->getClientOriginalExtension();
                 $path = $file->storeAs('public/bukti_transfer', $filename);
                 $transactionData['bukti_transfer'] = $path;
-
-                // TODO log-activity simpan bukti_transfer sebelumnya
             }
 
             if ($order->transaction) {

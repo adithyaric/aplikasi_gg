@@ -20,4 +20,4 @@
 
 <!-- 'kategori' => tersimpan di Category model, bisa digunakan next input kategori -->
 <!-- halaman penerimaan & pembayaran indexs, DataTable -->
-tambah log-acrivity, simpan history bukti_transfer (storage)
+<!-- tambah log-acrivity, simpan history bukti_transfer (storage) -->

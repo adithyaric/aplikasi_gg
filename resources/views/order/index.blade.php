@@ -87,6 +87,22 @@
                                     </table>
                                 </div>
                             </div>
+<div class="mb-1" id="payment_history_section" style="display:none;">
+    <label class="form-label fw-bold">Riwayat Bukti Transfer</label>
+    <div class="table-responsive">
+        <table class="table table-bordered table-sm">
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Bukti Lama</th>
+                    <th>Bukti Baru</th>
+                    <th>Perubahan Lain</th>
+                </tr>
+            </thead>
+            <tbody id="payment_history"></tbody>
+        </table>
+    </div>
+</div>
                         </div>
                     </div>
                 </div>
@@ -187,6 +203,41 @@
                         });
                     } else {
                         $('#detail_items').append('<tr><td colspan="4" class="text-center">Tidak ada items</td></tr>');
+                    }
+
+                    // Populate payment history
+                    $('#payment_history').empty();
+                    if (response.transaction?.activities && response.transaction.activities.length > 0) {
+                        $('#payment_history_section').show();
+
+                        response.transaction.activities.forEach(function(activity, index) {
+                            const props = activity.properties;
+                            const oldBukti = props.old?.bukti_transfer || props.old_bukti_transfer;
+                            const newBukti = props.attributes?.bukti_transfer;
+                            const createdAt = activity.created_at ? new Date(activity.created_at).toLocaleString('id-ID') : '-';
+
+                            let otherChanges = [];
+                            if (props.old && props.attributes) {
+                                if (props.old.status !== props.attributes.status) {
+                                    otherChanges.push(`status: ${props.old.status} → ${props.attributes.status}`);
+                                    // otherChanges.push(`notes: ${props.old.notes} → ${props.attributes.notes}`);
+                                }
+                                if (props.old.notes !== props.attributes.notes) {
+                                    otherChanges.push(`notes: ${props.attributes.notes}`);
+                                }
+                            }
+
+                            let row = '<tr>' +
+                                '<td>' + createdAt + '</td>' +
+                                '<td>' + (oldBukti ? '<a href="/storage/public/' + oldBukti.replace('public/', '') + '" target="_blank">Lihat</a>' : '-') + '</td>' +
+                                '<td>' + (newBukti ? '<a href="/storage/public/' + newBukti.replace('public/', '') + '" target="_blank">Lihat</a>' : '-') + '</td>' +
+                                '<td>' + (otherChanges.length > 0 ? otherChanges.join('<br>') : '-') + '</td>' +
+                                '</tr>';
+
+                            $('#payment_history').append(row);
+                        });
+                    } else {
+                        $('#payment_history_section').hide();
                     }
 
                     $('#modalOrderDetail').modal('show');
