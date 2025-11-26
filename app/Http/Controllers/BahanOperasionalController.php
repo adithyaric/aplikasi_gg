@@ -16,6 +16,7 @@ class BahanOperasionalController extends Controller
             'kategori',
             'satuan',
             'merek',
+            'gov_price',
         ]);
         $categories = Category::pluck('name')->all();
         $title = 'Master Bahan Operasional';
@@ -34,6 +35,7 @@ class BahanOperasionalController extends Controller
             'satuan' => 'required|string|max:255',
             'kategori' => 'nullable|array',
             'merek' => 'required|string|max:255',
+            'gov_price' => 'required|numeric|min:0',
         ]);
 
         // Save categories
@@ -48,6 +50,7 @@ class BahanOperasionalController extends Controller
             'satuan' => $request->satuan,
             'kategori' => $request->kategori,
             'merek' => $request->merek,
+            'gov_price' => $request->gov_price,
         ]);
 
         return response()->json([
@@ -73,6 +76,7 @@ class BahanOperasionalController extends Controller
             'satuan' => 'required|string|max:255',
             'kategori' => 'nullable|array',
             'merek' => 'required|string|max:255',
+            'gov_price' => 'required|numeric|min:0',
         ]);
 
         // Save categories
@@ -87,6 +91,7 @@ class BahanOperasionalController extends Controller
             'satuan' => $request->satuan,
             'kategori' => $request->kategori,
             'merek' => $request->merek,
+            'gov_price' => $request->gov_price,
         ]);
 
         return response()->json([

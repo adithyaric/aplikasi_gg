@@ -15,6 +15,7 @@ use App\Http\Controllers\PaketSurveyController;
 use App\Http\Controllers\RencanaMenuController;
 use App\Http\Controllers\RespondenController;
 use App\Http\Controllers\SekolahController;
+use App\Http\Controllers\StokController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\SurveyController;
@@ -78,6 +79,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/pembayaran', [OrderController::class, 'pembayaranIndex'])->name('pembayaran.index');
     Route::get('/pembayaran/{order}/edit', [OrderController::class, 'editPembayaran'])->name('pembayaran.edit');
     Route::put('/pembayaran/{order}', [OrderController::class, 'updatePembayaran'])->name('pembayaran.update');
+
+    Route::resource('stok', StokController::class);
 
     // Route::resource('surats', SuratController::class);
     // Route::get('/surats/{id}/cetak', [SuratController::class, 'cetak'])->name('surats.cetak');

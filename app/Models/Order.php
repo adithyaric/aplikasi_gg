@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Order extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'order_number',
@@ -49,5 +51,22 @@ class Order extends Model
     public function getOutstandingBalanceAttribute()
     {
         return $this->grand_total - $this->transaction?->amount;
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'order_number',
+                'supplier_id',
+                'tanggal_po',
+                'tanggal_penerimaan',
+                'grand_total',
+                'status', // draft, posted
+                'status_penerimaan', // draft, confirmed
+                'notes',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }

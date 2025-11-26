@@ -51,6 +51,7 @@
                                         <th>Kategori</th>
                                         <th>Satuan</th>
                                         <th>Merek</th>
+                                        <th>Gov. Price</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -68,6 +69,7 @@
                                             </td>
                                             <td>{{ $bahanoperasional->satuan }}</td>
                                             <td>{{ $bahanoperasional->merek }}</td>
+                                            <td>Rp {{ number_format($bahanoperasional->gov_price, 0, ',', '.') }}</td>
                                             <td>
                                                 <button type="button" class="btn btn-sm btn-success"
                                                     onclick="editBahanOperasional({{ $bahanoperasional->id }})">
@@ -146,6 +148,11 @@
                                     <label class="form-label">Merek</label>
                                     <input type="text" class="form-control" id="merek" name="merek"
                                         placeholder="Masukkan merek">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Gov. Price</label>
+                                    <input type="text" class="form-control" id="gov_price" name="gov_price"
+                                        placeholder="Masukkan Harga">
                                 </div>
                                 <div class="d-flex justify-content-end gap-2">
                                     <button type="submit" class="btn btn-success">Simpan</button>
@@ -234,6 +241,7 @@
                     $('#nama').val(response.nama);
                     $('#satuan').val(response.satuan);
                     $('#merek').val(response.merek);
+                    $('#gov_price').val(response.gov_price);
                     $('#form_method').val('PUT');
                     $('#modalBahanOperasionalLabel').text('Edit Bahan Operasional');
 

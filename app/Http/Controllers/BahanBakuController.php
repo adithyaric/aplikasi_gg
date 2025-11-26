@@ -19,6 +19,7 @@ class BahanBakuController extends Controller
             'kategori',
             'satuan',
             'merek',
+            'gov_price',
             'ukuran',
         ]);
         $categories = Category::pluck('name')->all();
@@ -39,6 +40,7 @@ class BahanBakuController extends Controller
             'jenis' => 'required|string|max:255',
             'kategori' => 'nullable|array',
             'merek' => 'required|string|max:255',
+            'gov_price' => 'required|numeric|min:0',
             'satuan' => 'required|string|max:255',
         ]);
 
@@ -56,6 +58,7 @@ class BahanBakuController extends Controller
             'satuan' => $request->satuan,
             'kategori' => $request->kategori,
             'merek' => $request->merek,
+            'gov_price' => $request->gov_price,
             'ukuran' => $request->ukuran,
         ]);
 
@@ -83,6 +86,7 @@ class BahanBakuController extends Controller
             'jenis' => 'required|string|max:255',
             'kategori' => 'nullable|array',
             'merek' => 'required|string|max:255',
+            'gov_price' => 'required|numeric|min:0',
             'satuan' => 'required|string|max:255',
         ]);
 
@@ -100,6 +104,7 @@ class BahanBakuController extends Controller
             'satuan' => $request->satuan,
             'kategori' => $request->kategori,
             'merek' => $request->merek,
+            'gov_price' => $request->gov_price,
             'ukuran' => $request->ukuran,
         ]);
 

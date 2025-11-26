@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class OrderItem extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'order_id',
@@ -41,5 +43,23 @@ class OrderItem extends Model
     public function bahanOperasional()
     {
         return $this->belongsTo(BahanOperasional::class, 'bahan_operasional_id');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'order_id',
+                'bahan_baku_id',
+                'bahan_operasional_id',
+                'quantity',
+                'quantity_diterima',
+                'satuan',
+                'unit_cost',
+                'subtotal',
+                'notes',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }

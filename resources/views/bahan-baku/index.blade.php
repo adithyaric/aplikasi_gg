@@ -53,6 +53,7 @@
                                         <th>Kategori</th>
                                         <th>Satuan</th>
                                         <th>Merek</th>
+                                        <th>Gov. Price</th>
                                         <th>Ukuran</th>
                                         <th>Aksi</th>
                                     </tr>
@@ -73,6 +74,7 @@
                                             </td>
                                             <td>{{ $bahanbaku->satuan }}</td>
                                             <td>{{ $bahanbaku->merek }}</td>
+                                            <td>Rp {{ number_format($bahanbaku->gov_price, 0, ',', '.') }}</td>
                                             <td>{{ $bahanbaku->ukuran }}</td>
                                             <td>
                                                 <button type="button" class="btn btn-sm btn-success"
@@ -163,6 +165,11 @@
                                     <label class="form-label">Merek</label>
                                     <input type="text" class="form-control" id="merek" name="merek"
                                         placeholder="Masukkan merek">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Gov. Price</label>
+                                    <input type="text" class="form-control" id="gov_price" name="gov_price"
+                                        placeholder="Masukkan Harga">
                                 </div>
                                 <div class="form-group mb-4">
                                     <label class="form-label">Ukuran</label>
@@ -258,6 +265,7 @@
                     $('#jenis').val(response.jenis);
                     $('#satuan').val(response.satuan);
                     $('#merek').val(response.merek);
+                    $('#gov_price').val(response.gov_price);
                     $('#ukuran').val(response.ukuran);
                     $('#form_method').val('PUT');
                     $('#modalBahanBakuLabel').text('Edit Bahan Baku');
