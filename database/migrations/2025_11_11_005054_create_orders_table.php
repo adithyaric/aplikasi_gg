@@ -42,7 +42,7 @@ class CreateOrdersTable extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
-            $table->date('payment_date')->nullable();
+            $table->dateTime('payment_date')->nullable();
             $table->string('payment_method')->nullable();
             $table->string('payment_reference')->nullable(); // ambil dari no rek supplier
             $table->decimal('amount', 15, 2)->nullable()->default(0);

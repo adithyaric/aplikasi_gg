@@ -116,8 +116,8 @@
 
                                 <div class="form-group">
                                     <label class="form-label">Tanggal Bayar</label>
-                                    <input type="date" name="payment_date" class="form-control"
-                                        value="{{ $order->transaction?->payment_date?->format('Y-m-d') }}" required />
+                                    <input type="datetime-local" name="payment_date" class="form-control"
+                                        value="{{ $order->transaction?->payment_date?->format('Y-m-d\TH:i') }}" required />
                                 </div>
 
                                 <div class="form-group">
@@ -183,13 +183,16 @@
                                         <option value="">Pilih Status Pembayaran</option>
                                         <option value="unpaid"
                                             {{ $order->transaction?->status == 'unpaid' ? 'selected' : '' }}>
-                                            Unpaid</option>
+                                            Unpaid
+                                        </option>
                                         <option value="paid"
                                             {{ $order->transaction?->status == 'paid' ? 'selected' : '' }}>
-                                            Paid</option>
+                                            Paid
+                                        </option>
                                         <option value="partial"
                                             {{ $order->transaction?->status == 'partial' ? 'selected' : '' }}>
-                                            Partial</option>
+                                            Partial
+                                        </option>
                                     </select>
                                 </div>
 
