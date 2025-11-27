@@ -482,34 +482,45 @@ class OrderController extends Controller
 
     private function createOrUpdateRekeningKoranVa($transaction, $order)
     {
-        $lastSaldo = \App\Models\RekeningKoranVa::orderBy('tanggal_transaksi', 'desc')
-            ->orderBy('id', 'desc')
-            ->value('saldo') ?? 0;
+        DB::beginTransaction();
+        try {
+            // Prevent race condition - lock the last record
+            $lastEntry = \App\Models\RekeningKoranVa::lockForUpdate()
+                ->orderBy('tanggal_transaksi', 'desc')
+                ->orderBy('id', 'desc')
+                ->first();
 
-        $newSaldo = $lastSaldo - $transaction->amount;
+            $lastSaldo = $lastEntry ? $lastEntry->saldo : 0;
 
-        $uraian = "Deposit PO {$order->order_number} - {$order->supplier->nama}";
+            $newSaldo = $lastSaldo - $transaction->amount;
 
-        $rekeningData = [
-            'tanggal_transaksi' => $transaction->payment_date,
-            'ref' => 'DEPOSIT',
-            'uraian' => $uraian,
-            'debit' => $transaction->amount,
-            'kredit' => 0,
-            'saldo' => $newSaldo,
-            'kategori_transaksi' => 'Deposit PO',
-            'minggu' => null,
-        ];
+            $uraian = "Deposit PO {$order->order_number} - {$order->supplier->nama}";
 
-        if ($transaction->rekeningKoranVa) {
-            // Recalculate saldo based on the difference
-            $oldAmount = $transaction->rekeningKoranVa->debit;
-            $difference = $transaction->amount - $oldAmount;
-            $rekeningData['saldo'] = $transaction->rekeningKoranVa->saldo - $difference;
+            $rekeningData = [
+                'tanggal_transaksi' => $transaction->payment_date,
+                'ref' => 'DEPOSIT',
+                'uraian' => $uraian,
+                'debit' => $transaction->amount,
+                'kredit' => 0,
+                'saldo' => $newSaldo,
+                'kategori_transaksi' => 'Deposit PO',
+                'minggu' => null,
+            ];
 
-            $transaction->rekeningKoranVa->update($rekeningData);
-        } else {
-            $transaction->rekeningKoranVa()->create($rekeningData);
+            if ($transaction->rekeningKoranVa) {
+                $oldAmount = $transaction->rekeningKoranVa->debit;
+                $difference = $transaction->amount - $oldAmount;
+                $rekeningData['saldo'] = $transaction->rekeningKoranVa->saldo - $difference;
+
+                $transaction->rekeningKoranVa->update($rekeningData);
+            } else {
+                $transaction->rekeningKoranVa()->create($rekeningData);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
         }
     }
 }

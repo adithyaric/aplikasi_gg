@@ -35,6 +35,20 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
+                    @if ($selisihFound)
+                        <div class="card-header">
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <h4 class="alert-heading">⚠️ Ditemukan Selisih Saldo!</h4>
+                                <p>Terdapat ketidaksesuaian dalam perhitungan saldo. Data mungkin perlu dikoreksi.</p>
+                                @foreach ($selisihDetails as $detail)
+                                    <small>
+                                        Tanggal: {{ $detail['entry']->tanggal_transaksi->format('d/m/Y') }} -
+                                        Selisih: Rp {{ number_format($detail['difference'], 0, ',', '.') }}
+                                    </small><br>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
                     <div class="card-body">
                         @if (session('success'))
                             <div class="alert alert-success">{{ session('success') }}</div>
@@ -54,6 +68,7 @@
                                         <th>Kategori Transaksi</th>
                                         <th>Minggu</th>
                                         <th>Link PO</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -63,7 +78,8 @@
                                             <td>{{ $item->tanggal_transaksi->format('d/m/y H.i.s') }}</td>
                                             <td>{{ $item->uraian }}</td>
                                             <td>{{ $item->ref }}</td>
-                                            <td>{{ $item->debit > 0 ? number_format($item->debit, 0, ',', '.') : '-' }}</td>
+                                            <td>{{ $item->debit > 0 ? number_format($item->debit, 0, ',', '.') : '-' }}
+                                            </td>
                                             <td>{{ $item->kredit > 0 ? number_format($item->kredit, 0, ',', '.') : '-' }}
                                             </td>
                                             <td>{{ number_format($item->saldo, 0, ',', '.') }}</td>
@@ -78,6 +94,16 @@
                                                     -
                                                 @endif
                                             </td>
+                                            <td>
+                                                <a href="{{ route('rekening-koran-va.edit', $item->id) }}"
+                                                    class="btn btn-sm btn-success">
+                                                    <i class="bi bi-pencil"></i> Edit
+                                                </a>
+                                                <button class="btn btn-sm btn-danger btn-delete"
+                                                    data-id="{{ $item->id }}" data-nama="{{ $item->uraian }}">
+                                                    <i class="bi bi-trash"></i> Hapus
+                                                </button>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -90,4 +116,51 @@
     </div>
 @endsection
 @push('js')
+    <script>
+        // Handle Delete Button Click
+        $(document).on('click', '.btn-delete', function() {
+            const id = $(this).data('id');
+            const nama = $(this).data('nama');
+
+            Swal.fire({
+                title: 'Konfirmasi Hapus',
+                text: `Apakah Anda yakin ingin menghapus "${nama}"?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/rekening-koran-va/${id}`,
+                        method: 'DELETE',
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: response.message,
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: xhr.responseJSON?.message ||
+                                    'Terjadi kesalahan saat menghapus data'
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 @endpush
