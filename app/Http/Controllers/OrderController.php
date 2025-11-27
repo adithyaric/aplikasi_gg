@@ -436,19 +436,6 @@ class OrderController extends Controller
             ];
 
             if ($request->hasFile('bukti_transfer')) {
-                // if ($order->transaction && $order->transaction->bukti_transfer) {
-                //     activity()
-                //         ->performedOn($order->transaction)
-                //         ->withProperties([
-                //             'old_bukti_transfer' => $order->transaction->bukti_transfer,
-                //             'old_file_url' => Storage::url($order->transaction->bukti_transfer),
-                //         ])
-                //         ->log('Bukti transfer replaced');
-                //         // Delete old file if exists
-                //         // if ($order->transaction && $order->transaction->bukti_transfer) {
-                //         //     Storage::delete($order->transaction->bukti_transfer);
-                //         // }
-                // }
 
                 $file = $request->file('bukti_transfer');
                 $filename = 'bukti_' . time() . '_' . $order->id . '.' . $file->getClientOriginalExtension();
@@ -463,8 +450,8 @@ class OrderController extends Controller
                 $transaction = $order->transaction()->create($transactionData);
             }
 
-            // Create or update RekeningKoranVa
             $this->createOrUpdateRekeningKoranVa($transaction, $order);
+            $this->createOrUpdateRekeningRekapBKU($transaction, $order);
 
             DB::commit();
             return response()->json([
@@ -484,37 +471,253 @@ class OrderController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Prevent race condition - lock the last record
-            $lastEntry = \App\Models\RekeningKoranVa::lockForUpdate()
-                ->orderBy('tanggal_transaksi', 'desc')
-                ->orderBy('id', 'desc')
-                ->first();
-
-            $lastSaldo = $lastEntry ? $lastEntry->saldo : 0;
-
-            $newSaldo = $lastSaldo - $transaction->amount;
-
+            // Prepare common data
             $uraian = "Deposit PO {$order->order_number} - {$order->supplier->nama}";
+            $tanggal = $transaction->payment_date;
+            $debit = 0;
+            $kredit = $transaction->amount;
 
-            $rekeningData = [
-                'tanggal_transaksi' => $transaction->payment_date,
-                'ref' => 'DEPOSIT',
-                'uraian' => $uraian,
-                'debit' => $transaction->amount,
-                'kredit' => 0,
-                'saldo' => $newSaldo,
-                'kategori_transaksi' => 'Deposit PO',
-                'minggu' => null,
-            ];
+            // If there's an existing linked RekeningKoranVa, lock it
+            $existing = $transaction->rekeningKoranVa ? \App\Models\RekeningKoranVa::lockForUpdate()->find($transaction->rekeningKoranVa->id) : null;
 
-            if ($transaction->rekeningKoranVa) {
-                $oldAmount = $transaction->rekeningKoranVa->debit;
-                $difference = $transaction->amount - $oldAmount;
-                $rekeningData['saldo'] = $transaction->rekeningKoranVa->saldo - $difference;
+            if ($existing) {
+                // Find previous entry relative to the (possibly updated) tanggal and excluding current record
+                $prevEntry = \App\Models\RekeningKoranVa::where(function ($q) use ($tanggal, $existing) {
+                    $q->where('tanggal_transaksi', '<', $tanggal)
+                        ->orWhere(function ($q2) use ($tanggal, $existing) {
+                            $q2->where('tanggal_transaksi', '=', $tanggal)
+                                ->where('id', '<', $existing->id);
+                        });
+                })
+                    ->orderBy('tanggal_transaksi', 'desc')
+                    ->orderBy('id', 'desc')
+                    ->lockForUpdate()
+                    ->first();
 
-                $transaction->rekeningKoranVa->update($rekeningData);
+                $prevSaldo = $prevEntry ? $prevEntry->saldo : 0;
+
+                // New saldo for this record (payment = kredit => saldo increases)
+                $newSaldoForCurrent = $prevSaldo - $debit + $kredit;
+
+                $rekeningData = [
+                    'tanggal_transaksi' => $tanggal,
+                    'ref' => 'PEMBAYARAN',
+                    'uraian' => $uraian,
+                    'debit' => $debit,
+                    'kredit' => $kredit,
+                    'saldo' => $newSaldoForCurrent,
+                    'kategori_transaksi' => 'Deposit PO',
+                    'minggu' => null,
+                ];
+
+                // Update existing record
+                $existing->update($rekeningData);
+
+                // Recalculate subsequent entries (those after the current record in ordering)
+                $nextEntries = \App\Models\RekeningKoranVa::where(function ($q) use ($existing) {
+                    $q->where('tanggal_transaksi', '>', $existing->tanggal_transaksi)
+                        ->orWhere(function ($q2) use ($existing) {
+                            $q2->where('tanggal_transaksi', '=', $existing->tanggal_transaksi)
+                                ->where('id', '>', $existing->id);
+                        });
+                })
+                    ->orderBy('tanggal_transaksi', 'asc')
+                    ->orderBy('id', 'asc')
+                    ->lockForUpdate()
+                    ->get();
+
+                $currentSaldo = $existing->saldo;
+                foreach ($nextEntries as $entry) {
+                    $currentSaldo = $currentSaldo - $entry->debit + $entry->kredit;
+                    $entry->update(['saldo' => $currentSaldo]);
+                }
             } else {
-                $transaction->rekeningKoranVa()->create($rekeningData);
+                // CREATE CASE
+                // Find previous entry relative to new tanggal
+                $prevEntry = \App\Models\RekeningKoranVa::where(function ($q) use ($tanggal) {
+                    $q->where('tanggal_transaksi', '<', $tanggal)
+                        ->orWhere(function ($q2) use ($tanggal) {
+                            $q2->where('tanggal_transaksi', '=', $tanggal)
+                                ->where('id', '<', PHP_INT_MAX); // no current id, so take any smaller id
+                        });
+                })
+                    ->orderBy('tanggal_transaksi', 'desc')
+                    ->orderBy('id', 'desc')
+                    ->lockForUpdate()
+                    ->first();
+
+                $prevSaldo = $prevEntry ? $prevEntry->saldo : 0;
+
+                $newSaldo = $prevSaldo - $debit + $kredit;
+
+                $rekeningData = [
+                    'tanggal_transaksi' => $tanggal,
+                    'ref' => 'DEPOSIT',
+                    'uraian' => $uraian,
+                    'debit' => $debit,
+                    'kredit' => $kredit,
+                    'saldo' => $newSaldo,
+                    'kategori_transaksi' => 'Deposit PO',
+                    'minggu' => null,
+                    'transaction_id' => $transaction->id,
+                ];
+
+                $created = \App\Models\RekeningKoranVa::create($rekeningData);
+
+                // Recalculate subsequent entries (those after the newly created record)
+                $nextEntries = \App\Models\RekeningKoranVa::where(function ($q) use ($created) {
+                    $q->where('tanggal_transaksi', '>', $created->tanggal_transaksi)
+                        ->orWhere(function ($q2) use ($created) {
+                            $q2->where('tanggal_transaksi', '=', $created->tanggal_transaksi)
+                                ->where('id', '>', $created->id);
+                        });
+                })
+                    ->orderBy('tanggal_transaksi', 'asc')
+                    ->orderBy('id', 'asc')
+                    ->lockForUpdate()
+                    ->get();
+
+                $currentSaldo = $created->saldo;
+                foreach ($nextEntries as $entry) {
+                    $currentSaldo = $currentSaldo - $entry->debit + $entry->kredit;
+                    $entry->update(['saldo' => $currentSaldo]);
+                }
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    private function createOrUpdateRekeningRekapBKU($transaction, $order)
+    {
+        DB::beginTransaction();
+        try {
+            // Prepare common data
+            $uraian = "Pembayaran PO {$order->order_number} - {$order->supplier->nama}";
+            $tanggal = $transaction->payment_date;
+            $debit = 0;
+            $kredit = $transaction->amount;
+
+            // If there's an existing linked RekeningRekapBKU, lock it
+            $existing = $transaction->rekeningRekapBKU ? \App\Models\RekeningRekapBKU::lockForUpdate()->find($transaction->rekeningRekapBKU->id) : null;
+
+            if ($existing) {
+                // Find previous entry relative to the (possibly updated) tanggal and excluding current record
+                $prevEntry = \App\Models\RekeningRekapBKU::where(function ($q) use ($tanggal, $existing) {
+                    $q->where('tanggal_transaksi', '<', $tanggal)
+                        ->orWhere(function ($q2) use ($tanggal, $existing) {
+                            $q2->where('tanggal_transaksi', '=', $tanggal)
+                                ->where('id', '<', $existing->id);
+                        });
+                })
+                    ->orderBy('tanggal_transaksi', 'desc')
+                    ->orderBy('id', 'desc')
+                    ->lockForUpdate()
+                    ->first();
+
+                $prevSaldo = $prevEntry ? $prevEntry->saldo : 0;
+
+                // New saldo for this record (payment = kredit => saldo decreases)
+                $newSaldoForCurrent = $prevSaldo + $debit - $kredit;
+
+                $rekeningData = [
+                    'tanggal_transaksi' => $tanggal,
+                    'no_bukti' => $transaction->payment_reference,
+                    'link_bukti' => $transaction->bukti_transfer,
+                    'jenis_bahan' => null,
+                    'nama_bahan' => null,
+                    'kuantitas' => null,
+                    'satuan' => null,
+                    'supplier' => $order->supplier->nama,
+                    'uraian' => $uraian,
+                    'debit' => $debit,
+                    'kredit' => $kredit,
+                    'saldo' => $newSaldoForCurrent,
+                    'bulan' => date('n', strtotime($tanggal)),
+                    'minggu' => null,
+                ];
+
+                // Update existing record
+                $existing->update($rekeningData);
+
+                // Recalculate subsequent entries (those after the current record in ordering)
+                $nextEntries = \App\Models\RekeningRekapBKU::where(function ($q) use ($existing) {
+                    $q->where('tanggal_transaksi', '>', $existing->tanggal_transaksi)
+                        ->orWhere(function ($q2) use ($existing) {
+                            $q2->where('tanggal_transaksi', '=', $existing->tanggal_transaksi)
+                                ->where('id', '>', $existing->id);
+                        });
+                })
+                    ->orderBy('tanggal_transaksi', 'asc')
+                    ->orderBy('id', 'asc')
+                    ->lockForUpdate()
+                    ->get();
+
+                $currentSaldo = $existing->saldo;
+                foreach ($nextEntries as $entry) {
+                    $currentSaldo = $currentSaldo + $entry->debit - $entry->kredit;
+                    $entry->update(['saldo' => $currentSaldo]);
+                }
+            } else {
+                // CREATE CASE
+                // Find previous entry relative to new tanggal
+                $prevEntry = \App\Models\RekeningRekapBKU::where(function ($q) use ($tanggal) {
+                    $q->where('tanggal_transaksi', '<', $tanggal)
+                        ->orWhere(function ($q2) use ($tanggal) {
+                            $q2->where('tanggal_transaksi', '=', $tanggal)
+                                ->where('id', '<', PHP_INT_MAX);
+                        });
+                })
+                    ->orderBy('tanggal_transaksi', 'desc')
+                    ->orderBy('id', 'desc')
+                    ->lockForUpdate()
+                    ->first();
+
+                $prevSaldo = $prevEntry ? $prevEntry->saldo : 0;
+
+                $newSaldo = $prevSaldo + $debit - $kredit;
+
+                $rekeningData = [
+                    'tanggal_transaksi' => $tanggal,
+                    'no_bukti' => $transaction->payment_reference,
+                    'link_bukti' => $transaction->bukti_transfer,
+                    'jenis_bahan' => null,
+                    'nama_bahan' => null,
+                    'kuantitas' => null,
+                    'satuan' => null,
+                    'supplier' => $order->supplier->nama,
+                    'uraian' => $uraian,
+                    'debit' => $debit,
+                    'kredit' => $kredit,
+                    'saldo' => $newSaldo,
+                    'bulan' => date('n', strtotime($tanggal)),
+                    'minggu' => null,
+                    'transaction_id' => $transaction->id,
+                ];
+
+                $created = \App\Models\RekeningRekapBKU::create($rekeningData);
+
+                // Recalculate subsequent entries (those after the newly created record)
+                $nextEntries = \App\Models\RekeningRekapBKU::where(function ($q) use ($created) {
+                    $q->where('tanggal_transaksi', '>', $created->tanggal_transaksi)
+                        ->orWhere(function ($q2) use ($created) {
+                            $q2->where('tanggal_transaksi', '=', $created->tanggal_transaksi)
+                                ->where('id', '>', $created->id);
+                        });
+                })
+                    ->orderBy('tanggal_transaksi', 'asc')
+                    ->orderBy('id', 'asc')
+                    ->lockForUpdate()
+                    ->get();
+
+                $currentSaldo = $created->saldo;
+                foreach ($nextEntries as $entry) {
+                    $currentSaldo = $currentSaldo + $entry->debit - $entry->kredit;
+                    $entry->update(['saldo' => $currentSaldo]);
+                }
             }
 
             DB::commit();

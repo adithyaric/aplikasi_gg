@@ -230,7 +230,7 @@
                                 </div>
                                 <div class="form-group col-6">
                                     <label class="form-label" for="saldo">Saldo</label>
-                                    <input type="text" class="form-control" id="saldo_display"
+                                    <input type="text" class="form-control bg-light" id="saldo_display"
                                         value="Rp {{ number_format($lastSaldo, 0, ',', '.') }}" readonly>
                                     <input type="number" step="0.01" name="saldo" id="saldo"
                                         value="{{ $lastSaldo }}" hidden>

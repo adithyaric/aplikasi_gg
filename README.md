@@ -41,5 +41,5 @@ Halaman Keuangan
 <!-- penerimaan = kredit -->
 <!-- `PO/Order = debit` -->
 
-Rekap BKU -> crud biasa + transaksi PO (ngurangi saldo)
-PO = kredit
+<!-- Rekap BKU -> crud biasa + transaksi PO (ngurangi saldo) -->
+<!-- PO = kredit -->

@@ -13,6 +13,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaketMenuController;
 use App\Http\Controllers\PaketSurveyController;
 use App\Http\Controllers\RekeningKoranVaController;
+use App\Http\Controllers\RekeningRekapBKUController;
 use App\Http\Controllers\RencanaMenuController;
 use App\Http\Controllers\RespondenController;
 use App\Http\Controllers\SekolahController;
@@ -83,6 +84,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('stok', StokController::class);
     Route::resource('rekening-koran-va', RekeningKoranVaController::class);
+    Route::resource('rekening-rekap-bku', RekeningRekapBKUController::class);
 
     // Route::resource('surats', SuratController::class);
     // Route::get('/surats/{id}/cetak', [SuratController::class, 'cetak'])->name('surats.cetak');
