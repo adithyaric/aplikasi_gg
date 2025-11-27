@@ -458,9 +458,13 @@ class OrderController extends Controller
 
             if ($order->transaction) {
                 $order->transaction->update($transactionData);
+                $transaction = $order->transaction;
             } else {
-                $order->transaction()->create($transactionData);
+                $transaction = $order->transaction()->create($transactionData);
             }
+
+            // Create or update RekeningKoranVa
+            $this->createOrUpdateRekeningKoranVa($transaction, $order);
 
             DB::commit();
             return response()->json([
@@ -473,6 +477,39 @@ class OrderController extends Controller
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    private function createOrUpdateRekeningKoranVa($transaction, $order)
+    {
+        $lastSaldo = \App\Models\RekeningKoranVa::orderBy('tanggal_transaksi', 'desc')
+            ->orderBy('id', 'desc')
+            ->value('saldo') ?? 0;
+
+        $newSaldo = $lastSaldo - $transaction->amount;
+
+        $uraian = "Deposit PO {$order->order_number} - {$order->supplier->nama}";
+
+        $rekeningData = [
+            'tanggal_transaksi' => $transaction->payment_date,
+            'ref' => 'DEPOSIT',
+            'uraian' => $uraian,
+            'debit' => $transaction->amount,
+            'kredit' => 0,
+            'saldo' => $newSaldo,
+            'kategori_transaksi' => 'Deposit PO',
+            'minggu' => null,
+        ];
+
+        if ($transaction->rekeningKoranVa) {
+            // Recalculate saldo based on the difference
+            $oldAmount = $transaction->rekeningKoranVa->debit;
+            $difference = $transaction->amount - $oldAmount;
+            $rekeningData['saldo'] = $transaction->rekeningKoranVa->saldo - $difference;
+
+            $transaction->rekeningKoranVa->update($rekeningData);
+        } else {
+            $transaction->rekeningKoranVa()->create($rekeningData);
         }
     }
 }

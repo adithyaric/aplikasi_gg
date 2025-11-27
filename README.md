@@ -33,12 +33,12 @@
 Halaman Keuangan
 `Anggaran -> crud biasa skip!`
 
-Formulir Rekening Koran VA
+<!-- Formulir Rekening Koran VA -->
 <!-- -> crud biasa + transaksi PO (nambah saldo) -->
 <!-- debit & kredit radio button, isi salah satu -->
 <!-- `cek & selisih = hapus input` -->
-semua kategori kecuali penerimaan = debit
-penerimaan = kredit
+<!-- semua kategori kecuali penerimaan = debit -->
+<!-- penerimaan = kredit -->
 <!-- `PO/Order = debit` -->
 
 Rekap BKU -> crud biasa + transaksi PO (ngurangi saldo)

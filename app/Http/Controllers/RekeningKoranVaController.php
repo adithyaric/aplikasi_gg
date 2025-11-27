@@ -11,12 +11,13 @@ class RekeningKoranVaController extends Controller
 {
     public function index()
     {
-        $rekeningKoran = RekeningKoranVa::with('transaction')
-            ->orderBy('tanggal_transaksi', 'desc')
+        $rekeningKoran = RekeningKoranVa::with('transaction.order.supplier')
+            ->orderBy('tanggal_transaksi', 'asc')
+            ->orderBy('id', 'asc')
             ->get();
 
         $title = 'Rekening Koran VA';
-        dd($rekeningKoran?->toArray(), $title);
+
         return view('keuangan.rekening-koran-va.index', compact('rekeningKoran', 'title'));
     }
 

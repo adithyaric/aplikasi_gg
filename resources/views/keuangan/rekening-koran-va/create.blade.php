@@ -62,64 +62,163 @@
                                     @enderror
                                 </div>
                                 <div class="form-group col-6">
-                                    <label class="form-label" for="ref">Ref</label>
-                                    <select class="form-select shadow-none @error('ref') is-invalid @enderror"
-                                        id="ref" name="ref" required>
-                                        <option selected disabled>Pilih Referensi</option>
-                                        <option value="BRIVA" {{ old('ref') == 'BRIVA' ? 'selected' : '' }}>BRIVA</option>
-                                        <option value="CMSX" {{ old('ref') == 'CMSX' ? 'selected' : '' }}>CMSX</option>
-                                        <option value="KLIKBCA" {{ old('ref') == 'KLIKBCA' ? 'selected' : '' }}>KLIKBCA
+                                    <label class="form-label" for="minggu">Minggu</label>
+                                    <select class="form-select shadow-none @error('minggu') is-invalid @enderror"
+                                        id="minggu" name="minggu">
+                                        <option selected disabled>Pilih Minggu</option>
+                                        <option value="1" {{ old('minggu') == '1' ? 'selected' : '' }}>
+                                            Minggu 1
                                         </option>
-                                        <option value="TRANSFER" {{ old('ref') == 'TRANSFER' ? 'selected' : '' }}>TRANSFER
+                                        <option value="2" {{ old('minggu') == '2' ? 'selected' : '' }}>
+                                            Minggu 2
                                         </option>
-                                        <option value="SKN" {{ old('ref') == 'SKN' ? 'selected' : '' }}>SKN</option>
-                                        <option value="LLG" {{ old('ref') == 'LLG' ? 'selected' : '' }}>LLG</option>
-                                        <option value="BI-RTGS" {{ old('ref') == 'BI-RTGS' ? 'selected' : '' }}>BI-RTGS
+                                        <option value="3" {{ old('minggu') == '3' ? 'selected' : '' }}>
+                                            Minggu 3
                                         </option>
-                                        <option value="BIAYA" {{ old('ref') == 'BIAYA' ? 'selected' : '' }}>BIAYA</option>
-                                        <option value="PAJAK" {{ old('ref') == 'PAJAK' ? 'selected' : '' }}>PAJAK</option>
-                                        <option value="PEMBAYARAN" {{ old('ref') == 'PEMBAYARAN' ? 'selected' : '' }}>
-                                            PEMBAYARAN</option>
+                                        <option value="4" {{ old('minggu') == '4' ? 'selected' : '' }}>
+                                            Minggu 4
+                                        </option>
                                     </select>
-                                    @error('ref')
+                                    @error('minggu')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
 
-                            <div class="form-group mt-3">
-                                <label class="form-label" for="uraian">Uraian</label>
-                                <textarea class="form-control @error('uraian') is-invalid @enderror" id="uraian" name="uraian" rows="2"
-                                    placeholder="Masukkan uraian transaksi" required>{{ old('uraian') }}</textarea>
-                                @error('uraian')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group mt-3">
-                                <label class="form-label">Jenis Transaksi</label>
-                                <div class="d-flex gap-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="jenis_transaksi"
-                                            id="jenis_debit" value="debit"
-                                            {{ old('jenis_transaksi') == 'debit' ? 'checked' : '' }} required>
-                                        <label class="form-check-label" for="jenis_debit">Debit</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="jenis_transaksi"
-                                            id="jenis_kredit" value="kredit"
-                                            {{ old('jenis_transaksi') == 'kredit' ? 'checked' : '' }} required>
-                                        <label class="form-check-label" for="jenis_kredit">Kredit</label>
-                                    </div>
+                            <div class="row mt-1">
+                                <div class="form-group col-4">
+                                    <label class="form-label" for="ref">Ref</label>
+                                    <select class="form-select shadow-none @error('ref') is-invalid @enderror"
+                                        id="ref" name="ref" required>
+                                        <option selected disabled>Pilih Referensi</option>
+                                        <option value="BRIVA" {{ old('ref') == 'BRIVA' ? 'selected' : '' }}>
+                                            BRIVA
+                                        </option>
+                                        <option value="CMSX" {{ old('ref') == 'CMSX' ? 'selected' : '' }}>
+                                            CMSX
+                                        </option>
+                                        <option value="KLIKBCA" {{ old('ref') == 'KLIKBCA' ? 'selected' : '' }}>
+                                            KLIKBCA
+                                        </option>
+                                        <option value="TRANSFER" {{ old('ref') == 'TRANSFER' ? 'selected' : '' }}>
+                                            TRANSFER
+                                        </option>
+                                        <option value="SKN" {{ old('ref') == 'SKN' ? 'selected' : '' }}>
+                                            SKN
+                                        </option>
+                                        <option value="LLG" {{ old('ref') == 'LLG' ? 'selected' : '' }}>
+                                            LLG
+                                        </option>
+                                        <option value="BI-RTGS" {{ old('ref') == 'BI-RTGS' ? 'selected' : '' }}>
+                                            BI-RTGS
+                                        </option>
+                                        <option value="BIAYA" {{ old('ref') == 'BIAYA' ? 'selected' : '' }}>
+                                            BIAYA
+                                        </option>
+                                        <option value="PAJAK" {{ old('ref') == 'PAJAK' ? 'selected' : '' }}>
+                                            PAJAK
+                                        </option>
+                                        <option value="PEMBAYARAN" {{ old('ref') == 'PEMBAYARAN' ? 'selected' : '' }}>
+                                            PEMBAYARAN
+                                        </option>
+                                    </select>
+                                    @error('ref')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
+                                <div class="form-group col-4">
+                                    <label class="form-label" for="kategori_transaksi">Kategori Transaksi</label>
+                                    <select
+                                        class="form-select shadow-none @error('kategori_transaksi') is-invalid @enderror"
+                                        id="kategori_transaksi" name="kategori_transaksi" required>
+                                        <option selected disabled>Pilih Kategori</option>
+                                        <option value="Penerimaan dari BGN"
+                                            {{ old('kategori_transaksi') == 'Penerimaan dari BGN' ? 'selected' : '' }}>
+                                            Penerimaan dari BGN
+                                        </option>
+                                        <option value="Transfer Masuk"
+                                            {{ old('kategori_transaksi') == 'Transfer Masuk' ? 'selected' : '' }}>
+                                            Transfer Masuk
+                                        </option>
+                                        <option value="Transfer Keluar"
+                                            {{ old('kategori_transaksi') == 'Transfer Keluar' ? 'selected' : '' }}>
+                                            Transfer Keluar
+                                        </option>
+                                        <option value="Biaya Admin"
+                                            {{ old('kategori_transaksi') == 'Biaya Admin' ? 'selected' : '' }}>
+                                            Biaya Admin
+                                        </option>
+                                        <option value="Penerimaan Pelanggan"
+                                            {{ old('kategori_transaksi') == 'Penerimaan Pelanggan' ? 'selected' : '' }}>
+                                            Penerimaan Pelanggan
+                                        </option>
+                                        <option value="Pembayaran Vendor"
+                                            {{ old('kategori_transaksi') == 'Pembayaran Vendor' ? 'selected' : '' }}>
+                                            Pembayaran Vendor
+                                        </option>
+                                        <option value="Biaya Operasional"
+                                            {{ old('kategori_transaksi') == 'Biaya Operasional' ? 'selected' : '' }}>
+                                            Biaya Operasional
+                                        </option>
+                                        <option value="Biaya Bank"
+                                            {{ old('kategori_transaksi') == 'Biaya Bank' ? 'selected' : '' }}>
+                                            Biaya Bank
+                                        </option>
+                                        <option value="Transfer Internal"
+                                            {{ old('kategori_transaksi') == 'Transfer Internal' ? 'selected' : '' }}>
+                                            Transfer Internal
+                                        </option>
+                                        <option value="Pembayaran Pajak"
+                                            {{ old('kategori_transaksi') == 'Pembayaran Pajak' ? 'selected' : '' }}>
+                                            Pembayaran Pajak
+                                        </option>
+                                        <option value="Pembayaran Pinjaman"
+                                            {{ old('kategori_transaksi') == 'Pembayaran Pinjaman' ? 'selected' : '' }}>
+                                            Pembayaran Pinjaman
+                                        </option>
+                                        <option value="Pembayaran Hutang"
+                                            {{ old('kategori_transaksi') == 'Pembayaran Hutang' ? 'selected' : '' }}>
+                                            Pembayaran Hutang
+                                        </option>
+                                        <option value="Penerimaan Internal"
+                                            {{ old('kategori_transaksi') == 'Penerimaan Internal' ? 'selected' : '' }}>
+                                            Penerimaan Internal
+                                        </option>
+                                        <option value="Deposit PO"
+                                            {{ old('kategori_transaksi') == 'Deposit PO' ? 'selected' : '' }}>
+                                            Deposit PO
+                                        </option>
+                                    </select>
+                                    @error('kategori_transaksi')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-4">
+                                    <label class="form-label">Jenis Transaksi</label>
+                                    <div class="d-flex gap-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="jenis_transaksi"
+                                                id="jenis_debit" value="debit"
+                                                {{ old('jenis_transaksi') == 'debit' ? 'checked' : '' }} required>
+                                            <label class="form-check-label" for="jenis_debit">Debit</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="jenis_transaksi"
+                                                id="jenis_kredit" value="kredit"
+                                                {{ old('jenis_transaksi') == 'kredit' ? 'checked' : '' }} required>
+                                            <label class="form-check-label" for="jenis_kredit">Kredit</label>
+                                        </div>
+                                    </div>
+                                    <input type="number" step="0.01" class="form-control" id="debit"
+                                        name="debit" value="{{ old('debit', 0) }}" hidden>
+                                    <input type="number" step="0.01" class="form-control" id="kredit"
+                                        name="kredit" value="{{ old('kredit', 0) }}" hidden>
+                                </div>
+
                             </div>
 
-                            <input type="number" step="0.01" class="form-control" id="debit" name="debit"
-                                value="{{ old('debit', 0) }}" hidden>
-                            <input type="number" step="0.01" class="form-control" id="kredit" name="kredit"
-                                value="{{ old('kredit', 0) }}" hidden>
 
-                            <div class="row mt-3">
+                            <div class="row mt-1">
                                 <div class="form-group col-6">
                                     <label class="form-label" for="nominal">Nominal</label>
                                     <input type="number" step="0.01"
@@ -139,98 +238,30 @@
                                 </div>
                             </div>
 
-                            <div class="row mt-3">
-                                <div class="form-group col-6">
-                                    <label class="form-label" for="kategori_transaksi">Kategori Transaksi</label>
-                                    <select
-                                        class="form-select shadow-none @error('kategori_transaksi') is-invalid @enderror"
-                                        id="kategori_transaksi" name="kategori_transaksi" required>
-                                        <option selected disabled>Pilih Kategori</option>
-                                        <option value="Penerimaan dari BGN"
-                                            {{ old('kategori_transaksi') == 'Penerimaan dari BGN' ? 'selected' : '' }}>
-                                            Penerimaan
-                                            dari BGN</option>
-                                        <option value="Transfer Masuk"
-                                            {{ old('kategori_transaksi') == 'Transfer Masuk' ? 'selected' : '' }}>
-                                            Transfer Masuk</option>
-                                        <option value="Transfer Keluar"
-                                            {{ old('kategori_transaksi') == 'Transfer Keluar' ? 'selected' : '' }}>
-                                            Transfer Keluar</option>
-                                        <option value="Biaya Admin"
-                                            {{ old('kategori_transaksi') == 'Biaya Admin' ? 'selected' : '' }}>
-                                            Biaya Admin</option>
-                                        <option value="Penerimaan Pelanggan"
-                                            {{ old('kategori_transaksi') == 'Penerimaan Pelanggan' ? 'selected' : '' }}>
-                                            Penerimaan Pelanggan</option>
-                                        <option value="Pembayaran Vendor"
-                                            {{ old('kategori_transaksi') == 'Pembayaran Vendor' ? 'selected' : '' }}>
-                                            Pembayaran Vendor</option>
-                                        <option value="Biaya Operasional"
-                                            {{ old('kategori_transaksi') == 'Biaya Operasional' ? 'selected' : '' }}>
-                                            Biaya Operasional</option>
-                                        <option value="Biaya Bank"
-                                            {{ old('kategori_transaksi') == 'Biaya Bank' ? 'selected' : '' }}>
-                                            Biaya Bank</option>
-                                        <option value="Transfer Internal"
-                                            {{ old('kategori_transaksi') == 'Transfer Internal' ? 'selected' : '' }}>
-                                            Transfer Internal</option>
-                                        <option value="Pembayaran Pajak"
-                                            {{ old('kategori_transaksi') == 'Pembayaran Pajak' ? 'selected' : '' }}>
-                                            Pembayaran Pajak</option>
-                                        <option value="Pembayaran Pinjaman"
-                                            {{ old('kategori_transaksi') == 'Pembayaran Pinjaman' ? 'selected' : '' }}>
-                                            Pembayaran
-                                            Pinjaman</option>
-                                        <option value="Pembayaran Hutang"
-                                            {{ old('kategori_transaksi') == 'Pembayaran Hutang' ? 'selected' : '' }}>
-                                            Pembayaran Hutang</option>
-                                        <option value="Penerimaan Internal"
-                                            {{ old('kategori_transaksi') == 'Penerimaan Internal' ? 'selected' : '' }}>
-                                            Penerimaan
-                                            Internal</option>
-                                        <option value="Deposit PO"
-                                            {{ old('kategori_transaksi') == 'Deposit PO' ? 'selected' : '' }}>
-                                            Deposit PO</option>
-                                    </select>
-                                    @error('kategori_transaksi')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-6">
-                                    <label class="form-label" for="minggu">Minggu</label>
-                                    <select class="form-select shadow-none @error('minggu') is-invalid @enderror"
-                                        id="minggu" name="minggu">
-                                        <option selected disabled>Pilih Minggu</option>
-                                        <option value="1" {{ old('minggu') == '1' ? 'selected' : '' }}>Minggu 1
-                                        </option>
-                                        <option value="2" {{ old('minggu') == '2' ? 'selected' : '' }}>Minggu 2
-                                        </option>
-                                        <option value="3" {{ old('minggu') == '3' ? 'selected' : '' }}>Minggu 3
-                                        </option>
-                                        <option value="4" {{ old('minggu') == '4' ? 'selected' : '' }}>Minggu 4
-                                        </option>
-                                    </select>
-                                    @error('minggu')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
+                            {{-- <div class="form-group mt-1"> --}}
+                            {{-- <label class="form-label" for="transaction_id">Link ke Transaksi PO (Optional)</label> --}}
+                            {{-- <select class="form-select shadow-none @error('transaction_id') is-invalid @enderror" --}}
+                            {{-- id="transaction_id" name="transaction_id"> --}}
+                            {{-- <option value="">-- Tidak ada link --</option> --}}
+                            {{-- @foreach ($transactions as $transaction) --}}
+                            {{-- <option value="{{ $transaction->id }}" --}}
+                            {{-- {{ old('transaction_id') == $transaction->id ? 'selected' : '' }}> --}}
+                            {{-- {{ $transaction->order->order_number }} - Rp --}}
+                            {{-- {{ number_format($transaction->amount, 0, ',', '.') }} --}}
+                            {{-- ({{ $transaction->payment_date->format('d/m/Y') }}) --}}
+                            {{-- </option> --}}
+                            {{-- @endforeach --}}
+                            {{-- </select> --}}
+                            {{-- @error('transaction_id') --}}
+                            {{-- <div class="invalid-feedback">{{ $message }}</div> --}}
+                            {{-- @enderror --}}
+                            {{-- </div> --}}
 
-                            <div class="form-group mt-3">
-                                <label class="form-label" for="transaction_id">Link ke Transaksi PO (Optional)</label>
-                                <select class="form-select shadow-none @error('transaction_id') is-invalid @enderror"
-                                    id="transaction_id" name="transaction_id">
-                                    <option value="">-- Tidak ada link --</option>
-                                    @foreach ($transactions as $transaction)
-                                        <option value="{{ $transaction->id }}"
-                                            {{ old('transaction_id') == $transaction->id ? 'selected' : '' }}>
-                                            {{ $transaction->order->order_number }} - Rp
-                                            {{ number_format($transaction->amount, 0, ',', '.') }}
-                                            ({{ $transaction->payment_date->format('d/m/Y') }})
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('transaction_id')
+                            <div class="form-group mt-1">
+                                <label class="form-label" for="uraian">Uraian</label>
+                                <textarea class="form-control @error('uraian') is-invalid @enderror" id="uraian" name="uraian" rows="2"
+                                    placeholder="Masukkan uraian transaksi" required>{{ old('uraian') }}</textarea>
+                                @error('uraian')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
