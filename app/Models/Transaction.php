@@ -32,6 +32,11 @@ class Transaction extends Model
         return $this->belongsTo(Order::class);
     }
 
+    public function rekeningKoranVa()
+    {
+        return $this->hasOne(RekeningKoranVa::class);
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

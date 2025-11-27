@@ -12,35 +12,80 @@ class StokController extends Controller
 {
     public function index()
     {
-        // Get Bahan Baku with stock calculations
-        $bahanBakuStok = BahanBaku::whereHas('orderItems')->select('bahan_bakus.*')
+        $bahanBakuStok = BahanBaku::whereHas('orderItems')
+            ->select(
+                'bahan_bakus.id',
+                'bahan_bakus.nama',
+                'bahan_bakus.kategori',
+                'bahan_bakus.merek',
+                'bahan_bakus.satuan',
+                'bahan_bakus.gov_price',
+                'bahan_bakus.kelompok',
+                'bahan_bakus.jenis',
+                'bahan_bakus.ukuran',
+                'bahan_bakus.created_at',
+                'bahan_bakus.updated_at',
+                'bahan_bakus.deleted_at'
+            )
             ->leftJoin('order_items', function ($join) {
                 $join->on('bahan_bakus.id', '=', 'order_items.bahan_baku_id')
                     ->whereNull('order_items.deleted_at');
             })
             ->leftJoin('orders', function ($join) {
                 $join->on('order_items.order_id', '=', 'orders.id')
-                    // ->where('orders.status', 'posted')
                     ->whereNull('orders.deleted_at');
             })
-            ->groupBy('bahan_bakus.id')
+            ->groupBy(
+                'bahan_bakus.id',
+                'bahan_bakus.nama',
+                'bahan_bakus.kategori',
+                'bahan_bakus.merek',
+                'bahan_bakus.satuan',
+                'bahan_bakus.gov_price',
+                'bahan_bakus.kelompok',
+                'bahan_bakus.jenis',
+                'bahan_bakus.ukuran',
+                'bahan_bakus.created_at',
+                'bahan_bakus.updated_at',
+                'bahan_bakus.deleted_at'
+            )
             ->get()
             ->map(function ($item) {
                 return $this->calculateStockData($item, 'bahan_baku');
             });
 
-        // Get Bahan Operasional with stock calculations
-        $bahanOperasionalStok = BahanOperasional::whereHas('orderItems')->select('bahan_operasionals.*')
+        // Replace the BahanOperasional query
+        $bahanOperasionalStok = BahanOperasional::whereHas('orderItems')
+            ->select(
+                'bahan_operasionals.id',
+                'bahan_operasionals.nama',
+                'bahan_operasionals.kategori',
+                'bahan_operasionals.merek',
+                'bahan_operasionals.satuan',
+                'bahan_operasionals.gov_price',
+                'bahan_operasionals.created_at',
+                'bahan_operasionals.updated_at',
+                'bahan_operasionals.deleted_at'
+            )
             ->leftJoin('order_items', function ($join) {
                 $join->on('bahan_operasionals.id', '=', 'order_items.bahan_operasional_id')
                     ->whereNull('order_items.deleted_at');
             })
             ->leftJoin('orders', function ($join) {
                 $join->on('order_items.order_id', '=', 'orders.id')
-                    // ->where('orders.status', 'posted')
                     ->whereNull('orders.deleted_at');
             })
-            ->groupBy('bahan_operasionals.id')
+            ->groupBy(
+                'bahan_operasionals.id',
+                'bahan_operasionals.nama',
+                'bahan_operasionals.kategori',
+                'bahan_operasionals.merek',
+                'bahan_operasionals.satuan',
+                'bahan_operasionals.gov_price',
+                'bahan_operasionals.created_at',
+                'bahan_operasionals.updated_at',
+                'bahan_operasionals.deleted_at'
+            )
             ->get()
             ->map(function ($item) {
                 return $this->calculateStockData($item, 'bahan_operasional');

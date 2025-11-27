@@ -12,6 +12,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaketMenuController;
 use App\Http\Controllers\PaketSurveyController;
+use App\Http\Controllers\RekeningKoranVaController;
 use App\Http\Controllers\RencanaMenuController;
 use App\Http\Controllers\RespondenController;
 use App\Http\Controllers\SekolahController;
@@ -81,6 +82,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/pembayaran/{order}', [OrderController::class, 'updatePembayaran'])->name('pembayaran.update');
 
     Route::resource('stok', StokController::class);
+    Route::resource('rekening-koran-va', RekeningKoranVaController::class);
 
     // Route::resource('surats', SuratController::class);
     // Route::get('/surats/{id}/cetak', [SuratController::class, 'cetak'])->name('surats.cetak');
