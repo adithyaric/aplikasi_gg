@@ -89,91 +89,12 @@
 @push('js')
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // let mapDistribusi;
-        // let schoolMarkers = [];
-
-        // function initMapDistribusi() {
-        //     mapDistribusi = L.map('map-distribusi').setView([-5.135, 119.422], 13);
-
-        //     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        //         attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-        //     }).addTo(mapDistribusi);
-
-        //     // Clear existing markers
-        //     schoolMarkers.forEach(marker => mapDistribusi.removeLayer(marker));
-        //     schoolMarkers = [];
-
-        //     @foreach ($schools as $sekolah)
-        //         @if ($sekolah->lat && $sekolah->long)
-        //             var schoolMarker = L.marker([{{ $sekolah->lat }}, {{ $sekolah->long }}]).addTo(mapDistribusi);
-        //             schoolMarker.bindPopup(`
-    //                 <div class="text-center">
-    //                     <h6 class="fw-bold">{{ $sekolah->nama }}</h6>
-    //                     <hr class="my-1">
-    //                     <div class="table-responsive">
-    //                         <table class="table table-sm table-bordered mb-0">
-    //                             <tbody>
-    //                                 <tr>
-    //                                     <td class="text-start pe-1"><strong>PIC</strong></td>
-    //                                     <td class="text-start">{{ $sekolah->nama_pic }}</td>
-    //                                 </tr>
-    //                                 <tr>
-    //                                     <td class="text-start pe-1"><strong>Nomor</strong></td>
-    //                                     <td class="text-start">{{ $sekolah->nomor }}</td>
-    //                                 </tr>
-    //                                 <tr>
-    //                                     <td class="text-start pe-1"><strong>Jarak</strong></td>
-    //                                     <td class="text-start">{{ $sekolah->jarak }} km</td>
-    //                                 </tr>
-    //                                 @if ($sekolah->porsi_8k)
-    //                                 <tr>
-    //                                     <td class="text-start pe-1"><strong>Porsi 8K</strong></td>
-    //                                     <td class="text-start">{{ $sekolah->porsi_8k }}</td>
-    //                                 </tr>
-    //                                 @endif
-    //                                 @if ($sekolah->porsi_10k)
-    //                                 <tr>
-    //                                     <td class="text-start pe-1"><strong>Porsi 10K</strong></td>
-    //                                     <td class="text-start">{{ $sekolah->porsi_10k }}</td>
-    //                                 </tr>
-    //                                 @endif
-    //                                 @if ($sekolah->alamat)
-    //                                 <tr>
-    //                                     <td class="text-start pe-1"><strong>Alamat</strong></td>
-    //                                     <td class="text-start text-wrap" style="min-width: 225px; word-break: break-word;">{{ $sekolah->alamat }}</td>
-    //                                 </tr>
-    //                                 @endif
-    //                             </tbody>
-    //                         </table>
-    //                     </div>
-    //                 </div>
-    //             `);
-
-        //             // Store marker with school data for searching
-        //             schoolMarker.schoolData = {
-        //                 id: {{ $sekolah->id }},
-        //                 nama: `{{ $sekolah->nama }}`,
-        //                 nama_pic: `{{ $sekolah->nama_pic }}`,
-        //                 alamat: `{{ $sekolah->alamat ?? '' }}`,
-        //                 lat: {{ $sekolah->lat }},
-        //                 long: {{ $sekolah->long }}
-        //             };
-        //             schoolMarkers.push(schoolMarker);
-        //         @endif
-        //     @endforeach
-
-        //     // Fit map bounds to show all markers
-        //     if (schoolMarkers.length > 0) {
-        //         var group = new L.featureGroup(schoolMarkers);
-        //         mapDistribusi.fitBounds(group.getBounds().pad(0.1));
-        //     }
-        // }
-
         let mapSchool, mapSupplier;
         let schoolMarkers = [];
         let supplierMarkers = [];
 
         function initMapSchool() {
+            //titik Se Indonesia
             mapSchool = L.map('map-school').setView([-5.135, 119.422], 13);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -248,6 +169,7 @@
         }
 
         function initMapSupplier() {
+            //titik Se Indonesia
             mapSupplier = L.map('map-supplier').setView([-5.135, 119.422], 13);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

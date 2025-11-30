@@ -73,6 +73,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('orders', OrderController::class);
     Route::get('/orders-add-menu-items', [OrderController::class, 'addMenuItems'])->name('orders.addMenuItems');
+    Route::put('/orders/{order}/topost', [OrderController::class, 'UpdateToPost'])->name('orders.updateToPost');
 
     Route::get('/penerimaan', [OrderController::class, 'penerimaanIndex'])->name('penerimaan.index');
     Route::get('/penerimaan/{order}/edit', [OrderController::class, 'editPenerimaan'])->name('penerimaan.edit');

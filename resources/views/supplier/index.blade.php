@@ -353,6 +353,7 @@
                 return;
             }
 
+            //titik Se Indonesia
             mapSupplier = L.map('map-supplier').setView([-5.135, 119.422], 13);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -616,6 +617,7 @@
             }
 
             if (mapSupplier) {
+                //titik Se Indonesia
                 mapSupplier.setView([-5.135, 119.422], 13);
             }
         }

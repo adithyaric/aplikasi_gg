@@ -100,7 +100,7 @@
                                                             id="diterima_{{ $item->id }}" value="1"
                                                             {{ $item->quantity_diterima ? 'checked' : '' }} required>
                                                         <label class="form-check-label" for="diterima_{{ $item->id }}">
-                                                            Diterima
+                                                            Sesuai
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
@@ -110,7 +110,7 @@
                                                             {{ !$item->quantity_diterima ? 'checked' : '' }} required>
                                                         <label class="form-check-label"
                                                             for="tidak_diterima_{{ $item->id }}">
-                                                            Tidak Diterima
+                                                            Tidak Sesuai
                                                         </label>
                                                     </div>
                                                     <textarea name="items[{{ $loop->index }}][notes]" class="form-control mt-2" placeholder="Berikan catatan disini..."

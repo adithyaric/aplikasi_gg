@@ -12,6 +12,7 @@ class StokController extends Controller
 {
     public function index()
     {
+        //TODO : orderItem quantity_diterima sudah diterima/true
         $bahanBakuStok = BahanBaku::whereHas('orderItems')
             ->select(
                 'bahan_bakus.id',
@@ -111,6 +112,7 @@ class StokController extends Controller
         // Calculate totals
         $totalQty = $orderItems->sum('quantity');
         $lastPurchasePrice = $orderItems->sortByDesc('created_at')->first()?->unit_cost ?? 0;
+        //TODO ganti rumus avgCost
         $avgCost = $orderItems->avg('unit_cost') ?? 0;
 
         // Get kategori value

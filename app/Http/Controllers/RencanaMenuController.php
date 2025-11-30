@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\RencanaMenu;
 use App\Models\PaketMenu;
+use App\Models\Sekolah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -54,8 +55,10 @@ class RencanaMenuController extends Controller
     public function create()
     {
         $paketmenus = PaketMenu::orderBy('nama')->get(['id', 'nama']);
+        $porsiSekolah = (int) Sekolah::sum(\DB::raw('porsi_8k + porsi_10k'));;
+
         $title = 'Formulir Perencanaan Menu';
-        return view('rencana-menu.create', compact('paketmenus', 'title'));
+        return view('rencana-menu.create', compact('paketmenus', 'porsiSekolah', 'title'));
     }
 
     public function store(Request $request)

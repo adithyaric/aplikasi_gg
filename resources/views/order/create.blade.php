@@ -11,8 +11,10 @@
                             <p>Makan Sehat Bergizi</p>
                         </div>
                         <div>
-                            <a href="#" class="btn btn-link btn-soft-light" data-bs-toggle="modal" data-bs-target="#modalTambahBahan">
-                                <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <a href="#" class="btn btn-link btn-soft-light" data-bs-toggle="modal"
+                                data-bs-target="#modalTambahBahan">
+                                <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" clip-rule="evenodd"
                                         d="M12.5495 13.73H14.2624C14.6683 13.73 15.005 13.4 15.005 12.99C15.005 12.57 14.6683 12.24 14.2624 12.24H12.5495V10.51C12.5495 10.1 12.2228 9.77 11.8168 9.77C11.4109 9.77 11.0743 10.1 11.0743 10.51V12.24H9.37129C8.96535 12.24 8.62871 12.57 8.62871 12.99C8.62871 13.4 8.96535 13.73 9.37129 13.73H11.0743V15.46C11.0743 15.87 11.4109 16.2 11.8168 16.2C12.2228 16.2 12.5495 15.87 12.5495 15.46V13.73ZM19.3381 9.02561C19.5708 9.02292 19.8242 9.02 20.0545 9.02C20.302 9.02 20.5 9.22 20.5 9.47V17.51C20.5 19.99 18.5099 22 16.0446 22H8.17327C5.59901 22 3.5 19.89 3.5 17.29V6.51C3.5 4.03 5.5 2 7.96535 2H13.2525C13.5099 2 13.7079 2.21 13.7079 2.46V5.68C13.7079 7.51 15.203 9.01 17.0149 9.02C17.4381 9.02 17.8112 9.02316 18.1377 9.02593C18.3917 9.02809 18.6175 9.03 18.8168 9.03C18.9578 9.03 19.1405 9.02789 19.3381 9.02561ZM19.61 7.5662C18.7961 7.5692 17.8367 7.5662 17.1466 7.5592C16.0516 7.5592 15.1496 6.6482 15.1496 5.5422V2.9062C15.1496 2.4752 15.6674 2.2612 15.9635 2.5722C16.4995 3.1351 17.2361 3.90891 17.9693 4.67913C18.7002 5.44689 19.4277 6.21108 19.9496 6.7592C20.2387 7.0622 20.0268 7.5652 19.61 7.5662Z"
                                         fill="currentColor"></path>
@@ -59,71 +61,73 @@
                             </div>
                         </div>
                         <div class="card-body">
-<div class="table-responsive text-nowrap">
-    <table class="table table-bordered table-sm">
-        <thead>
-            <tr class="fw-bold border-bottom">
-                <th class="border-0">Tanggal</th>
-                <th class="border-0">Menu</th>
-                <th class="border-0 text-center">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($rencanaMenus as $rencana)
-            <tr>
-                <td class="align-middle">
-                    {{ \Carbon\Carbon::parse($rencana->start_date)->format('d/m/Y') }}
-                </td>
-                <td class="table-responsive text-nowrap">
-                    <table class="table table-sm table-bordered mb-0">
-                        @foreach ($rencana->paketMenu as $paket)
-                        <tr class="border-bottom">
-                            <td class="fw-bold ps-0">{{ $paket->nama }}</td>
-                            <td class="text-end pe-0">
-                                <small class="fw-bold">{{ $paket->pivot->porsi }} porsi</small>
-                            </td>
-                        </tr>
-                        @foreach ($paket->menus as $menu)
-                        <tr>
-                            <td class="ps-3">{{ $menu->nama }}</td>
-                            <td></td>
-                        </tr>
-                        @foreach ($menu->bahanBakus as $bahan)
-                        @php
-                        $pivotData = DB::table('bahan_baku_menu')
-                        ->where('paket_menu_id', $paket->id)
-                        ->where('menu_id', $menu->id)
-                        ->where('bahan_baku_id', $bahan->id)
-                        ->first();
-                        @endphp
-                        <tr>
-                            <td class="ps-5 text-muted">{{ $bahan->nama }}</td>
-                            <td class="fw-bold text-end">
-                                <small>{{ $pivotData->berat_bersih ?? 0 }} {{ $bahan->satuan }}</small>
-                            </td>
-                        </tr>
-                        @endforeach
-                        @endforeach
-                        @endforeach
-                    </table>
-                </td>
-                <td class="align-middle text-center">
-                    <button class="btn btn-sm btn-success add-menu-btn" data-rencana-id="{{ $rencana->id }}"
-                        type="button">
-                        Add Menu
-                    </button>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="3" class="text-center text-muted py-3">
-                    Tidak ada rencana menu tersedia
-                </td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
-</div>
+                            <div class="table-responsive text-nowrap">
+                                <table class="table table-bordered table-sm">
+                                    <thead>
+                                        <tr class="fw-bold border-bottom">
+                                            <th class="border-0">Tanggal</th>
+                                            <th class="border-0">Menu</th>
+                                            <th class="border-0 text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($rencanaMenus as $rencana)
+                                            <tr>
+                                                <td class="align-middle">
+                                                    {{ \Carbon\Carbon::parse($rencana->start_date)->format('d/m/Y') }}
+                                                </td>
+                                                <td class="table-responsive text-nowrap">
+                                                    <table class="table table-sm table-bordered mb-0">
+                                                        @foreach ($rencana->paketMenu as $paket)
+                                                            <tr class="border-bottom">
+                                                                <td class="fw-bold ps-0">{{ $paket->nama }}</td>
+                                                                <td class="text-end pe-0">
+                                                                    <small class="fw-bold">{{ $paket->pivot->porsi }}
+                                                                        porsi</small>
+                                                                </td>
+                                                            </tr>
+                                                            @foreach ($paket->menus as $menu)
+                                                                <tr>
+                                                                    <td class="ps-3">{{ $menu->nama }}</td>
+                                                                    <td></td>
+                                                                </tr>
+                                                                @foreach ($menu->bahanBakus as $bahan)
+                                                                    @php
+                                                                        $pivotData = DB::table('bahan_baku_menu')
+                                                                            ->where('paket_menu_id', $paket->id)
+                                                                            ->where('menu_id', $menu->id)
+                                                                            ->where('bahan_baku_id', $bahan->id)
+                                                                            ->first();
+                                                                    @endphp
+                                                                    <tr>
+                                                                        <td class="ps-5 text-muted">{{ $bahan->nama }}</td>
+                                                                        <td class="fw-bold text-end">
+                                                                            <small>{{ $pivotData->berat_bersih ?? 0 }}
+                                                                                {{ $bahan->satuan }}</small>
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            @endforeach
+                                                        @endforeach
+                                                    </table>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <button class="btn btn-sm btn-success add-menu-btn"
+                                                        data-rencana-id="{{ $rencana->id }}" type="button">
+                                                        Add Menu
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="3" class="text-center text-muted py-3">
+                                                    Tidak ada rencana menu tersedia
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -135,104 +139,109 @@
     <div class="conatiner-fluid content-inner mt-n5 py-0">
         <div class="row">
             <div class="col-12">
-    <div class="card">
-        <div class="card-header d-flex justify-content-between">
-            <div class="header-title">
-                <h4 class="card-title">{{ $title }}</h4>
-            </div>
-        </div>
-        <div class="card-body">
-            <form id="orderForm">
-                @csrf
-                <div class="row">
-                    <div class="form-group col-md-6">
-                        <label class="form-label">Pemasok *</label>
-                        <select name="supplier_id" class="select2-input form-select shadow-none" required>
-                            <option value="">-- Pilih Pemasok --</option>
-                            @foreach ($suppliers as $supplier)
-                                <option value="{{ $supplier->id }}">{{ $supplier->nama }}</option>
-                            @endforeach
-                        </select>
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="header-title">
+                            <h4 class="card-title">{{ $title }}</h4>
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col-6">
-                        <label class="form-label">Tanggal PO *</label>
-                        <input type="date" name="tanggal_po" class="form-control" required />
-                    </div>
-                    <div class="form-group col-6">
-                        <label class="form-label">Tanggal Penerimaan *</label>
-                        <input type="date" name="tanggal_penerimaan" class="form-control" required />
-                    </div>
-                </div>
+                    <div class="card-body">
+                        <form id="orderForm">
+                            @csrf
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="form-label">Pemasok *</label>
+                                    <select name="supplier_id" class="select2-input form-select shadow-none" required>
+                                        <option value="">-- Pilih Pemasok --</option>
+                                        @foreach ($suppliers as $supplier)
+                                            <option value="{{ $supplier->id }}">{{ $supplier->nama }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-6">
+                                    <label class="form-label">Tanggal PO *</label>
+                                    <input type="date" name="tanggal_po" class="form-control" required />
+                                </div>
+                                <div class="form-group col-6">
+                                    <label class="form-label">Tanggal Penerimaan *</label>
+                                    <input type="date" name="tanggal_penerimaan" class="form-control" required />
+                                </div>
+                            </div>
 
-                <hr class="hr-horizontal" />
-                <h5>Bahan Baku & Operasional</h5>
-                <div id="itemContainer">
-                    <div class="row itemRow align-items-end mb-3">
-                        <div class="form-group col-4">
-                            <label class="form-label">Jenis Bahan *</label>
-                            <select name="items[0][bahan_id]" class="form-select shadow-none bahan-select" data-type="" required>
-                                <option value="">Pilih Bahan</option>
-                                <optgroup label="Bahan Baku">
-                                    @foreach ($bahans->where('type', 'bahan_baku') as $bahan)
-                                    <option value="{{ $bahan['id'] }}" data-satuan="{{ $bahan['satuan'] }}" data-type="bahan_baku">
-                                        {{ $bahan['nama'] }}
-                                    </option>
-                                    @endforeach
-                                </optgroup>
-                                <optgroup label="Bahan Operasional">
-                                    @foreach ($bahans->where('type', 'bahan_operasional') as $bahan)
-                                    <option value="{{ $bahan['id'] }}" data-satuan="{{ $bahan['satuan'] }}"
-                                        data-type="bahan_operasional">
-                                        {{ $bahan['nama'] }}
-                                    </option>
-                                    @endforeach
-                                </optgroup>
-                            </select>
-                        </div>
-                        <div class="form-group col-2">
-                            <label class="form-label">Quantity *</label>
-                            <input type="number" name="items[0][quantity]" class="form-control quantity-input" step="0.01" min="0.01"
-                                required />
-                        </div>
-                        <div class="form-group col-2">
-                            <label class="form-label">Satuan *</label>
-                            <input type="text" name="items[0][satuan]" class="form-control satuan-input" readonly required />
-                        </div>
-                        <div class="form-group col-3">
-                            <label class="form-label">Harga *</label>
-                            <input type="number" name="items[0][unit_cost]" class="form-control price-input" step="0.01" min="0"
-                                required />
-                        </div>
-                        <div class="form-group col-1">
-                            <button type="button" class="btn btn-danger btn-sm removeRow">X</button>
-                        </div>
-                        <input type="hidden" name="items[0][type]" class="type-input" value="" />
+                            <hr class="hr-horizontal" />
+                            <h5>Bahan Baku & Operasional</h5>
+                            <div id="itemContainer">
+                                <div class="row itemRow align-items-end mb-3">
+                                    <div class="form-group col-4">
+                                        <label class="form-label">Jenis Bahan *</label>
+                                        <select name="items[0][bahan_id]" class="form-select shadow-none bahan-select"
+                                            data-type="" required>
+                                            <option value="">Pilih Bahan</option>
+                                            <optgroup label="Bahan Baku">
+                                                @foreach ($bahans->where('type', 'bahan_baku') as $bahan)
+                                                    <option value="{{ $bahan['id'] }}"
+                                                        data-satuan="{{ $bahan['satuan'] }}" data-type="bahan_baku">
+                                                        {{ $bahan['nama'] }}
+                                                    </option>
+                                                @endforeach
+                                            </optgroup>
+                                            <optgroup label="Bahan Operasional">
+                                                @foreach ($bahans->where('type', 'bahan_operasional') as $bahan)
+                                                    <option value="{{ $bahan['id'] }}"
+                                                        data-satuan="{{ $bahan['satuan'] }}"
+                                                        data-type="bahan_operasional">
+                                                        {{ $bahan['nama'] }}
+                                                    </option>
+                                                @endforeach
+                                            </optgroup>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-2">
+                                        <label class="form-label">Quantity *</label>
+                                        <input type="number" name="items[0][quantity]"
+                                            class="form-control quantity-input" step="0.01" min="0.01" required />
+                                    </div>
+                                    <div class="form-group col-2">
+                                        <label class="form-label">Satuan *</label>
+                                        <input type="text" name="items[0][satuan]" class="form-control satuan-input"
+                                            readonly required />
+                                    </div>
+                                    <div class="form-group col-3">
+                                        <label class="form-label">Harga *</label>
+                                        <input type="number" name="items[0][unit_cost]" class="form-control price-input"
+                                            step="0.01" min="0" required />
+                                    </div>
+                                    {{-- //TODO ada subtotal, hanya preview perhitungan --}}
+                                    <div class="form-group col-1">
+                                        <button type="button" class="btn btn-danger btn-sm removeRow">X</button>
+                                    </div>
+                                    <input type="hidden" name="items[0][type]" class="type-input" value="" />
+                                </div>
+                            </div>
+
+                            <hr class="hr-horizontal mb-4" />
+
+                            <div class="row mb-3">
+                                <div class="col-md-9 text-end">
+                                    <h6 class="fw-bold">Total Harga:</h6>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="text" id="totalHarga" class="form-control text-end fw-bold"
+                                        value="Rp 0" disabled />
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button type="button" class="btn btn-primary" id="tambah-item">
+                                    <i class="bi bi-plus-circle"></i> Tambah Item
+                                </button>
+                                <button type="submit" class="btn btn-success">Simpan</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-
-                <hr class="hr-horizontal mb-4" />
-
-                <div class="row mb-3">
-                    <div class="col-md-9 text-end">
-                        <h6 class="fw-bold">Total Harga:</h6>
-                    </div>
-                    <div class="col-md-3">
-                        <input type="text" id="totalHarga" class="form-control text-end fw-bold" value="Rp 0"
-                            disabled />
-                    </div>
-                </div>
-
-                <div class="d-flex justify-content-between align-items-center">
-                    <button type="button" class="btn btn-primary" id="tambah-item">
-                        <i class="bi bi-plus-circle"></i> Tambah Item
-                    </button>
-                    <button type="submit" class="btn btn-success">Simpan</button>
-                </div>
-            </form>
-        </div>
-    </div>
             </div>
         </div>
     </div>
@@ -266,7 +275,8 @@
             let optionsBahanOperasional = '';
 
             bahans.forEach(bahan => {
-                const option = `<option value="${bahan.id}" data-satuan="${bahan.satuan}" data-type="${bahan.type}">${bahan.nama}</option>`;
+                const option =
+                    `<option value="${bahan.id}" data-satuan="${bahan.satuan}" data-type="${bahan.type}">${bahan.nama}</option>`;
                 if (bahan.type === 'bahan_baku') {
                     optionsBahanBaku += option;
                 } else {
@@ -368,7 +378,7 @@
             const rencanaId = $(this).data('rencana-id');
 
             $.ajax({
-                url: '{{ route("orders.addMenuItems") }}',
+                url: '{{ route('orders.addMenuItems') }}',
                 method: 'GET',
                 data: {
                     rencana_menu_id: rencanaId
@@ -388,13 +398,15 @@
                             $('#itemContainer').append(newRow);
 
                             const $row = $('#itemContainer .itemRow').last();
-                            $row.find('.bahan-select').val(item.bahan_baku_id).trigger('change');
+                            $row.find('.bahan-select').val(item.bahan_baku_id).trigger(
+                            'change');
                             $row.find('.quantity-input').val(item.quantity.toFixed(2));
                             $row.find('.satuan-input').val(item.satuan);
 
                             itemIndex++;
                         });
 
+                        //Cek jika satuan gram maka dibagi 1000 satuan jd kg
                         calculateTotal();
 
                         // Close modal
@@ -404,7 +416,8 @@
                     }
                 },
                 error: function(xhr) {
-                    alert('Gagal menambahkan menu: ' + (xhr.responseJSON?.message || 'Terjadi kesalahan'));
+                    alert('Gagal menambahkan menu: ' + (xhr.responseJSON?.message ||
+                        'Terjadi kesalahan'));
                 }
             });
         });

@@ -148,6 +148,7 @@ class RekeningKoranVaController extends Controller
                 ->orderBy('id', 'asc')
                 ->get();
 
+            //TODO jadikan validasi di function lain
             $currentSaldo = $newSaldo;
             foreach ($nextEntries as $entry) {
                 $currentSaldo = $currentSaldo - $entry->debit + $entry->kredit;

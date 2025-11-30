@@ -48,7 +48,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Nama</th>
-                                        <th>Kategori</th>
+                                        <th>Kelompok</th>
                                         <th>Satuan</th>
                                         <th>Merek</th>
                                         <th>Gov. Price</th>
@@ -93,6 +93,7 @@
                                                         </svg>
                                                     </span>
                                                 </button>
+                                                //TODO tambah detail pop up history gov price
                                             </td>
                                         </tr>
                                     @endforeach
@@ -136,9 +137,8 @@
                                     <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group mb-3">
-                                    <label class="form-label">Kategori</label>
-                                    <select class="form-control select2-multi" id="kategori" name="kategori[]" multiple
-                                        style="width: 100%;">
+                                    <label class="form-label">Kelompok</label>
+                                    <select class="form-control select2-multi" id="kategori" name="kategori[]" multiple style="width: 100%;">
                                         @foreach ($categories as $category)
                                             <option value="{{ $category }}">{{ $category }}</option>
                                         @endforeach

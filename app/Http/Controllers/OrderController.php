@@ -140,6 +140,8 @@ class OrderController extends Controller
             $number = $latestOrder ? (int)substr($latestOrder->order_number, 2) + 1 : 1;
             $orderNumber = 'PO' . str_pad($number, 3, '0', STR_PAD_LEFT);
 
+            //TODO : PO/Tahun/BulanRomawi/nomor
+
             $grandTotal = 0;
             foreach ($request->items as $item) {
                 $grandTotal += $item['quantity'] * $item['unit_cost'];
@@ -171,7 +173,8 @@ class OrderController extends Controller
                 'payment_date' => null,
                 'payment_method' => 'bank_transfer',
                 'payment_reference' => $supplier->bank_no_rek . '-' . $supplier->bank_nama ?? 'TRX-' . now(),
-                'amount' => $grandTotal,
+                // 'amount' => $grandTotal,
+                'amount' => 0,
                 'status' => 'unpaid',
                 'notes' => null,
             ]);
@@ -305,16 +308,26 @@ class OrderController extends Controller
         }
     }
 
+    public function UpdateToPost(Order $order)
+    {
+        $order->update(['status' => 'posted']);
+
+        return response()->json([
+            'message' => 'Order berhasil diposting'
+        ]);
+    }
+
+
     public function destroy(Order $order)
     {
         DB::beginTransaction();
         try {
-            // if ($order->transaction->exists() > 0) {
-            //     return response()->json([
-            //         'success' => false,
-            //         'message' => 'Order tidak dapat dihapus karena sudah memiliki transaksi pembayaran'
-            //     ], 422);
-            // }
+            if ($order->transaction->rekeningRekapBKU->exists()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Order tidak dapat dihapus karena sudah memiliki transaksi pembayaran'
+                ], 422);
+            }
 
             $order->delete();
             DB::commit();
@@ -409,11 +422,13 @@ class OrderController extends Controller
 
         $order->load(['supplier', 'items.bahanBaku', 'items.bahanOperasional', 'transaction']);
         $title = 'Edit Pembayaran';
+        //TODO jika partial jumlah pembayaran kembali ke 0
         return view('order.pembayaran.edit', compact('order', 'title'));
     }
 
     public function updatePembayaran(Request $request, Order $order)
     {
+        //TODO jika partial inputnya ditambah dari yg sebelumnya
         $request->validate([
             'payment_date' => 'required|date',
             'payment_method' => 'required|in:cash,bank_transfer,giro_cek,lainnya',
@@ -450,7 +465,7 @@ class OrderController extends Controller
                 $transaction = $order->transaction()->create($transactionData);
             }
 
-            $this->createOrUpdateRekeningKoranVa($transaction, $order);
+            // $this->createOrUpdateRekeningKoranVa($transaction, $order);
             $this->createOrUpdateRekeningRekapBKU($transaction, $order);
 
             DB::commit();

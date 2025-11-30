@@ -214,50 +214,50 @@
                                 </div>
                             </div>
 
-                            <div class="row mt-3">
-                                <div class="form-group col-6">
-                                    <label class="form-label" for="bulan">Bulan</label>
-                                    <select class="form-select @error('bulan') is-invalid @enderror" id="bulan"
-                                        name="bulan">
-                                        <option value="">Pilih Bulan</option>
-                                        @for ($i = 1; $i <= 12; $i++)
-                                            <option value="{{ $i }}"
-                                                {{ old('bulan', $rekeningBKU->bulan) == $i ? 'selected' : '' }}>
-                                                {{ \Carbon\Carbon::create()->month($i)->format('F') }}
-                                            </option>
-                                        @endfor
-                                    </select>
-                                    @error('bulan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-6">
-                                    <label class="form-label" for="minggu">Minggu</label>
-                                    <select class="form-select @error('minggu') is-invalid @enderror" id="minggu"
-                                        name="minggu">
-                                        <option value="">Pilih Minggu</option>
-                                        <option value="1"
-                                            {{ old('minggu', $rekeningBKU->minggu) == 1 ? 'selected' : '' }}>
-                                            Minggu 1
-                                        </option>
-                                        <option value="2"
-                                            {{ old('minggu', $rekeningBKU->minggu) == 2 ? 'selected' : '' }}>
-                                            Minggu 2
-                                        </option>
-                                        <option value="3"
-                                            {{ old('minggu', $rekeningBKU->minggu) == 3 ? 'selected' : '' }}>
-                                            Minggu 3
-                                        </option>
-                                        <option value="4"
-                                            {{ old('minggu', $rekeningBKU->minggu) == 4 ? 'selected' : '' }}>
-                                            Minggu 4
-                                        </option>
-                                    </select>
-                                    @error('minggu')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
+                            {{-- <div class="row mt-3"> --}}
+                                {{-- <div class="form-group col-6"> --}}
+                                    {{-- <label class="form-label" for="bulan">Bulan</label> --}}
+                                    {{-- <select class="form-select @error('bulan') is-invalid @enderror" id="bulan" --}}
+                                        {{-- name="bulan"> --}}
+                                        {{-- <option value="">Pilih Bulan</option> --}}
+                                        {{-- @for ($i = 1; $i <= 12; $i++) --}}
+                                            {{-- <option value="{{ $i }}" --}}
+                                                {{-- {{ old('bulan', $rekeningBKU->bulan) == $i ? 'selected' : '' }}> --}}
+                                                {{-- {{ \Carbon\Carbon::create()->month($i)->format('F') }} --}}
+                                            {{-- </option> --}}
+                                        {{-- @endfor --}}
+                                    {{-- </select> --}}
+                                    {{-- @error('bulan') --}}
+                                        {{-- <div class="invalid-feedback">{{ $message }}</div> --}}
+                                    {{-- @enderror --}}
+                                {{-- </div> --}}
+                                {{-- <div class="form-group col-6"> --}}
+                                    {{-- <label class="form-label" for="minggu">Minggu</label> --}}
+                                    {{-- <select class="form-select @error('minggu') is-invalid @enderror" id="minggu" --}}
+                                        {{-- name="minggu"> --}}
+                                        {{-- <option value="">Pilih Minggu</option> --}}
+                                        {{-- <option value="1" --}}
+                                            {{-- {{ old('minggu', $rekeningBKU->minggu) == 1 ? 'selected' : '' }}> --}}
+                                            {{-- Minggu 1 --}}
+                                        {{-- </option> --}}
+                                        {{-- <option value="2" --}}
+                                            {{-- {{ old('minggu', $rekeningBKU->minggu) == 2 ? 'selected' : '' }}> --}}
+                                            {{-- Minggu 2 --}}
+                                        {{-- </option> --}}
+                                        {{-- <option value="3" --}}
+                                            {{-- {{ old('minggu', $rekeningBKU->minggu) == 3 ? 'selected' : '' }}> --}}
+                                            {{-- Minggu 3 --}}
+                                        {{-- </option> --}}
+                                        {{-- <option value="4" --}}
+                                            {{-- {{ old('minggu', $rekeningBKU->minggu) == 4 ? 'selected' : '' }}> --}}
+                                            {{-- Minggu 4 --}}
+                                        {{-- </option> --}}
+                                    {{-- </select> --}}
+                                    {{-- @error('minggu') --}}
+                                        {{-- <div class="invalid-feedback">{{ $message }}</div> --}}
+                                    {{-- @enderror --}}
+                                {{-- </div> --}}
+                            {{-- </div> --}}
 
                             <div class="d-flex justify-content-end mt-4">
                                 <a href="{{ route('rekening-rekap-bku.index') }}" class="btn btn-secondary me-2">

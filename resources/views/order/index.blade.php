@@ -26,17 +26,20 @@
         </div>
 
         <div class="iq-header-img">
-            <img src="{{ asset('assets/images/dashboard/top-header.png') }}" alt="header" class="theme-color-default-img img-fluid w-100 h-100 animated-scaleX">
+            <img src="{{ asset('assets/images/dashboard/top-header.png') }}" alt="header"
+                class="theme-color-default-img img-fluid w-100 h-100 animated-scaleX">
         </div>
     </div>
 
     <!-- Modal Detail -->
     <div class="modal fade" id="modalOrderDetail" tabindex="-1" aria-labelledby="modalOrderDetailLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content" style="border-radius:15px; border:1px solid #ddd; box-shadow:0 8px 20px rgba(0,0,0,0.2);">
+            <div class="modal-content"
+                style="border-radius:15px; border:1px solid #ddd; box-shadow:0 8px 20px rgba(0,0,0,0.2);">
                 <div class="modal-header bg-primary">
                     <h5 class="modal-title text-white" id="modalOrderDetailLabel">Detail Purchase Order</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="card">
@@ -87,22 +90,22 @@
                                     </table>
                                 </div>
                             </div>
-<div class="mb-1" id="payment_history_section" style="display:none;">
-    <label class="form-label fw-bold">Riwayat Bukti Transfer</label>
-    <div class="table-responsive">
-        <table class="table table-bordered table-sm">
-            <thead>
-                <tr>
-                    <th>Tanggal</th>
-                    <th>Bukti Lama</th>
-                    <th>Bukti Baru</th>
-                    <th>Perubahan Lain</th>
-                </tr>
-            </thead>
-            <tbody id="payment_history"></tbody>
-        </table>
-    </div>
-</div>
+                            <div class="mb-1" id="payment_history_section" style="display:none;">
+                                <label class="form-label fw-bold">Riwayat Bukti Transfer</label>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Tanggal</th>
+                                                <th>Bukti Lama</th>
+                                                <th>Bukti Baru</th>
+                                                <th>Perubahan Lain</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="payment_history"></tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -140,14 +143,20 @@
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $order->order_number }}</td>
                                             <td>{{ $order->tanggal_po->format('d/m/Y') }}</td>
-                                            <td>{{ $order->tanggal_penerimaan ? $order->tanggal_penerimaan->format('d/m/Y') : '-' }}</td>
+                                            <td>{{ $order->tanggal_penerimaan ? $order->tanggal_penerimaan->format('d/m/Y') : '-' }}
+                                            </td>
                                             <td>{{ ucfirst($order->status) }}</td>
                                             <td>
                                                 @if ($order->status == 'draft')
-                                                <a href="{{ route('orders.edit', $order->id) }}"
-                                                    class="btn btn-sm btn-success">
-                                                    Edit
-                                                </a>
+                                                    <a href="{{ route('orders.edit', $order->id) }}"
+                                                        class="btn btn-sm btn-success">
+                                                        Edit
+                                                    </a>
+
+                                                    <button type="button" class="btn btn-sm btn-warning"
+                                                        onclick="postOrder({{ $order->id }})">
+                                                        POST
+                                                    </button>
                                                 @endif
                                                 {{-- @else --}}
                                                 <button type="button" class="btn btn-sm btn-info"
@@ -181,9 +190,12 @@
                 success: function(response) {
                     $('#detail_order_number').text(response.order_number);
                     $('#detail_supplier').text(response.supplier?.nama || '-');
-                    $('#detail_tanggal_po').text(response.tanggal_po ? new Date(response.tanggal_po).toLocaleDateString('id-ID') : '-');
-                    $('#detail_tanggal_penerimaan').text(response.tanggal_penerimaan ? new Date(response.tanggal_penerimaan).toLocaleDateString('id-ID') : '-');
-                    $('#detail_grand_total').text('Rp ' + new Intl.NumberFormat('id-ID').format(response.grand_total || 0));
+                    $('#detail_tanggal_po').text(response.tanggal_po ? new Date(response.tanggal_po)
+                        .toLocaleDateString('id-ID') : '-');
+                    $('#detail_tanggal_penerimaan').text(response.tanggal_penerimaan ? new Date(response
+                        .tanggal_penerimaan).toLocaleDateString('id-ID') : '-');
+                    $('#detail_grand_total').text('Rp ' + new Intl.NumberFormat('id-ID').format(response
+                        .grand_total || 0));
                     $('#detail_status').text(response.status || '-');
 
                     // Clear items table
@@ -194,17 +206,22 @@
                         response.items.forEach(function(item) {
                             $('#detail_items').append(
                                 '<tr>' +
-                                '<td>' + (item.bahan_baku?.nama || item.bahan_operasional?.nama) + '</td>' +
+                                '<td>' + (item.bahan_baku?.nama || item.bahan_operasional?.nama) +
+                                '</td>' +
                                 '<td>' + (item.quantity || 0) + '</td>' +
-                                '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.unit_cost || 0) + '</td>' +
-                                '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.subtotal || 0) + '</td>' +
+                                '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.unit_cost ||
+                                    0) + '</td>' +
+                                '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.subtotal ||
+                                    0) + '</td>' +
                                 '</tr>'
                             );
                         });
                     } else {
-                        $('#detail_items').append('<tr><td colspan="4" class="text-center">Tidak ada items</td></tr>');
+                        $('#detail_items').append(
+                            '<tr><td colspan="4" class="text-center">Tidak ada items</td></tr>');
                     }
 
+                    // TODO pindah ke halaman indexPembayaran
                     // Populate payment history
                     $('#payment_history').empty();
                     if (response.transaction?.activities && response.transaction.activities.length > 0) {
@@ -214,24 +231,33 @@
                             const props = activity.properties;
                             const oldBukti = props.old?.bukti_transfer || props.old_bukti_transfer;
                             const newBukti = props.attributes?.bukti_transfer;
-                            const createdAt = activity.created_at ? new Date(activity.created_at).toLocaleString('id-ID') : '-';
+                            const createdAt = activity.created_at ? new Date(activity.created_at)
+                                .toLocaleString('id-ID') : '-';
 
                             let otherChanges = [];
                             if (props.old && props.attributes) {
                                 if (props.old.status !== props.attributes.status) {
-                                    otherChanges.push(`status: ${props.old.status} → ${props.attributes.status}`);
+                                    otherChanges.push(
+                                        `status: ${props.old.status} → ${props.attributes.status}`);
                                     // otherChanges.push(`notes: ${props.old.notes} → ${props.attributes.notes}`);
                                 }
                                 if (props.old.notes !== props.attributes.notes) {
                                     otherChanges.push(`notes: ${props.attributes.notes}`);
                                 }
+                                if (props.old.amount !== props.attributes.amount) {
+                                    otherChanges.push(`amount: ${props.attributes.amount}`);
+                                    //TODO sama kekurangannya
+                                }
                             }
 
                             let row = '<tr>' +
                                 '<td>' + createdAt + '</td>' +
-                                '<td>' + (oldBukti ? '<a href="/storage/public/' + oldBukti.replace('public/', '') + '" target="_blank">Lihat</a>' : '-') + '</td>' +
-                                '<td>' + (newBukti ? '<a href="/storage/public/' + newBukti.replace('public/', '') + '" target="_blank">Lihat</a>' : '-') + '</td>' +
-                                '<td>' + (otherChanges.length > 0 ? otherChanges.join('<br>') : '-') + '</td>' +
+                                '<td>' + (oldBukti ? '<a href="/storage/' + oldBukti.replace('public/',
+                                    '') + '" target="_blank">Lihat</a>' : '-') + '</td>' +
+                                '<td>' + (newBukti ? '<a href="/storage/' + newBukti.replace('public/',
+                                    '') + '" target="_blank">Lihat</a>' : '-') + '</td>' +
+                                '<td>' + (otherChanges.length > 0 ? otherChanges.join('<br>') : '-') +
+                                '</td>' +
                                 '</tr>';
 
                             $('#payment_history').append(row);
@@ -247,6 +273,45 @@
                         icon: 'error',
                         title: 'Error!',
                         text: 'Terjadi kesalahan saat mengambil data detail'
+                    });
+                }
+            });
+        }
+
+        function postOrder(id) {
+            Swal.fire({
+                title: 'Post order?',
+                text: 'Status akan diubah menjadi POSTED',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, lanjutkan',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/orders/" + id + "/topost",
+                        method: "PUT",
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: response.message,
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => location.reload());
+                        },
+                        error: function(xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: xhr.responseJSON?.message || 'Terjadi kesalahan'
+                            });
+                        }
                     });
                 }
             });

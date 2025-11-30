@@ -88,32 +88,32 @@
                                 </div>
                             </div>
 
-                            <div class="row mt-3">
-                                <div class="form-group col-12">
-                                    <label class="form-label" for="transaction_id">Transaksi PO (Opsional)</label>
-                                    <select class="form-select @error('transaction_id') is-invalid @enderror"
-                                        id="transaction_id" name="transaction_id">
-                                        <option value="">-- Pilih Transaksi PO --</option>
-                                        @foreach ($transactions as $trans)
-                                            <option value="{{ $trans->id }}" data-amount="{{ $trans->amount }}"
-                                                data-supplier="{{ $trans->order->supplier->nama }}"
-                                                data-order="{{ $trans->order->order_number }}"
-                                                {{ old('transaction_id') == $trans->id ? 'selected' : '' }}>
-                                                PO: {{ $trans->order->order_number }} -
-                                                {{ $trans->order->supplier->nama }} - Rp
-                                                {{ number_format($trans->amount, 0, ',', '.') }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('transaction_id')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
+                            {{-- <div class="row mt-3"> --}}
+                                {{-- <div class="form-group col-12"> --}}
+                                    {{-- <label class="form-label" for="transaction_id">Transaksi PO (Opsional)</label> --}}
+                                    {{-- <select class="form-select @error('transaction_id') is-invalid @enderror" --}}
+                                        {{-- id="transaction_id" name="transaction_id"> --}}
+                                        {{-- <option value="">-- Pilih Transaksi PO --</option> --}}
+                                        {{-- @foreach ($transactions as $trans) --}}
+                                            {{-- <option value="{{ $trans->id }}" data-amount="{{ $trans->amount }}" --}}
+                                                {{-- data-supplier="{{ $trans->order->supplier->nama }}" --}}
+                                                {{-- data-order="{{ $trans->order->order_number }}" --}}
+                                                {{-- {{ old('transaction_id') == $trans->id ? 'selected' : '' }}> --}}
+                                                {{-- PO: {{ $trans->order->order_number }} - --}}
+                                                {{-- {{ $trans->order->supplier->nama }} - Rp --}}
+                                                {{-- {{ number_format($trans->amount, 0, ',', '.') }} --}}
+                                            {{-- </option> --}}
+                                        {{-- @endforeach --}}
+                                    {{-- </select> --}}
+                                    {{-- @error('transaction_id') --}}
+                                        {{-- <div class="invalid-feedback">{{ $message }}</div> --}}
+                                    {{-- @enderror --}}
+                                {{-- </div> --}}
+                            {{-- </div> --}}
 
                             <div class="row mt-3">
                                 <div class="form-group col-4">
-                                    <label class="form-label" for="jenis_bahan">Jenis Bahan</label>
+                                    <label class="form-label" for="jenis_bahan">Jenis Bahan</label> //TODO model Category
                                     <input type="text" class="form-control @error('jenis_bahan') is-invalid @enderror"
                                         id="jenis_bahan" name="jenis_bahan" value="{{ old('jenis_bahan') }}"
                                         placeholder="Contoh: Penerimaan BGN">
@@ -122,7 +122,7 @@
                                     @enderror
                                 </div>
                                 <div class="form-group col-4">
-                                    <label class="form-label" for="nama_bahan">Nama Bahan</label>
+                                    <label class="form-label" for="nama_bahan">Nama Bahan</label> //TODO Dropdown model BahanBaku/BahanOperasional
                                     <input type="text" class="form-control @error('nama_bahan') is-invalid @enderror"
                                         id="nama_bahan" name="nama_bahan" value="{{ old('nama_bahan') }}"
                                         placeholder="Masukkan nama bahan">
@@ -143,7 +143,7 @@
 
                             <div class="row mt-3">
                                 <div class="form-group col-4">
-                                    <label class="form-label" for="satuan">Satuan</label>
+                                    <label class="form-label" for="satuan">Satuan</label> //TODO dari bahan
                                     <input type="text" class="form-control @error('satuan') is-invalid @enderror"
                                         id="satuan" name="satuan" value="{{ old('satuan') }}"
                                         placeholder="Contoh: Kg, Liter, Paket">
@@ -152,7 +152,7 @@
                                     @enderror
                                 </div>
                                 <div class="form-group col-4">
-                                    <label class="form-label" for="supplier">Supplier</label>
+                                    <label class="form-label" for="supplier">Supplier</label> //TODO model Supplier
                                     <input type="text" class="form-control @error('supplier') is-invalid @enderror"
                                         id="supplier" name="supplier" value="{{ old('supplier') }}"
                                         placeholder="Masukkan nama supplier">
@@ -202,46 +202,46 @@
                                 </div>
                             </div>
 
-                            <div class="row mt-3">
-                                <div class="form-group col-6">
-                                    <label class="form-label" for="bulan">Bulan</label>
-                                    <select class="form-select @error('bulan') is-invalid @enderror" id="bulan"
-                                        name="bulan">
-                                        <option value="">Pilih Bulan</option>
-                                        @for ($i = 1; $i <= 12; $i++)
-                                            <option value="{{ $i }}"
-                                                {{ old('bulan', date('n')) == $i ? 'selected' : '' }}>
-                                                {{ \Carbon\Carbon::create()->month($i)->format('F') }}
-                                            </option>
-                                        @endfor
-                                    </select>
-                                    @error('bulan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-6">
-                                    <label class="form-label" for="minggu">Minggu</label>
-                                    <select class="form-select @error('minggu') is-invalid @enderror" id="minggu"
-                                        name="minggu">
-                                        <option value="">Pilih Minggu</option>
-                                        <option value="1" {{ old('minggu') == 1 ? 'selected' : '' }}>
-                                            Minggu 1
-                                        </option>
-                                        <option value="2" {{ old('minggu') == 2 ? 'selected' : '' }}>
-                                            Minggu 2
-                                        </option>
-                                        <option value="3" {{ old('minggu') == 3 ? 'selected' : '' }}>
-                                            Minggu 3
-                                        </option>
-                                        <option value="4" {{ old('minggu') == 4 ? 'selected' : '' }}>
-                                            Minggu 4
-                                        </option>
-                                    </select>
-                                    @error('minggu')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
+                            {{-- <div class="row mt-3"> --}}
+                                {{-- <div class="form-group col-6"> --}}
+                                    {{-- <label class="form-label" for="bulan">Bulan</label> --}}
+                                    {{-- <select class="form-select @error('bulan') is-invalid @enderror" id="bulan" --}}
+                                        {{-- name="bulan"> --}}
+                                        {{-- <option value="">Pilih Bulan</option> --}}
+                                        {{-- @for ($i = 1; $i <= 12; $i++) --}}
+                                            {{-- <option value="{{ $i }}" --}}
+                                                {{-- {{ old('bulan', date('n')) == $i ? 'selected' : '' }}> --}}
+                                                {{-- {{ \Carbon\Carbon::create()->month($i)->format('F') }} --}}
+                                            {{-- </option> --}}
+                                        {{-- @endfor --}}
+                                    {{-- </select> --}}
+                                    {{-- @error('bulan') --}}
+                                        {{-- <div class="invalid-feedback">{{ $message }}</div> --}}
+                                    {{-- @enderror --}}
+                                {{-- </div> --}}
+                                {{-- <div class="form-group col-6"> --}}
+                                    {{-- <label class="form-label" for="minggu">Minggu</label> --}}
+                                    {{-- <select class="form-select @error('minggu') is-invalid @enderror" id="minggu" --}}
+                                        {{-- name="minggu"> --}}
+                                        {{-- <option value="">Pilih Minggu</option> --}}
+                                        {{-- <option value="1" {{ old('minggu') == 1 ? 'selected' : '' }}> --}}
+                                            {{-- Minggu 1 --}}
+                                        {{-- </option> --}}
+                                        {{-- <option value="2" {{ old('minggu') == 2 ? 'selected' : '' }}> --}}
+                                            {{-- Minggu 2 --}}
+                                        {{-- </option> --}}
+                                        {{-- <option value="3" {{ old('minggu') == 3 ? 'selected' : '' }}> --}}
+                                            {{-- Minggu 3 --}}
+                                        {{-- </option> --}}
+                                        {{-- <option value="4" {{ old('minggu') == 4 ? 'selected' : '' }}> --}}
+                                            {{-- Minggu 4 --}}
+                                        {{-- </option> --}}
+                                    {{-- </select> --}}
+                                    {{-- @error('minggu') --}}
+                                        {{-- <div class="invalid-feedback">{{ $message }}</div> --}}
+                                    {{-- @enderror --}}
+                                {{-- </div> --}}
+                            {{-- </div> --}}
 
                             <div class="d-flex justify-content-end mt-4">
                                 <a href="{{ route('rekening-rekap-bku.index') }}" class="btn btn-secondary me-2">

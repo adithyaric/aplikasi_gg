@@ -69,17 +69,14 @@
                                         </h5>
                                     </td>
                                     <td>
-                                        @if ($order->transaction?->status == 'paid')
-                                        <button type="button" class="btn btn-sm btn-info"
-                                            onclick="showPembayaranDetail({{ $order->id }})">
-                                            Detail
-                                        </button>
-                                        @else
                                         <a href="{{ route('pembayaran.edit', $order->id) }}"
                                             class="btn btn-sm btn-success">
                                             Edit
                                         </a>
-                                        @endif
+                                        <button type="button" class="btn btn-sm btn-info"
+                                            onclick="showPembayaranDetail({{ $order->id }})">
+                                            Detail
+                                        </button>
                                     </td>
                                 </tr>
                                 @endforeach

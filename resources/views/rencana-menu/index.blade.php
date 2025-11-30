@@ -242,12 +242,11 @@
                                 // Use bahanBakusWithPaketData (Laravel converts camelCase to snake_case)
                                 (menu.bahanBakusWithPaketData || []).forEach((
                                     bahan) => {
-                                    const totalKebutuhan = bahan
-                                        .energi * paket.pivot.porsi;
+                                    const totalKebutuhan = bahan.berat_bersih * paket.pivot.porsi;
                                     html += `
                     <tr>
                         <td>${bahan.nama}</td>
-                        <td>${bahan.energi} ${bahan.satuan}</td>
+                        <td>${bahan.berat_bersih} ${bahan.satuan}</td> //berat bersih
                         <td>${paket.pivot.porsi.toLocaleString('id-ID')}</td>
                         <td>${totalKebutuhan.toLocaleString('id-ID', {minimumFractionDigits: 0, maximumFractionDigits: 3})} ${bahan.satuan}</td>
                     </tr>

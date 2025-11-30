@@ -376,7 +376,7 @@
                             $('#itemContainer').append(newRow);
                             const $row = $('#itemContainer .itemRow').last();
                             $row.find('.bahan-select').val(item.bahan_baku_id).trigger(
-                            'change');
+                                'change');
                             $row.find('.quantity-input').val(item.quantity.toFixed(2));
                             $row.find('.satuan-input').val(item.satuan);
                             itemIndex++;

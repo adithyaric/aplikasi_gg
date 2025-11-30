@@ -66,8 +66,8 @@
                                         <th>Debit</th>
                                         <th>Kredit</th>
                                         <th>Saldo</th>
-                                        <th>Bulan</th>
-                                        <th>Minggu</th>
+                                        {{-- <th>Bulan</th> --}}
+                                        {{-- <th>Minggu</th> --}}
                                         <th>Link PO</th>
                                         <th>Action</th>
                                     </tr>
@@ -85,12 +85,12 @@
                                             <td>{{ $item->kredit > 0 ? 'Rp ' . number_format($item->kredit, 0, ',', '.') : '-' }}
                                             </td>
                                             <td>Rp {{ number_format($item->saldo, 0, ',', '.') }}</td>
-                                            <td>{{ $item->bulan ? date('F', mktime(0, 0, 0, $item->bulan, 1)) : '-' }}</td>
-                                            <td>{{ $item->minggu ? 'Minggu ' . $item->minggu : '-' }}</td>
+                                            {{-- <td>{{ $item->bulan ? date('F', mktime(0, 0, 0, $item->bulan, 1)) : '-' }}</td> --}}
+                                            {{-- <td>{{ $item->minggu ? 'Minggu ' . $item->minggu : '-' }}</td> --}}
                                             <td>
                                                 @if ($item->transaction)
                                                     <span class="badge bg-info">
-                                                        {{ $item->transaction->order->order_number }}
+                                                        {{ $item->transaction?->order?->order_number }}
                                                     </span>
                                                 @else
                                                     -

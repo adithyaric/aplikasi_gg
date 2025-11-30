@@ -48,9 +48,9 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Nama</th>
+                                        {{-- <th>Kelompok</th> --}}
+                                        {{-- <th>Jenis</th> --}}
                                         <th>Kelompok</th>
-                                        <th>Jenis</th>
-                                        <th>Kategori</th>
                                         <th>Satuan</th>
                                         <th>Merek</th>
                                         <th>Gov. Price</th>
@@ -63,8 +63,8 @@
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $bahanbaku->nama }}</td>
-                                            <td>{{ $bahanbaku->kelompok }}</td>
-                                            <td>{{ $bahanbaku->jenis }}</td>
+                                            {{-- <td>{{ $bahanbaku->kelompok }}</td> --}}
+                                            {{-- <td>{{ $bahanbaku->jenis }}</td> --}}
                                             <td>
                                                 @if ($bahanbaku->kategori && is_array($bahanbaku->kategori))
                                                     {{ implode(', ', $bahanbaku->kategori) }}
@@ -99,6 +99,7 @@
                                                         </svg>
                                                     </span>
                                                 </button>
+                                                //TODO tambah detail pop up history gov price
                                             </td>
                                         </tr>
                                     @endforeach
@@ -134,18 +135,18 @@
                                         placeholder="Masukkan nama">
                                     <div class="invalid-feedback"></div>
                                 </div>
-                                <div class="form-group mb-3">
-                                    <label class="form-label">Kelompok <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="kelompok" name="kelompok"
-                                        placeholder="Masukkan kelompok">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <label class="form-label">Jenis <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="jenis" name="jenis"
-                                        placeholder="Masukkan jenis">
-                                    <div class="invalid-feedback"></div>
-                                </div>
+                                {{-- <div class="form-group mb-3"> --}}
+                                    {{-- <label class="form-label">Kelompok <span class="text-danger">*</span></label> --}}
+                                    {{-- <input type="text" class="form-control" id="kelompok" name="kelompok" --}}
+                                        {{-- placeholder="Masukkan kelompok"> --}}
+                                    {{-- <div class="invalid-feedback"></div> --}}
+                                {{-- </div> --}}
+                                {{-- <div class="form-group mb-3"> --}}
+                                    {{-- <label class="form-label">Jenis <span class="text-danger">*</span></label> --}}
+                                    {{-- <input type="text" class="form-control" id="jenis" name="jenis" --}}
+                                        {{-- placeholder="Masukkan jenis"> --}}
+                                    {{-- <div class="invalid-feedback"></div> --}}
+                                {{-- </div> --}}
                                 <div class="form-group mb-4">
                                     <label class="form-label">Satuan <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="satuan" name="satuan"
@@ -153,7 +154,7 @@
                                     <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group mb-3">
-                                    <label class="form-label">Kategori</label>
+                                    <label class="form-label">Kelompok</label>
                                     <select class="form-control select2-multi" id="kategori" name="kategori[]" multiple
                                         style="width: 100%;">
                                         @foreach ($categories as $category)

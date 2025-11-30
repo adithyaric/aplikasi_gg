@@ -51,7 +51,7 @@
                                         <th>Nama</th>
                                         <th>Nama PIC</th>
                                         <th>Nomor</th>
-                                        <th>Jarak</th>
+                                        <th>Jarak (KM)</th>
                                         <th>Porsi 8K</th>
                                         <th>Porsi 10K</th>
                                         <th>Aksi</th>
@@ -140,7 +140,7 @@
                                     <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="form-group mb-1">
-                                    <label class="form-label">Jarak <span class="text-danger">*</span></label>
+                                    <label class="form-label">Jarak (KM) <span class="text-danger">*</span></label>
                                     <input type="number" class="form-control" id="jarak" name="jarak"
                                         placeholder="Masukkan jarak">
                                     <div class="invalid-feedback"></div>
@@ -335,6 +335,7 @@
                 return;
             }
 
+            //titik Se Indonesia
             mapSekolah = L.map('map-sekolah').setView([-5.135, 119.422], 13);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -460,9 +461,9 @@
                                 <strong>${schoolName}</strong><br>
                                 <small>${displayName}</small><br>
                                 <a href="javascript:void(0)" class="btn btn-sm btn-success mt-1 select-location"
-                                   data-lat="${lat}" 
-                                   data-lng="${lng}" 
-                                   data-address="${displayName.replace(/"/g, '&quot;')}" 
+                                   data-lat="${lat}"
+                                   data-lng="${lng}"
+                                   data-address="${displayName.replace(/"/g, '&quot;')}"
                                    data-school="${schoolName.replace(/"/g, '&quot;')}">
                                     Pilih
                                 </a>
@@ -479,9 +480,9 @@
                                     <small class="text-muted">${displayName}</small>
                                 </div>
                                 <a href="javascript:void(0)" class="btn btn-sm btn-outline-primary ms-2 select-location"
-                                   data-lat="${lat}" 
-                                   data-lng="${lng}" 
-                                   data-address="${displayName.replace(/"/g, '&quot;')}" 
+                                   data-lat="${lat}"
+                                   data-lng="${lng}"
+                                   data-address="${displayName.replace(/"/g, '&quot;')}"
                                    data-school="${schoolName.replace(/"/g, '&quot;')}">
                                     Pilih
                                 </a>
@@ -598,6 +599,7 @@
             }
 
             if (mapSekolah) {
+                //titik Se Indonesia
                 mapSekolah.setView([-5.135, 119.422], 13);
             }
         }
