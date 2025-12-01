@@ -79,10 +79,10 @@ class RekeningRekapBKUController extends Controller
         $suppliers = Supplier::orderBy('nama')->get(['id', 'nama']);
 
         $jenisBahanOptions = [
-            'Penerimaan BGN',
             'Bahan Pokok',
             'Bahan Operasional',
-            'Pembayaran Sewa'
+            'Pembayaran Sewa',
+            'Penerimaan BGN',
         ];
 
         $title = 'Formulir Rekap BKU';
@@ -217,10 +217,10 @@ class RekeningRekapBKUController extends Controller
         $suppliers = Supplier::orderBy('nama')->get(['id', 'nama']);
 
         $jenisBahanOptions = [
-            'Penerimaan BGN',
             'Bahan Pokok',
             'Bahan Operasional',
-            'Pembayaran Sewa'
+            'Pembayaran Sewa',
+            'Penerimaan BGN',
         ];
 
         $title = 'Edit Rekap BKU';

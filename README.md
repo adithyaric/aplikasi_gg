@@ -51,8 +51,8 @@ Revisi :
 <!-- `4. ⁠Sekolah - Satuan jarak (KM)` -->
 <!-- `5. ⁠Sekolah - Peta hanya bisa di akses di makassar (Buat akses penuh)` -->
 <!-- `6. ⁠Perencanaan menu - Jumlah porsi menghitung otomatis dari jumlah porsi yg diinput disekolah` -->
-7. ⁠Perencanaan menu - (detail) kebutuhan per porsi diambil dari berat bersih dipaket menu satuan gram
-8. ⁠Perencanaan menu - (detail) perporsi ambil dari paket menu berat bersih gram. Saat narik diperencanaan menu perporsi otomatis konversi ke Kg
+`7. ⁠Perencanaan menu - (detail) kebutuhan per porsi diambil dari berat bersih dipaket menu satuan gram`
+`8. ⁠Perencanaan menu - (detail) perporsi ambil dari paket menu berat bersih gram. Saat narik diperencanaan menu perporsi otomatis konversi ke Kg`
 9. ⁠Tambah menu PO - hasil dari penarikan perencanaan menu per porsi
 <!-- `10. ⁠Purchase Order - ID PO perlu perbaikan P000 dimulai dari 1, ada format order_number terbaru` -->
 <!-- `11. ⁠Purchase Order - tambahkan tombol Post` -->
@@ -63,19 +63,19 @@ Revisi :
 16. `⁠Pembayaran - nominal tabel dibayar sesuai dengan yg sudah dibayar` menjumlahkan nominal partial. Apabila blm bayar maka nominal dibayar 0.
 17. ⁠Pembayaran - Detail Inputan kembali 0 ketika melakukan pembayaran partial.
 18. ⁠Pembayaran - Detail pembayaran partial belum ter record history pembayaran sebelumnya masukkan di dalam edit juga (Seperti nomor 13)
-`19. ⁠Pembayaran - Bukti belum muncul (public)`
+<!-- `19. ⁠Pembayaran - Bukti belum muncul (public)` -->
 <!-- `20. ⁠Pembayaran- Filter (unpaid,paid, partial) belum berfungsi` -->
 <!-- `21. ⁠Stok - Rumus avg cost diganti. Total harga pembelian produk semua(dari awal sampai akhir) dibagi qty produk semua(dari awal sampai terakhir)` -->
 <!-- `22. ⁠Stok - Tambahkan History gov price (Pop Up Detail Pada Stock)` -->
 <!-- `23. Rekening Koran VA - Edit Pada Rekening Koran Berikan Saldo Juga` -->
 <!-- `24. Rekening Koran VA - Jika Menambahkan Data Rekon VA Di Waktu Sebelumnya Maka Saldo Tidak Sesuai` -->
 <!-- `25. Rekap BKU - Transaksi Pembayaran PO harusnya auto masuk ke dalam BKU (Tanpa Add Manual)` -->
-26. Rekap BKU - Jenis Bahan Dibuat Dropdown isi (Penerimaan BGN, Bahan Pokok, Bahan Operasional, Pembayaran Sewa)
-27. Rekap BKU - Nama Bahan Ambil Dari Data Bahan Pokok & Data Bahan Operasional
-28. Rekap BKU - Supplier Ambil Dari Data Supplier
-29. Rekap BKU - Debit Kredit Isi Salah Satu Buat Seperti Pada Rekening Koran VA (Radio)
+<!-- 26. Rekap BKU - Jenis Bahan Dibuat Dropdown isi (Penerimaan BGN, Bahan Pokok, Bahan Operasional, Pembayaran Sewa) -->
+<!-- 27. Rekap BKU - Nama Bahan Ambil Dari Data Bahan Pokok & Data Bahan Operasional -->
+<!-- 28. Rekap BKU - Supplier Ambil Dari Data Supplier -->
+<!-- 29. Rekap BKU - Debit Kredit Isi Salah Satu Buat Seperti Pada Rekening Koran VA (Radio) -->
 <!-- `30. Rekap BKU - Hapus Bulan & Minggu` -->
-31. Rekap BKU - Jika Menambahkan Data, Rekap BKU Di Waktu Sebelumnya Maka Saldo Tidak Sesuai
+<!-- 31. Rekap BKU - Jika Menambahkan Data, Rekap BKU Di Waktu Sebelumnya Maka Saldo Tidak Sesuai -->
 
 32. Kartu Stock Dibuat Sekalian
 33. Stock Opname Dibuat Sekalian
