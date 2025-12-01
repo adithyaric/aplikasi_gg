@@ -469,10 +469,13 @@ class OrderController extends Controller
             ];
 
             if ($request->hasFile('bukti_transfer')) {
-
                 $file = $request->file('bukti_transfer');
                 $filename = 'bukti_' . time() . '_' . $order->id . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('public/bukti_transfer', $filename);
+
+                // store directly in public/uploads/bukti_transfer
+                $path = $file->storeAs('bukti_transfer', $filename, 'uploads');
+
+                // save only the relative path
                 $transactionData['bukti_transfer'] = $path;
             }
 

@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BahanBaku;
+use App\Models\BahanOperasional;
 use App\Models\RekeningRekapBKU;
+use App\Models\Supplier;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -53,8 +56,46 @@ class RekeningRekapBKUController extends Controller
             ->with('order')
             ->get();
 
+        $bahanbakus = BahanBaku::orderBy('nama')->get(['id', 'nama', 'satuan']);
+        $bahanoperasionals = BahanOperasional::orderBy('nama')->get(['id', 'nama', 'satuan']);
+
+        // Combine both with type identifier
+        $bahans = $bahanbakus->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'nama' => $item->nama,
+                'satuan' => $item->satuan,
+                'type' => 'bahan_baku'
+            ];
+        })->merge($bahanoperasionals->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'nama' => $item->nama,
+                'satuan' => $item->satuan,
+                'type' => 'bahan_operasional'
+            ];
+        }));
+
+        $suppliers = Supplier::orderBy('nama')->get(['id', 'nama']);
+
+        $jenisBahanOptions = [
+            'Penerimaan BGN',
+            'Bahan Pokok',
+            'Bahan Operasional',
+            'Pembayaran Sewa'
+        ];
+
         $title = 'Formulir Rekap BKU';
-        return view('keuangan.rekening-rekap-bku.create', compact('lastSaldo', 'transactions', 'title'));
+
+        return view('keuangan.rekening-rekap-bku.create', [
+            'lastSaldo' => $lastSaldo,
+            'transactions' => $transactions,
+            'bahanbakus' => $bahanbakus,
+            'bahanoperasionals' => $bahanoperasionals,
+            'suppliers' => $suppliers,
+            'jenisBahanOptions' => $jenisBahanOptions,
+            'title' => $title,
+        ]);
     }
 
     public function store(Request $request)
@@ -76,25 +117,58 @@ class RekeningRekapBKUController extends Controller
             'transaction_id' => 'nullable|exists:transactions,id',
         ]);
 
+        $jenisTransaksi = $request->input('jenis_transaksi');
+        $nominal = floatval($request->input('nominal'));
+
+        if ($jenisTransaksi === 'debit') {
+            $validated['debit'] = 0;
+            $validated['kredit'] = $nominal;
+        } else {
+            $validated['debit'] = $nominal;
+            $validated['kredit'] = 0;
+        }
+
         DB::beginTransaction();
         try {
             if ($request->hasFile('link_bukti')) {
                 $validated['link_bukti'] = $request->file('link_bukti')->store('bukti_bku', 'public');
             }
 
-            $lastEntry = RekeningRekapBKU::lockForUpdate()
+            $tanggalTransaksi = $validated['tanggal_transaksi'];
+
+            // Get previous entry based on date and ID
+            $prevEntry = RekeningRekapBKU::where(function ($q) use ($tanggalTransaksi) {
+                $q->where('tanggal_transaksi', '<', $tanggalTransaksi)
+                    ->orWhere(function ($q2) use ($tanggalTransaksi) {
+                        $q2->where('tanggal_transaksi', '=', $tanggalTransaksi);
+                    });
+            })
                 ->orderBy('tanggal_transaksi', 'desc')
                 ->orderBy('id', 'desc')
+                ->lockForUpdate()
                 ->first();
 
-            $lastSaldo = $lastEntry ? $lastEntry->saldo : 0;
-            $debit = floatval($validated['debit']);
-            $kredit = floatval($validated['kredit']);
-
-            $newSaldo = $lastSaldo + $debit - $kredit;
+            $prevSaldo = $prevEntry ? $prevEntry->saldo : 0;
+            $newSaldo = $prevSaldo + $validated['debit'] - $validated['kredit'];
             $validated['saldo'] = $newSaldo;
 
-            RekeningRekapBKU::create($validated);
+            $newEntry = RekeningRekapBKU::create($validated);
+
+            // Recalculate all entries after this one
+            $nextEntries = RekeningRekapBKU::where('tanggal_transaksi', '>', $newEntry->tanggal_transaksi)
+                ->orWhere(function ($q) use ($newEntry) {
+                    $q->where('tanggal_transaksi', '=', $newEntry->tanggal_transaksi)
+                        ->where('id', '>', $newEntry->id);
+                })
+                ->orderBy('tanggal_transaksi', 'asc')
+                ->orderBy('id', 'asc')
+                ->get();
+
+            $currentSaldo = $newSaldo;
+            foreach ($nextEntries as $entry) {
+                $currentSaldo = $currentSaldo + $entry->debit - $entry->kredit;
+                $entry->update(['saldo' => $currentSaldo]);
+            }
 
             DB::commit();
             return redirect()->route('rekening-rekap-bku.index')
@@ -120,8 +194,46 @@ class RekeningRekapBKUController extends Controller
             ->with('order')
             ->get();
 
+        $bahanbakus = BahanBaku::orderBy('nama')->get(['id', 'nama', 'satuan']);
+        $bahanoperasionals = BahanOperasional::orderBy('nama')->get(['id', 'nama', 'satuan']);
+
+        // Combine both with type identifier
+        $bahans = $bahanbakus->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'nama' => $item->nama,
+                'satuan' => $item->satuan,
+                'type' => 'bahan_baku'
+            ];
+        })->merge($bahanoperasionals->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'nama' => $item->nama,
+                'satuan' => $item->satuan,
+                'type' => 'bahan_operasional'
+            ];
+        }));
+
+        $suppliers = Supplier::orderBy('nama')->get(['id', 'nama']);
+
+        $jenisBahanOptions = [
+            'Penerimaan BGN',
+            'Bahan Pokok',
+            'Bahan Operasional',
+            'Pembayaran Sewa'
+        ];
+
         $title = 'Edit Rekap BKU';
-        return view('keuangan.rekening-rekap-bku.edit', compact('lastSaldo', 'rekeningBKU', 'transactions', 'title'));
+        return view('keuangan.rekening-rekap-bku.edit', [
+            'rekeningBKU' => $rekeningBKU,
+            'lastSaldo' => $lastSaldo,
+            'transactions' => $transactions,
+            'bahanbakus' => $bahanbakus,
+            'bahanoperasionals' => $bahanoperasionals,
+            'suppliers' => $suppliers,
+            'jenisBahanOptions' => $jenisBahanOptions,
+            'title' => $title,
+        ]);
     }
 
     public function update(Request $request, $id)
@@ -149,7 +261,7 @@ class RekeningRekapBKUController extends Controller
 
             if ($request->hasFile('link_bukti')) {
                 if ($rekeningBKU->link_bukti) {
-                    Storage::disk('public')->delete($rekeningBKU->link_bukti);
+                    Storage::disk('uploads')->delete($rekeningBKU->link_bukti);
                 }
                 $validated['link_bukti'] = $request->file('link_bukti')->store('bukti_bku', 'public');
             }
@@ -211,7 +323,7 @@ class RekeningRekapBKUController extends Controller
             $deletedEntry = $rekening_rekap_bku;
 
             if ($deletedEntry->link_bukti) {
-                Storage::disk('public')->delete($deletedEntry->link_bukti);
+                Storage::disk('uploads')->delete($deletedEntry->link_bukti);
             }
 
             $prevEntry = RekeningRekapBKU::where('tanggal_transaksi', '<', $deletedEntry->tanggal_transaksi)

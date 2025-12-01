@@ -252,7 +252,7 @@ function showPembayaranDetail(id) {
                 $('#pembayaran_payment_method').val(response.transaction.payment_method || '-');
                 $('#pembayaran_payment_reference').val(response.transaction.payment_reference || '-');
                 if (response.transaction.bukti_transfer) {
-                    const url = "{{ Storage::url('') }}" + response.transaction.bukti_transfer;
+                    const url = "{{ Storage::disk('uploads')->url('') }}" + response.transaction.bukti_transfer;
                     $('#pembayaran_bukti_tarnsfer')
                         .attr('href', url)
                         .text('Lihat Bukti');
@@ -293,8 +293,8 @@ function showPembayaranDetail(id) {
                                         const newBukti = props.attributes[field];
                                         let buktiChange = [];
 
-                                        if (oldBukti) buktiChange.push(`Bukti Lama: <a href="/storage/${oldBukti.replace('public/', '')}" target="_blank">Lihat</a>`);
-                                        if (newBukti) buktiChange.push(`Bukti Baru: <a href="/storage/${newBukti.replace('public/', '')}" target="_blank">Lihat</a>`);
+                                        if (oldBukti) buktiChange.push(`Bukti Lama: <a href="uploads/${oldBukti}" target="_blank">Lihat</a>`);
+                                        if (newBukti) buktiChange.push(`Bukti Baru: <a href="uploads/${newBukti}" target="_blank">Lihat</a>`);
 
                                         if (buktiChange.length) changes.push(buktiChange.join(' → '));
                                     } else {

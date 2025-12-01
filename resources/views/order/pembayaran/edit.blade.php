@@ -170,7 +170,7 @@
                                         accept="image/*,.pdf" />
                                     @if ($order->transaction?->bukti_transfer)
                                         <small class="text-muted">
-                                            <a href="{{ Storage::url($order->transaction->bukti_transfer) }}"
+                                            <a href="{{ Storage::disk('uploads')->url($order->transaction->bukti_transfer) }}"
                                                 target="_blank">Lihat bukti saat ini</a>
                                         </small>
                                     @endif
