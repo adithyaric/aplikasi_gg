@@ -110,11 +110,11 @@
                                         <option value="">-- Pilih Transaksi PO --</option>
                                         @foreach ($transactions as $trans)
                                             <option value="{{ $trans->id }}" data-amount="{{ $trans->amount }}"
-                                                data-supplier="{{ $trans->order->supplier->nama }}"
-                                                data-order="{{ $trans->order->order_number }}"
+                                                data-supplier="{{ $trans->order?->supplier->nama }}"
+                                                data-order="{{ $trans->order?->order_number }}"
                                                 {{ old('transaction_id', $rekeningBKU->transaction_id) == $trans->id ? 'selected' : '' }}>
-                                                PO: {{ $trans->order->order_number }} -
-                                                {{ $trans->order->supplier->nama }} -
+                                                PO: {{ $trans->order?->order_number }} -
+                                                {{ $trans->order?->supplier->nama }} -
                                                 Rp {{ number_format($trans->amount, 0, ',', '.') }}
                                             </option>
                                         @endforeach

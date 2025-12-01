@@ -51,8 +51,8 @@ Revisi :
 <!-- `4. ⁠Sekolah - Satuan jarak (KM)` -->
 <!-- `5. ⁠Sekolah - Peta hanya bisa di akses di makassar (Buat akses penuh)` -->
 <!-- `6. ⁠Perencanaan menu - Jumlah porsi menghitung otomatis dari jumlah porsi yg diinput disekolah` -->
-`7. ⁠Perencanaan menu - (detail) kebutuhan per porsi diambil dari berat bersih dipaket menu satuan gram`
-`8. ⁠Perencanaan menu - (detail) perporsi ambil dari paket menu berat bersih gram. Saat narik diperencanaan menu perporsi otomatis konversi ke Kg`
+<!-- `7. ⁠Perencanaan menu - (detail) kebutuhan per porsi diambil dari berat bersih dipaket menu satuan gram` -->
+<!-- `8. ⁠Perencanaan menu - (detail) perporsi ambil dari paket menu berat bersih gram. Saat narik diperencanaan menu perporsi otomatis konversi ke Kg` -->
 9. ⁠Tambah menu PO - hasil dari penarikan perencanaan menu per porsi
 <!-- `10. ⁠Purchase Order - ID PO perlu perbaikan P000 dimulai dari 1, ada format order_number terbaru` -->
 <!-- `11. ⁠Purchase Order - tambahkan tombol Post` -->

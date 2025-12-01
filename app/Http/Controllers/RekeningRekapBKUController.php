@@ -313,7 +313,7 @@ class RekeningRekapBKUController extends Controller
     {
         DB::beginTransaction();
         try {
-            if ($rekening_rekap_bku->transaction_id) {
+            if ($rekening_rekap_bku->transaction->order) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Data tidak dapat dihapus karena terhubung dengan transaksi PO',

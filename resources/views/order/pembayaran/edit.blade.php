@@ -173,7 +173,7 @@
 
                                 <div class="form-group">
                                     <label class="form-label">Metode Pembayaran</label>
-                                    <select name="payment_method" class="select2-input form-select shadow-none" id="paymentMethod"
+                                    <select name="payment_method" class="form-select shadow-none" id="paymentMethod"
                                         required>
                                         <option value="">Pilih Metode Pembayaran</option>
                                         <option value="cash"
@@ -235,7 +235,7 @@
 
                                 <div class="form-group">
                                     <label class="form-label">Status</label>
-                                    <select name="status" class="select2-input form-select shadow-none" id="paymentStatus"
+                                    <select name="status" class="form-select shadow-none" id="paymentStatus"
                                         required>
                                         <option value="">Pilih Status Pembayaran</option>
                                         <option value="unpaid"

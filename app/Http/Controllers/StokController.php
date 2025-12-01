@@ -145,4 +145,14 @@ class StokController extends Controller
             'type' => $type,
         ];
     }
+
+    public function kartu(Request $request)
+    {
+        return view('stok.kartu', []);
+    }
+
+    public function opname(Request $request)
+    {
+        return view('stok.opname', []);
+    }
 }

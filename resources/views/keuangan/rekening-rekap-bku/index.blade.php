@@ -28,6 +28,33 @@
             <img src="{{ asset('assets/images/dashboard/top-header.png') }}" alt="header"
                 class="theme-color-default-img img-fluid w-100 h-100 animated-scaleX">
         </div>
+
+        <!-- Modal Template -->
+        <div class="modal fade" id="modalPB2" tabindex="-1" aria-labelledby="modalPOLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content"
+                    style="
+                border-radius: 15px;
+                border: 1px solid #ddd;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+              ">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title text-white" id="modalTambahBahanLabel">
+                            Data Bukti
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body text-center">
+                        <!-- Gambar Dinamis -->
+                        <img id="modalGambarPB2" src="" alt="Bukti Gambar" class="img-fluid"
+                            style="max-height: 500px; border-radius: 10px" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 @endsection
 @section('container')
@@ -61,6 +88,7 @@
                                         <th>No</th>
                                         <th>Tanggal</th>
                                         <th>No Bukti</th>
+                                        <th>Link Bukti</th>
                                         <th>Supplier</th>
                                         <th>Uraian</th>
                                         <th>Debit</th>
@@ -78,6 +106,17 @@
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $item->tanggal_transaksi->format('d/m/y') }}</td>
                                             <td>{{ $item->no_bukti ?? '-' }}</td>
+                                            <td>
+                                                @if ($item->link_bukti)
+                                                <button class="btn btn-sm btn-primary lihat-bukti"
+                                                    data-src="{{ Storage::disk('uploads')->url($item->link_bukti) }}" data-bs-toggle="modal"
+                                                    data-bs-target="#modalPB2">
+                                                    <i class="bi bi-eye"></i> Lihat Disini
+                                                </button>
+                                                @else
+                                                -
+                                                @endif
+                                            </td>
                                             <td>{{ $item->supplier ?? '-' }}</td>
                                             <td>{{ $item->uraian }}</td>
                                             <td>{{ $item->debit > 0 ? 'Rp ' . number_format($item->debit, 0, ',', '.') : '-' }}
@@ -162,6 +201,25 @@
                         }
                     });
                 }
+            });
+        });
+    </script>
+    <!-- Script untuk mengisi gambar saat tombol diklik -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const modalImg = document.getElementById("modalGambarPB2");
+
+            document.querySelectorAll(".lihat-bukti").forEach((button) => {
+                button.addEventListener("click", function() {
+                    const src = this.getAttribute("data-src"); // ambil src dari tombol
+                    modalImg.src = src;
+                });
+            });
+
+            // Optional: reset gambar saat modal ditutup
+            const modal = document.getElementById("modalPB2");
+            modal.addEventListener("hidden.bs.modal", function() {
+                modalImg.src = "";
             });
         });
     </script>

@@ -84,6 +84,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/pembayaran/{order}', [OrderController::class, 'updatePembayaran'])->name('pembayaran.update');
 
     Route::resource('stok', StokController::class);
+    Route::get('/stok-kartu', [StokController::class, 'kartu'])->name('stok.kartu');
+    Route::get('/stok-opname', [StokController::class, 'opname'])->name('stok.opname');
+
     Route::resource('rekening-koran-va', RekeningKoranVaController::class);
     Route::resource('rekening-rekap-bku', RekeningRekapBKUController::class);
 
