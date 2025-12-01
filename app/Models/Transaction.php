@@ -16,6 +16,7 @@ class Transaction extends Model
         'payment_date',
         'payment_method',
         'payment_reference',
+        'payment_history', // for partial
         'status', //'paid', 'unpaid', 'partial'
         'amount',
         'bukti_transfer', //path storage
@@ -24,6 +25,7 @@ class Transaction extends Model
 
     protected $casts = [
         'payment_date' => 'datetime',
+        'payment_history' => 'array',
         'amount' => 'float',
     ];
 
@@ -49,6 +51,7 @@ class Transaction extends Model
                 'payment_date',
                 'payment_method',
                 'payment_reference',
+                'payment_history', // for partial
                 'status', //'paid', 'unpaid', 'partial'
                 'amount',
                 'bukti_transfer', //path storage

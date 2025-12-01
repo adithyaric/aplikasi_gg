@@ -36,7 +36,6 @@
                         <div class="border border-2 d-flex flex-column gap-2 rounded-3 overflow-hidden">
                             <div class="d-flex p-3 border-bottom border-bottom-1">
                                 <div class="d-flex flex-column">
-                                    <strong>{{ $order->order_number }}</strong>
                                     <h4 class="fw-bold">{{ $order->order_number }}</h4>
                                     <strong>Tanggal Terima : {{ $order->tanggal_penerimaan->format('d/m/Y') }}</strong>
                                     <strong>Pemasok : {{ $order->supplier?->nama }}</strong>
@@ -103,6 +102,58 @@
                                 </div>
                             </div>
                         </div>
+<!-- Display Payment History -->
+@if($order->transaction && !empty($paymentHistory))
+<div class="card mt-1 border border-2">
+    <div class="card-header">
+        <h5 class="mb-0">Riwayat Pembayaran</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Jumlah</th>
+                        <th>Metode</th>
+                        <th>Referensi</th>
+                        <th>Bukti</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($paymentHistory as $history)
+                    <tr>
+                        <td>{{ \Carbon\Carbon::parse($history['payment_date'])->format('d/m/Y H:i') }}</td>
+                        <td>Rp {{ number_format($history['amount'], 0, ',', '.') }}</td>
+                        <td>{{ ucfirst(str_replace('_', ' ', $history['payment_method'])) }}</td>
+                        <td>{{ $history['payment_reference'] ?? '-' }}</td>
+                        <td>
+                            @if(!empty($history['bukti_transfer']))
+                            <a href="{{ Storage::disk('uploads')->url($history['bukti_transfer']) }}"
+                                target="_blank">Lihat</a>
+                            @else
+                            -
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+                <tfoot>
+                    <tr class="fw-bold">
+                        <td>Total Dibayar</td>
+                        <td colspan="4">Rp {{ number_format($order->transaction->amount, 0, ',', '.') }}</td>
+                    </tr>
+                    <tr class="text-danger">
+                        <td>Sisa</td>
+                        <td colspan="4">Rp {{ number_format($order->grand_total - $order->transaction->amount, 0, ',',
+                            '.') }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+@endif
                         </div>
 
                         <div class="col-md-4 col-sm-12">
@@ -156,11 +207,17 @@
                                 <div class="form-group">
                                     <label class="form-label">Jumlah Pembayaran</label>
                                     <input type="number" name="amount" class="form-control" id="amountInput"
-                                        value="{{ $order->transaction?->amount }}" step="0.01" min="0"
-                                        max="{{ $order->grand_total }}" placeholder="Masukkan jumlah yang dibayar"
-                                        required />
+                                        value="0" step="0.01" min="0"
+                                        max="{{ $order->grand_total - ($order->transaction?->amount ?? 0) }}"
+                                        placeholder="Masukkan jumlah yang dibayar" required />
                                     <small class="text-muted">
-                                        Max: Rp.{{ number_format($order->grand_total, 0, ',', '.') }}
+                                        @if($order->transaction && $order->transaction->status === 'partial')
+                                            Sudah dibayar: Rp {{ number_format($order->transaction->amount, 0, ',', '.') }}<br>
+                                            Sisa: Rp {{ number_format($order->grand_total - $order->transaction->amount, 0, ',', '.') }}<br>
+                                            Max input: Rp {{ number_format($order->grand_total - $order->transaction->amount, 0, ',', '.') }}
+                                        @else
+                                            Max: Rp {{ number_format($order->grand_total, 0, ',', '.') }}
+                                        @endif
                                     </small>
                                 </div>
 
@@ -229,12 +286,27 @@
 
         // Format amount input
         $('#amountInput').on('input', function() {
-            let value = $(this).val().replace(/[^0-9]/g, '');
+            let value = $(this).val().replace(/[^0-9.]/g, '');
             if (value) {
-                const max = {{ $order->grand_total }};
+                const max = {{ $order->grand_total - ($order->transaction?->amount ?? 0) }};
                 if (parseFloat(value) > max) {
                     $(this).val(max);
                 }
+            }
+        });
+
+        $('#amountInput').on('change', function() {
+            const currentPaid = {{ $order->transaction?->amount ?? 0 }};
+            const inputAmount = parseFloat($(this).val()) || 0;
+            const totalPaid = currentPaid + inputAmount;
+            const grandTotal = {{ $order->grand_total }};
+
+            if (totalPaid === 0) {
+                $('#paymentStatus').val('unpaid');
+            } else if (totalPaid >= grandTotal) {
+                $('#paymentStatus').val('paid');
+            } else {
+                $('#paymentStatus').val('partial');
             }
         });
 

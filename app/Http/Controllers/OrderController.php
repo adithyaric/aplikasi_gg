@@ -432,61 +432,107 @@ class OrderController extends Controller
 
     public function editPembayaran(Order $order)
     {
-        // $transaction = $order->transaction;
-        // dd([
-        //     'bukti_transfer' => Activity::forSubject($transaction)->get()?->toArray(),
-        //     'transaction' =>$transaction->activities?->pluck('properties')->toArray()
-        // ]);
-
         $order->load(['supplier', 'items.bahanBaku', 'items.bahanOperasional', 'transaction']);
         $title = 'Edit Pembayaran';
-        //TODO jika partial jumlah pembayaran kembali ke 0
-        return view('order.pembayaran.edit', compact('order', 'title'));
+
+        $paymentHistory = $order->transaction?->payment_history ?? [];
+
+        return view('order.pembayaran.edit', compact('order', 'title', 'paymentHistory'));
     }
 
     public function updatePembayaran(Request $request, Order $order)
     {
-        //TODO jika partial inputnya ditambah dari yg sebelumnya
+        $currentAmount = $order->transaction?->amount ?? 0;
+        $maxAmount = $order->grand_total - $currentAmount;
+
         $request->validate([
             'payment_date' => 'required|date',
             'payment_method' => 'required|in:cash,bank_transfer,giro_cek,lainnya',
             'payment_reference' => 'nullable|string',
-            'amount' => 'required|numeric|min:0|max:' . $order->grand_total,
+            'amount' => 'required|numeric|min:0|max:' . $maxAmount,
             'notes' => 'nullable|string',
-            'status' => 'nullable|string',
+            'status' => 'required|in:unpaid,paid,partial',
             'bukti_transfer' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
         DB::beginTransaction();
         try {
-            $transactionData = [
-                'payment_date' => $request->payment_date,
-                'payment_method' => $request->payment_method,
-                'payment_reference' => $request->payment_reference,
-                'amount' => $request->amount,
-                'notes' => $request->notes,
-                'status' => $request->status,
-            ];
+            $previousAmount = $order->transaction?->amount ?? 0;
+            $newTotalAmount = $previousAmount + $request->amount;
 
+            // Handle file upload
+            $buktiPath = null;
             if ($request->hasFile('bukti_transfer')) {
                 $file = $request->file('bukti_transfer');
                 $filename = 'bukti_' . time() . '_' . $order->id . '.' . $file->getClientOriginalExtension();
-
-                // store directly in public/uploads/bukti_transfer
-                $path = $file->storeAs('bukti_transfer', $filename, 'uploads');
-
-                // save only the relative path
-                $transactionData['bukti_transfer'] = $path;
+                $buktiPath = $file->storeAs('bukti_transfer', $filename, 'uploads');
             }
 
             if ($order->transaction) {
+                // Update existing transaction
+                $paymentHistory = $order->transaction->payment_history ?? [];
+
+                // Add new payment to history if amount > 0 (record all payments)
+                if ($request->amount > 0) {
+                    $paymentHistory[] = [
+                        'payment_date' => $request->payment_date,
+                        'amount' => $request->amount,
+                        'payment_method' => $request->payment_method,
+                        'payment_reference' => $request->payment_reference,
+                        'bukti_transfer' => $buktiPath ?? $order->transaction->bukti_transfer,
+                        'notes' => $request->notes,
+                        'created_at' => now()->toDateTimeString(),
+                    ];
+                }
+
+                $transactionData = [
+                    'payment_date' => $request->payment_date,
+                    'payment_method' => $request->payment_method,
+                    'payment_reference' => $request->payment_reference,
+                    'amount' => $newTotalAmount,
+                    'payment_history' => $paymentHistory,
+                    'notes' => $request->notes,
+                    'status' => $request->status,
+                ];
+
+                if ($buktiPath) {
+                    $transactionData['bukti_transfer'] = $buktiPath;
+                }
+
                 $order->transaction->update($transactionData);
                 $transaction = $order->transaction;
             } else {
+                // Create new transaction
+                $paymentHistory = [];
+                if ($request->amount > 0) {
+                    $paymentHistory[] = [
+                        'payment_date' => $request->payment_date,
+                        'amount' => $request->amount,
+                        'payment_method' => $request->payment_method,
+                        'payment_reference' => $request->payment_reference,
+                        'bukti_transfer' => $buktiPath,
+                        'notes' => $request->notes,
+                        'created_at' => now()->toDateTimeString(),
+                    ];
+                }
+
+                $transactionData = [
+                    'payment_date' => $request->payment_date,
+                    'payment_method' => $request->payment_method,
+                    'payment_reference' => $request->payment_reference,
+                    'amount' => $request->amount,
+                    'payment_history' => $paymentHistory,
+                    'notes' => $request->notes,
+                    'status' => $request->status,
+                ];
+
+                if ($buktiPath) {
+                    $transactionData['bukti_transfer'] = $buktiPath;
+                }
+
                 $transaction = $order->transaction()->create($transactionData);
             }
 
-            // $this->createOrUpdateRekeningKoranVa($transaction, $order);
             $this->createOrUpdateRekeningRekapBKU($transaction, $order);
 
             DB::commit();

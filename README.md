@@ -60,9 +60,9 @@ Revisi :
 <!-- `13. ⁠Purchase Order - Detail PO riwayat bukti transfer pindah ke pembayaran` -->
 <!-- `14. ⁠Penerimaan barang - qty diterima, tidak diterima ubah jadi sesuai, tidak sesuai` -->
 <!-- `15. ⁠Penerimaan barang - penambahan stok diambil dari barang diterima, (draft & confirm) tidak mempengaruhi apapun` -->
-16. `⁠Pembayaran - nominal tabel dibayar sesuai dengan yg sudah dibayar` menjumlahkan nominal partial. Apabila blm bayar maka nominal dibayar 0.
-17. ⁠Pembayaran - Detail Inputan kembali 0 ketika melakukan pembayaran partial.
-18. ⁠Pembayaran - Detail pembayaran partial belum ter record history pembayaran sebelumnya masukkan di dalam edit juga (Seperti nomor 13)
+<!-- 16. `⁠Pembayaran - nominal tabel dibayar sesuai dengan yg sudah dibayar` menjumlahkan nominal partial. Apabila blm bayar maka nominal dibayar 0. -->
+<!-- `17. ⁠Pembayaran - Detail Inputan kembali 0 ketika melakukan pembayaran partial.` -->
+<!-- `18. ⁠Pembayaran - Detail pembayaran partial belum ter record history pembayaran sebelumnya masukkan di dalam edit juga (Seperti nomor 13)` -->
 <!-- `19. ⁠Pembayaran - Bukti belum muncul (public)` -->
 <!-- `20. ⁠Pembayaran- Filter (unpaid,paid, partial) belum berfungsi` -->
 <!-- `21. ⁠Stok - Rumus avg cost diganti. Total harga pembelian produk semua(dari awal sampai akhir) dibagi qty produk semua(dari awal sampai terakhir)` -->

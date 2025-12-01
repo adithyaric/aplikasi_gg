@@ -288,13 +288,19 @@ function showPembayaranDetail(id) {
                         if (props.old && props.attributes) {
                             Object.keys(trackedFields).forEach(field => {
                                 if (props.old[field] !== props.attributes[field]) {
+                                    if (field === 'payment_date') {
+                                        const oldValue = props.old[field] ? new Date(props.old[field]).toLocaleDateString('id-ID') : '-';
+                                        const newValue = props.attributes[field] ? new Date(props.attributes[field]).toLocaleDateString('id-ID') : '-';
+                                        changes.push(`${trackedFields[field]}: ${oldValue} → ${newValue}`);
+                                        return;
+                                    }
                                     if (field === 'bukti_transfer') {
                                         const oldBukti = props.old[field];
                                         const newBukti = props.attributes[field];
                                         let buktiChange = [];
 
-                                        if (oldBukti) buktiChange.push(`Bukti Lama: <a href="uploads/${oldBukti}" target="_blank">Lihat</a>`);
-                                        if (newBukti) buktiChange.push(`Bukti Baru: <a href="uploads/${newBukti}" target="_blank">Lihat</a>`);
+                                        // if (oldBukti) buktiChange.push(`Bukti Lama: <a href="uploads/${oldBukti}" target="_blank">Lihat</a>`);
+                                        if (newBukti) buktiChange.push(`Bukti: <a href="uploads/${newBukti}" target="_blank">Lihat</a>`);
 
                                         if (buktiChange.length) changes.push(buktiChange.join(' → '));
                                     } else {
