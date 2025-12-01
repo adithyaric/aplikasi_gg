@@ -77,5 +77,5 @@ Revisi :
 <!-- `30. Rekap BKU - Hapus Bulan & Minggu` -->
 <!-- 31. Rekap BKU - Jika Menambahkan Data, Rekap BKU Di Waktu Sebelumnya Maka Saldo Tidak Sesuai -->
 
-32. Kartu Stock Dibuat Sekalian
+`32. Kartu Stock Dibuat Sekalian`
 33. Stock Opname Dibuat Sekalian

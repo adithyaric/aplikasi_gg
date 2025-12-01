@@ -85,6 +85,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('stok', StokController::class);
     Route::get('/stok-kartu', [StokController::class, 'kartu'])->name('stok.kartu');
+    Route::get('/stok/kartu/data', [StokController::class, 'getKartuData'])->name('stok.kartu.data');
+
     Route::get('/stok-opname', [StokController::class, 'opname'])->name('stok.opname');
 
     Route::resource('rekening-koran-va', RekeningKoranVaController::class);

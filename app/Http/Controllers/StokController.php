@@ -148,7 +148,119 @@ class StokController extends Controller
 
     public function kartu(Request $request)
     {
-        return view('stok.kartu', []);
+        $bahanbakus = BahanBaku::orderBy('nama')->get(['id', 'nama', 'satuan']);
+        $bahanoperasionals = BahanOperasional::orderBy('nama')->get(['id', 'nama', 'satuan']);
+
+        // Combine both with type identifier
+        $bahans = $bahanbakus->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'nama' => $item->nama,
+                'satuan' => $item->satuan,
+                'type' => 'bahan_baku'
+            ];
+        })->merge($bahanoperasionals->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'nama' => $item->nama,
+                'satuan' => $item->satuan,
+                'type' => 'bahan_operasional'
+            ];
+        }));
+
+        return view('stok.kartu', [
+            'bahans' => $bahans,
+        ]);
+    }
+
+    public function getKartuData(Request $request)
+    {
+        $request->validate([
+            'bahan_id' => 'required',
+            'type' => 'required|in:bahan_baku,bahan_operasional'
+        ]);
+
+        $bahanId = $request->bahan_id;
+        $type = $request->type;
+        $columnName = $type === 'bahan_baku' ? 'bahan_baku_id' : 'bahan_operasional_id';
+
+        // Get bahan info
+        $bahan = $type === 'bahan_baku'
+            ? BahanBaku::find($bahanId)
+            : BahanOperasional::find($bahanId);
+
+        if (!$bahan) {
+            return response()->json(['error' => 'Bahan tidak ditemukan'], 404);
+        }
+
+        // Get all order items with orders
+        $orderItems = OrderItem::with('order')
+            ->whereHas('order', function ($query) {
+                $query->whereNull('deleted_at');
+            })
+            ->where($columnName, $bahanId)
+            ->where('quantity_diterima', true)
+            ->whereNull('deleted_at')
+            ->orderBy('created_at')
+            ->get();
+
+        // Group by date and calculate daily transactions
+        $transactions = [];
+        $runningStock = 0;
+
+        foreach ($orderItems as $item) {
+            $date = $item->created_at->format('Y-m-d');
+
+            if (!isset($transactions[$date])) {
+                $transactions[$date] = [
+                    'tanggal' => $date,
+                    'stok_awal' => $runningStock,
+                    'masuk' => 0,
+                    'keluar' => 0,
+                    'harga' => $item->unit_cost,
+                    'keterangan' => ''
+                ];
+            }
+
+            // Assuming positive quantity is "masuk" (purchase)
+            // If you have a field to distinguish masuk/keluar, adjust here
+            if ($item->quantity > 0) {
+                $transactions[$date]['masuk'] += $item->quantity;
+            } else {
+                $transactions[$date]['keluar'] += abs($item->quantity);
+            }
+
+            $transactions[$date]['harga'] = $item->unit_cost; // Last price for that date
+        }
+
+        // Calculate stok_akhir and nilai for each transaction
+        $result = [];
+        foreach ($transactions as $trans) {
+            $stokAkhir = $trans['stok_awal'] + $trans['masuk'] - $trans['keluar'];
+            $nilai = $stokAkhir * $trans['harga'];
+
+            $result[] = [
+                'tanggal' => $trans['tanggal'],
+                'stok_awal' => $trans['stok_awal'],
+                'masuk' => $trans['masuk'],
+                'keluar' => $trans['keluar'],
+                'stok_akhir' => $stokAkhir,
+                'harga' => $trans['harga'],
+                'nilai' => $nilai,
+                'keterangan' => $trans['keterangan']
+            ];
+
+            $runningStock = $stokAkhir;
+        }
+
+        return response()->json([
+            'bahan' => [
+                'id' => $bahan->id,
+                'nama' => $bahan->nama,
+                'satuan' => $bahan->satuan
+            ],
+            'transactions' => $result
+        ]);
     }
 
     public function opname(Request $request)

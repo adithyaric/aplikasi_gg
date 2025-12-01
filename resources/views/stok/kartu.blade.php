@@ -39,6 +39,25 @@
                             <h5><strong>KARTU STOK</strong></h5>
                         </div>
 
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Pilih Bahan</label>
+                                <select id="selectBahan" class="form-select">
+                                    <option value="">-- Pilih Bahan --</option>
+                                    @foreach ($bahans as $bahan)
+                                        <option value="{{ $bahan['id'] }}" data-type="{{ $bahan['type'] }}"
+                                            data-satuan="{{ $bahan['satuan'] }}">
+                                            {{ $bahan['nama'] }} ({{ ucfirst(str_replace('_', ' ', $bahan['type'])) }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button id="btnLoadKartu" class="btn btn-primary" disabled>
+                                    <i class="bi bi-search"></i> Tampilkan Kartu
+                                </button>
+                            </div>
+                        </div>
                         <!-- 🔹 Input Identitas Bahan -->
                         <table class="table table-borderless mb-2" style="width: 60%">
                             <tr>
@@ -46,7 +65,7 @@
                                 <td>
                                     :
                                     <input type="text" id="namaBahan" class="form-control d-inline-block"
-                                        style="width: 70%" value="Beras" placeholder="Masukkan nama bahan..." readonly />
+                                        style="width: 70%" value="Beras" placeholder="Masukkan nama bahan..." />
                                 </td>
                             </tr>
                             <tr>
@@ -54,7 +73,7 @@
                                 <td>
                                     :
                                     <input type="text" id="kodeAkun" class="form-control d-inline-block"
-                                        style="width: 70%" value="BP001" placeholder="Masukkan kode akun..." readonly />
+                                        style="width: 70%" value="BP001" placeholder="Masukkan kode akun..." />
                                 </td>
                             </tr>
                             <tr>
@@ -62,7 +81,7 @@
                                 <td>
                                     :
                                     <input type="text" id="satuan" class="form-control d-inline-block"
-                                        style="width: 70%" value="Gram" placeholder="Masukkan kode akun..." readonly />
+                                        style="width: 70%" value="Gram" placeholder="Masukkan kode akun..." />
                                 </td>
                             </tr>
                         </table>
@@ -93,139 +112,7 @@
                                         <th>Keterangan</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tableBody">
-                                    <tr>
-                                        <td>1</td>
-                                        <td>
-                                            <input type="date" class="form-control" value="2025-09-15" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control stok-awal" value="3500" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control masuk" value="545000" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control keluar" value="542700" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control stok-akhir" value="5800" disabled />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control harga" value="13" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control nilai" value="75400" disabled />
-                                        </td>
-                                        <td><input type="text" class="form-control" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>
-                                            <input type="date" class="form-control" value="2025-09-16" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control stok-awal" value="5800" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control masuk" value="536900" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control keluar" value="542700" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control stok-akhir" value="0" disabled />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control harga" value="13" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control nilai" value="0" disabled />
-                                        </td>
-                                        <td><input type="text" class="form-control" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td>
-                                            <input type="date" class="form-control" value="2025-09-17" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control stok-awal" value="0"
-                                                readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control masuk" value="542700" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control keluar" value="542700" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control stok-akhir" value="0"
-                                                disabled />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control harga" value="13" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control nilai" value="0" disabled />
-                                        </td>
-                                        <td><input type="text" class="form-control" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td>4</td>
-                                        <td>
-                                            <input type="date" class="form-control" value="2025-09-18" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control stok-awal" value="0"
-                                                readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control masuk" value="550000" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control keluar" value="542700" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control stok-akhir" value="7300"
-                                                disabled />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control harga" value="13" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control nilai" value="0" disabled />
-                                        </td>
-                                        <td><input type="text" class="form-control" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td>5</td>
-                                        <td>
-                                            <input type="date" class="form-control" value="2025-09-19" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control stok-awal" value="7300"
-                                                readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control masuk" value="530000" readonly />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control keluar" value="" />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control stok-akhir" value=""
-                                                disabled />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control harga" value="" />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control nilai" value="" disabled />
-                                        </td>
-                                        <td><input type="text" class="form-control" /></td>
-                                    </tr>
-                                </tbody>
+                                <tbody id="tableBody"></tbody>
                                 <tfoot>
                                     <tr>
                                         <th colspan="7" class="text-end">
@@ -249,8 +136,7 @@
         </div>
     </div>
     <!-- 🔶 Modal Cetak Kartu Stok -->
-    <div class="modal fade" id="modalCetakKartu" tabindex="-1" aria-labelledby="modalCetakKartuLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="modalCetakKartu" tabindex="-1" aria-labelledby="modalCetakKartuLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content p-4">
                 <div class="modal-header border-bottom-0">
@@ -557,5 +443,148 @@
                     printWindow.close();
                 }, 800);
             });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            let currentData = [];
+
+            // Enable button when bahan selected
+            $('#selectBahan').on('change', function() {
+                $('#btnLoadKartu').prop('disabled', !$(this).val());
+            });
+
+            // Load kartu data
+            $('#btnLoadKartu').on('click', function() {
+                const selected = $('#selectBahan option:selected');
+                const bahanId = selected.val();
+                const type = selected.data('type');
+                const satuan = selected.data('satuan');
+
+                if (!bahanId) return;
+
+                $(this).prop('disabled', true).html(
+                    '<span class="spinner-border spinner-border-sm"></span> Loading...');
+
+                $.ajax({
+                    url: '{{ route('stok.kartu.data') }}',
+                    method: 'GET',
+                    data: {
+                        bahan_id: bahanId,
+                        type: type
+                    },
+                    success: function(response) {
+                        currentData = response;
+
+                        // Update form fields
+                        $('#namaBahan').val(response.bahan.nama);
+                        $('#kodeAkun').val(response.bahan.id);
+                        $('#satuan').val(response.bahan.satuan);
+
+                        // Render table
+                        renderKartuTable(response.transactions);
+
+                        $('#btnLoadKartu').prop('disabled', false).html(
+                            '<i class="bi bi-search"></i> Tampilkan Kartu');
+                    },
+                    error: function() {
+                        alert('Gagal memuat data kartu stok');
+                        $('#btnLoadKartu').prop('disabled', false).html(
+                            '<i class="bi bi-search"></i> Tampilkan Kartu');
+                    }
+                });
+            });
+
+            function renderKartuTable(transactions) {
+                const tbody = $('#tableBody');
+                tbody.empty();
+
+                if (transactions.length === 0) {
+                    tbody.append('<tr><td colspan="9" class="text-center">Tidak ada data transaksi</td></tr>');
+                    $('#totalPersediaan').text('0');
+                    return;
+                }
+
+                let totalNilai = 0;
+
+                transactions.forEach((item, index) => {
+                    totalNilai += item.nilai;
+
+                    tbody.append(`
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><input type="date" class="form-control" value="${item.tanggal}" /></td>
+                    <td><input type="number" class="form-control stok-awal" value="${item.stok_awal}" /></td>
+                    <td><input type="number" class="form-control masuk" value="${item.masuk}" /></td>
+                    <td><input type="number" class="form-control keluar" value="${item.keluar}" /></td>
+                    <td><input type="number" class="form-control stok-akhir" value="${item.stok_akhir}" disabled /></td>
+                    <td><input type="number" class="form-control harga" value="${item.harga}" /></td>
+                    <td><input type="number" class="form-control nilai" value="${item.nilai}" disabled /></td>
+                    <td><input type="text" class="form-control" value="${item.keterangan}" /></td>
+                </tr>
+            `);
+                });
+
+                $('#totalPersediaan').text(totalNilai.toLocaleString('id-ID'));
+            }
+
+            // Update getTabelUtamaData function to work with dynamic data
+            window.getTabelUtamaData = function() {
+                const rows = [];
+                $("#datatable tbody tr").each(function() {
+                    const row = {
+                        tanggal: $(this).find("td:eq(1) input").val(),
+                        stokAwal: parseFloat($(this).find(".stok-awal").val()) || 0,
+                        masuk: parseFloat($(this).find(".masuk").val()) || 0,
+                        keluar: parseFloat($(this).find(".keluar").val()) || 0,
+                        stokAkhir: parseFloat($(this).find(".stok-akhir").val()) || 0,
+                        harga: parseFloat($(this).find(".harga").val()) || 0,
+                        nilai: parseFloat($(this).find(".nilai").val()) || 0,
+                        ket: $(this).find("td:eq(8) input").val() || "",
+                    };
+                    if (row.tanggal) rows.push(row);
+                });
+                return rows;
+            };
+        });
+    </script>
+
+    <script>
+        function hitungPersediaan() {
+            let total = 0;
+            let previousStokAkhir = 0;
+
+            $("#datatable tbody tr").each(function(index) {
+                // Set stok awal from previous row's stok akhir
+                if (index > 0) {
+                    $(this).find(".stok-awal").val(previousStokAkhir);
+                }
+
+                const stokAwal = parseFloat($(this).find(".stok-awal").val()) || 0;
+                const masuk = parseFloat($(this).find(".masuk").val()) || 0;
+                const keluar = parseFloat($(this).find(".keluar").val()) || 0;
+                const harga = parseFloat($(this).find(".harga").val()) || 0;
+
+                const stokAkhir = stokAwal + masuk - keluar;
+                const nilai = stokAkhir * harga;
+
+                $(this).find(".stok-akhir").val(stokAkhir);
+                $(this).find(".nilai").val(nilai);
+
+                previousStokAkhir = stokAkhir;
+                total += nilai;
+            });
+
+            $("#totalPersediaan").text(total.toLocaleString("id-ID"));
+        }
+
+        $(document).ready(function() {
+            hitungPersediaan();
+
+            // Recalculate when any input changes
+            $("#datatable").on("input", ".stok-awal, .masuk, .keluar, .harga", function() {
+                hitungPersediaan();
+            });
+        });
     </script>
 @endpush
