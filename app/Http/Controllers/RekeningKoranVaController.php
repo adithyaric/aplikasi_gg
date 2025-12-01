@@ -82,7 +82,8 @@ class RekeningKoranVaController extends Controller
             $validated['saldo'] = $newSaldo;
 
             // dd($validated);
-            RekeningKoranVa::create($validated);
+            $newEntry = RekeningKoranVa::create($validated);
+            $this->recalculateSubsequentEntries($newEntry);
 
             DB::commit();
             return redirect()->route('rekening-koran-va.index')->with('success', 'Data rekening koran berhasil ditambahkan');
@@ -96,13 +97,15 @@ class RekeningKoranVaController extends Controller
 
     public function edit($id)
     {
+        $lastSaldo = RekeningKoranVa::orderBy('tanggal_transaksi', 'desc')->orderBy('id', 'desc')->value('saldo') ?? 0;
+
         $rekeningKoran = RekeningKoranVa::with('transaction.order')->findOrFail($id);
 
         $transactions = Transaction::whereHas('order')->whereDoesntHave('rekeningKoranVa')->orWhere('id', $rekeningKoran->transaction_id)->with('order')->get();
 
         $title = 'Edit Rekening Koran VA';
 
-        return view('keuangan.rekening-koran-va.edit', compact('rekeningKoran', 'transactions', 'title'));
+        return view('keuangan.rekening-koran-va.edit', compact('lastSaldo', 'rekeningKoran', 'transactions', 'title'));
     }
 
     public function update(Request $request, $id)
@@ -139,21 +142,7 @@ class RekeningKoranVaController extends Controller
             $validated['saldo'] = $newSaldo;
             $rekeningKoran->update($validated);
 
-            // Recalculate all subsequent entries
-            $nextEntries = RekeningKoranVa::where('tanggal_transaksi', '>', $rekeningKoran->tanggal_transaksi)
-                ->orWhere(function ($q) use ($rekeningKoran) {
-                    $q->where('tanggal_transaksi', '=', $rekeningKoran->tanggal_transaksi)->where('id', '>', $rekeningKoran->id);
-                })
-                ->orderBy('tanggal_transaksi', 'asc')
-                ->orderBy('id', 'asc')
-                ->get();
-
-            //TODO jadikan validasi di function lain
-            $currentSaldo = $newSaldo;
-            foreach ($nextEntries as $entry) {
-                $currentSaldo = $currentSaldo - $entry->debit + $entry->kredit;
-                $entry->update(['saldo' => $currentSaldo]);
-            }
+            $this->recalculateSubsequentEntries($rekeningKoran);
 
             DB::commit();
             return redirect()->route('rekening-koran-va.index')->with('success', 'Data rekening koran berhasil diperbarui');
@@ -223,6 +212,27 @@ class RekeningKoranVaController extends Controller
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
             ], 500);
+        }
+    }
+
+    private function recalculateSubsequentEntries(RekeningKoranVa $entry)
+    {
+        // Get all entries starting from the earliest one that needs recalculation
+        $allEntries = RekeningKoranVa::orderBy('tanggal_transaksi', 'asc')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $currentSaldo = 0;
+        $recalculate = false;
+
+        foreach ($allEntries as $currentEntry) {
+            if ($recalculate || $currentEntry->id === $entry->id) {
+                $recalculate = true;
+                $currentSaldo = $currentSaldo - $currentEntry->debit + $currentEntry->kredit;
+                $currentEntry->update(['saldo' => $currentSaldo]);
+            } else {
+                $currentSaldo = $currentEntry->saldo;
+            }
         }
     }
 }

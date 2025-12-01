@@ -136,11 +136,29 @@ class OrderController extends Controller
         try {
             $supplier = Supplier::find($request->supplier_id);
 
-            $latestOrder = Order::latest()->first();
-            $number = $latestOrder ? (int)substr($latestOrder->order_number, 2) + 1 : 1;
-            $orderNumber = 'PO' . str_pad($number, 3, '0', STR_PAD_LEFT);
+            $year = date('Y');
+            $month = date('n');
+            $romanMonth = [
+                1 => 'I',
+                2 => 'II',
+                3 => 'III',
+                4 => 'IV',
+                5 => 'V',
+                6 => 'VI',
+                7 => 'VII',
+                8 => 'VIII',
+                9 => 'IX',
+                10 => 'X',
+                11 => 'XI',
+                12 => 'XII'
+            ][$month];
 
-            //TODO : PO/Tahun/BulanRomawi/nomor
+            $latestOrder = Order::where('order_number', 'like', "PO/{$year}/{$romanMonth}/%")
+                ->latest()
+                ->first();
+
+            $number = $latestOrder ? (int)substr($latestOrder->order_number, -3) + 1 : 1;
+            $orderNumber = 'PO/' . $year . '/' . $romanMonth . '/' . str_pad($number, 3, '0', STR_PAD_LEFT);
 
             $grandTotal = 0;
             foreach ($request->items as $item) {

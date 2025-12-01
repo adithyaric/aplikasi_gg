@@ -166,7 +166,7 @@
                             <div id="itemContainer">
                                 @foreach ($order->items as $index => $item)
                                     <div class="row itemRow align-items-end mb-3">
-                                        <div class="form-group col-4">
+                                        <div class="form-group col-3">
                                             <label class="form-label">Jenis Bahan *</label>
                                             <select name="items[{{ $index }}][bahan_id]"
                                                 class="form-select shadow-none bahan-select" required>
@@ -204,11 +204,15 @@
                                                 class="form-control satuan-input" value="{{ $item->satuan }}" readonly
                                                 required />
                                         </div>
-                                        <div class="form-group col-3">
+                                        <div class="form-group col-2">
                                             <label class="form-label">Harga *</label>
                                             <input type="number" name="items[{{ $index }}][unit_cost]"
                                                 class="form-control price-input" step="0.01" min="0"
                                                 value="{{ $item->unit_cost }}" required />
+                                        </div>
+                                        <div class="form-group col-2">
+                                            <label class="form-label">Subtotal</label>
+                                            <input type="text" class="form-control subtotal-input" disabled />
                                         </div>
                                         <div class="form-group col-1">
                                             <button type="button" class="btn btn-danger btn-sm removeRow">X</button>
@@ -259,7 +263,10 @@
             $('.itemRow').each(function() {
                 const qty = parseFloat($(this).find('.quantity-input').val()) || 0;
                 const price = parseFloat($(this).find('.price-input').val()) || 0;
-                total += qty * price;
+                const subtotal = qty * price;
+
+                $(this).find('.subtotal-input').val(formatRupiah(subtotal));
+                total += subtotal;
             });
             $('#totalHarga').val(formatRupiah(total));
         }
@@ -278,7 +285,7 @@
             });
             return `
             <div class="row itemRow align-items-end mb-3">
-                <div class="form-group col-4">
+                <div class="form-group col-3">
                     <label class="form-label">Jenis Bahan *</label>
                     <select name="items[${index}][bahan_id]" class="form-select shadow-none bahan-select" data-type="" required>
                         <option value="">Pilih Bahan</option>
@@ -298,9 +305,13 @@
                     <label class="form-label">Satuan *</label>
                     <input type="text" name="items[${index}][satuan]" class="form-control satuan-input" readonly required />
                 </div>
-                <div class="form-group col-3">
+                <div class="form-group col-2">
                     <label class="form-label">Harga *</label>
                     <input type="number" name="items[${index}][unit_cost]" class="form-control price-input" step="0.01" min="0" required />
+                </div>
+                <div class="form-group col-2">
+                    <label class="form-label">Subtotal</label>
+                    <input type="text" class="form-control subtotal-input" disabled />
                 </div>
                 <div class="form-group col-1">
                     <button type="button" class="btn btn-danger btn-sm removeRow">X</button>

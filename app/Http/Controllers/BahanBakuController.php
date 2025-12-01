@@ -36,8 +36,8 @@ class BahanBakuController extends Controller
     {
         $request->validate([
             'nama' => 'required|string|max:255',
-            'kelompok' => 'required|string|max:255',
-            'jenis' => 'required|string|max:255',
+            'kelompok' => 'nullable|string|max:255',
+            'jenis' => 'nullable|string|max:255',
             'kategori' => 'nullable|array',
             'merek' => 'required|string|max:255',
             'gov_price' => 'required|numeric|min:0',
@@ -70,6 +70,7 @@ class BahanBakuController extends Controller
 
     public function show(BahanBaku $bahanbaku)
     {
+        $bahanbaku->load('activities');
         return response()->json($bahanbaku);
     }
 
@@ -82,8 +83,8 @@ class BahanBakuController extends Controller
     {
         $request->validate([
             'nama' => 'required|string|max:255',
-            'kelompok' => 'required|string|max:255',
-            'jenis' => 'required|string|max:255',
+            'kelompok' => 'nullable|string|max:255',
+            'jenis' => 'nullable|string|max:255',
             'kategori' => 'nullable|array',
             'merek' => 'required|string|max:255',
             'gov_price' => 'required|numeric|min:0',

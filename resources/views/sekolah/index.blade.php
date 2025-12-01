@@ -271,9 +271,38 @@
                     $('#jarak').val(response.jarak);
                     $('#porsi_8k').val(response.porsi_8k);
                     $('#porsi_10k').val(response.porsi_10k);
+                    $('#lat').val(response.lat);
+                    $('#long').val(response.long);
+                    $('#alamat').val(response.alamat);
                     $('#form_method').val('PUT');
                     $('#modalSekolahLabel').text('Edit Sekolah');
+
                     $('#modalSekolah').modal('show');
+
+                    setTimeout(function() {
+                        if (response.lat && response.long) {
+                            clearSearchMarkers();
+                            if (markerSekolah) {
+                                mapSekolah.removeLayer(markerSekolah);
+                            }
+
+                            var redIcon = L.icon({
+                                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+                                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+                                iconSize: [25, 41],
+                                iconAnchor: [12, 41],
+                                popupAnchor: [1, -34],
+                                shadowSize: [41, 41]
+                            });
+
+                            markerSekolah = L.marker([response.lat, response.long], {
+                                    icon: redIcon
+                                }).addTo(mapSekolah)
+                                .bindPopup(response.nama)
+                                .openPopup();
+                            mapSekolah.setView([response.lat, response.long], 5);
+                        }
+                    }, 400);
                 }
             });
         }
@@ -320,50 +349,29 @@
             });
         }
     </script>
+    {{-- //Maps --}}
     <script>
         let mapSekolah, markerSekolah, searchMarkers = [];
-
-        const makassarBounds = {
-            north: -5.0556,
-            south: -5.2096,
-            east: 119.5377,
-            west: 119.3737
-        };
 
         function initMapSekolah() {
             if (!document.getElementById('map-sekolah') || $('#map-sekolah').is(':hidden')) {
                 return;
             }
-
-            //titik Se Indonesia
-            mapSekolah = L.map('map-sekolah').setView([-5.135, 119.422], 13);
-
+            // Center of Indonesia
+            mapSekolah = L.map('map-sekolah').setView([-2.5489, 118.0149], 4);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
             }).addTo(mapSekolah);
-
-            mapSekolah.setMaxBounds([
-                [makassarBounds.south, makassarBounds.west],
-                [makassarBounds.north, makassarBounds.east]
-            ]);
 
             mapSekolah.on('click', async function(e) {
                 let lat = e.latlng.lat;
                 let lng = e.latlng.lng;
 
-                if (lat < makassarBounds.south || lat > makassarBounds.north ||
-                    lng < makassarBounds.west || lng > makassarBounds.east) {
-                    Swal.fire('Peringatan', 'Silakan pilih lokasi dalam area Makassar', 'warning');
-                    return;
-                }
-
                 $('#lat').val(lat);
                 $('#long').val(lng);
-
                 if (markerSekolah) {
                     mapSekolah.removeLayer(markerSekolah);
                 }
-
                 var redIcon = L.icon({
                     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
                     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
@@ -372,13 +380,11 @@
                     popupAnchor: [1, -34],
                     shadowSize: [41, 41]
                 });
-
                 markerSekolah = L.marker([lat, lng], {
                         icon: redIcon
                     }).addTo(mapSekolah)
                     .bindPopup('Lokasi Sekolah Terpilih')
                     .openPopup();
-
                 await getAddressFromCoordinates(lat, lng);
             });
         }
@@ -395,30 +401,23 @@
                 let searchQuery = query;
                 const schoolKeywords = ['sekolah', 'school', 'sd', 'smp', 'sma', 'smk', 'madrasah', 'mi', 'mts', 'man'];
                 const hasSchoolKeyword = schoolKeywords.some(keyword => query.toLowerCase().includes(keyword));
-
                 if (!hasSchoolKeyword) {
-                    searchQuery = `${query} sekolah Makassar`;
+                    searchQuery = `${query} sekolah Indonesia`;
                 } else {
-                    searchQuery = `${query} Makassar`;
+                    searchQuery = `${query} Indonesia`;
                 }
-
                 const response = await fetch(
                     `https://nominatim.openstreetmap.org/search?` +
                     `format=json&` +
                     `q=${encodeURIComponent(searchQuery)}&` +
                     `countrycodes=id&` +
-                    `viewbox=${makassarBounds.west},${makassarBounds.north},${makassarBounds.east},${makassarBounds.south}&` +
-                    `bounded=1&` +
                     `limit=10`
                 );
-
                 const data = await response.json();
-
                 if (data.length > 0) {
                     clearSearchMarkers();
                     $('#search-results').show();
                     $('#results-list').empty();
-
                     var blueIcon = L.icon({
                         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
                         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
@@ -428,74 +427,55 @@
                         shadowSize: [41, 41]
                     });
 
-                    const makassarResults = data.filter(result => {
-                        const lat = parseFloat(result.lat);
-                        const lon = parseFloat(result.lon);
-                        return lat >= makassarBounds.south && lat <= makassarBounds.north &&
-                            lon >= makassarBounds.west && lon <= makassarBounds.east;
-                    });
-
-                    if (makassarResults.length === 0) {
-                        $('#search-results').hide();
-                        Swal.fire('Peringatan', 'Tidak ditemukan sekolah di area Makassar', 'warning');
-                        return;
-                    }
-
-                    makassarResults.forEach((result, index) => {
+                    data.forEach((result, index) => {
                         const lat = parseFloat(result.lat);
                         const lng = parseFloat(result.lon);
-
                         let displayName = result.display_name;
                         let schoolName = result.display_name.split(',')[0];
                         if (result.name && result.name !== '') {
                             schoolName = result.name;
                         }
-
                         const resultId = `result-${index}`;
-
                         const marker = L.marker([lat, lng], {
                                 icon: blueIcon
                             }).addTo(mapSekolah)
                             .bindPopup(`
-                            <div class="text-center">
-                                <strong>${schoolName}</strong><br>
-                                <small>${displayName}</small><br>
-                                <a href="javascript:void(0)" class="btn btn-sm btn-success mt-1 select-location"
-                                   data-lat="${lat}"
-                                   data-lng="${lng}"
-                                   data-address="${displayName.replace(/"/g, '&quot;')}"
-                                   data-school="${schoolName.replace(/"/g, '&quot;')}">
-                                    Pilih
-                                </a>
-                            </div>
-                        `);
-
+                    <div class="text-center">
+                        <strong>${schoolName}</strong><br>
+                        <small>${displayName}</small><br>
+                        <a href="javascript:void(0)" class="btn btn-sm btn-success mt-1 select-location"
+                            data-lat="${lat}"
+                            data-lng="${lng}"
+                            data-address="${displayName.replace(/"/g, '&quot;')}"
+                            data-school="${schoolName.replace(/"/g, '&quot;')}">
+                            Pilih
+                        </a>
+                    </div>
+                `);
                         searchMarkers.push(marker);
-
                         $('#results-list').append(`
-                        <div class="p-3 border-bottom">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-1">${schoolName}</h6>
-                                    <small class="text-muted">${displayName}</small>
-                                </div>
-                                <a href="javascript:void(0)" class="btn btn-sm btn-outline-primary ms-2 select-location"
-                                   data-lat="${lat}"
-                                   data-lng="${lng}"
-                                   data-address="${displayName.replace(/"/g, '&quot;')}"
-                                   data-school="${schoolName.replace(/"/g, '&quot;')}">
-                                    Pilih
-                                </a>
-                            </div>
+                <div class="p-3 border-bottom">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">${schoolName}</h6>
+                            <small class="text-muted">${displayName}</small>
                         </div>
-                    `);
+                        <a href="javascript:void(0)" class="btn btn-sm btn-outline-primary ms-2 select-location"
+                            data-lat="${lat}"
+                            data-lng="${lng}"
+                            data-address="${displayName.replace(/"/g, '&quot;')}"
+                            data-school="${schoolName.replace(/"/g, '&quot;')}">
+                            Pilih
+                        </a>
+                    </div>
+                </div>
+            `);
                     });
-
                     const group = new L.featureGroup(searchMarkers);
                     mapSekolah.fitBounds(group.getBounds().pad(0.1));
                 } else {
                     $('#search-results').hide();
-                    Swal.fire('Peringatan', 'Tidak ditemukan sekolah dengan kata kunci tersebut di Makassar',
+                    Swal.fire('Peringatan', 'Tidak ditemukan sekolah dengan kata kunci tersebut di Indonesia',
                         'warning');
                 }
             } catch (error) {
@@ -517,19 +497,15 @@
             clearSearchMarkers();
             $('#search-results').hide();
             $('#search-location').val('');
-
             $('#lat').val(lat);
             $('#long').val(lng);
             $('#alamat').val(address);
-
             if (schoolName && !$('#nama').val()) {
                 $('#nama').val(schoolName);
             }
-
             if (markerSekolah) {
                 mapSekolah.removeLayer(markerSekolah);
             }
-
             var redIcon = L.icon({
                 iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
                 shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
@@ -538,14 +514,12 @@
                 popupAnchor: [1, -34],
                 shadowSize: [41, 41]
             });
-
             markerSekolah = L.marker([lat, lng], {
                     icon: redIcon
                 }).addTo(mapSekolah)
                 .bindPopup('<strong>Lokasi Sekolah Terpilih</strong><br>' + address)
                 .openPopup();
-
-            mapSekolah.setView([lat, lng], 15);
+            mapSekolah.setView([lat, lng], 5);
         }
 
         async function getAddressFromCoordinates(lat, lng) {
@@ -591,16 +565,14 @@
             $('#search-location').val('');
             $('#search-results').hide();
             $('#results-list').empty();
-
             clearSearchMarkers();
             if (markerSekolah) {
                 mapSekolah.removeLayer(markerSekolah);
                 markerSekolah = null;
             }
-
             if (mapSekolah) {
-                //titik Se Indonesia
-                mapSekolah.setView([-5.135, 119.422], 13);
+                // Center of Indonesia
+                mapSekolah.setView([-2.5489, 118.0149], 4);
             }
         }
 
@@ -613,53 +585,5 @@
                 }
             }, 300);
         });
-
-        function editSekolah(id) {
-            $.ajax({
-                url: "{{ route('sekolah.index') }}/" + id + "/edit",
-                method: 'GET',
-                success: function(response) {
-                    $('#sekolah_id').val(response.id);
-                    $('#nama').val(response.nama);
-                    $('#nama_pic').val(response.nama_pic);
-                    $('#nomor').val(response.nomor);
-                    $('#jarak').val(response.jarak);
-                    $('#porsi_8k').val(response.porsi_8k);
-                    $('#porsi_10k').val(response.porsi_10k);
-                    $('#lat').val(response.lat);
-                    $('#long').val(response.long);
-                    $('#alamat').val(response.alamat);
-                    $('#form_method').val('PUT');
-                    $('#modalSekolahLabel').text('Edit Sekolah');
-
-                    $('#modalSekolah').modal('show');
-
-                    setTimeout(function() {
-                        if (response.lat && response.long) {
-                            clearSearchMarkers();
-                            if (markerSekolah) {
-                                mapSekolah.removeLayer(markerSekolah);
-                            }
-
-                            var redIcon = L.icon({
-                                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-                                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-                                iconSize: [25, 41],
-                                iconAnchor: [12, 41],
-                                popupAnchor: [1, -34],
-                                shadowSize: [41, 41]
-                            });
-
-                            markerSekolah = L.marker([response.lat, response.long], {
-                                    icon: redIcon
-                                }).addTo(mapSekolah)
-                                .bindPopup(response.nama)
-                                .openPopup();
-                            mapSekolah.setView([response.lat, response.long], 15);
-                        }
-                    }, 400);
-                }
-            });
-        }
     </script>
 @endpush

@@ -48,8 +48,6 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Nama</th>
-                                        {{-- <th>Kelompok</th> --}}
-                                        {{-- <th>Jenis</th> --}}
                                         <th>Kelompok</th>
                                         <th>Satuan</th>
                                         <th>Merek</th>
@@ -63,8 +61,6 @@
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $bahanbaku->nama }}</td>
-                                            {{-- <td>{{ $bahanbaku->kelompok }}</td> --}}
-                                            {{-- <td>{{ $bahanbaku->jenis }}</td> --}}
                                             <td>
                                                 @if ($bahanbaku->kategori && is_array($bahanbaku->kategori))
                                                     {{ implode(', ', $bahanbaku->kategori) }}
@@ -99,7 +95,19 @@
                                                         </svg>
                                                     </span>
                                                 </button>
-                                                //TODO tambah detail pop up history gov price
+                                                <button type="button" class="btn btn-sm btn-info"
+                                                    onclick="showGovPriceHistory({{ $bahanbaku->id }})">
+                                                    <span class="btn-inner">
+                                                        <svg class="icon-20" width="20" viewBox="0 0 24 24"
+                                                            fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" />
+                                                            <path
+                                                                d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                                                                stroke="currentColor" stroke-width="2" />
+                                                        </svg>
+                                                    </span>
+                                                </button>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -135,18 +143,6 @@
                                         placeholder="Masukkan nama">
                                     <div class="invalid-feedback"></div>
                                 </div>
-                                {{-- <div class="form-group mb-3"> --}}
-                                    {{-- <label class="form-label">Kelompok <span class="text-danger">*</span></label> --}}
-                                    {{-- <input type="text" class="form-control" id="kelompok" name="kelompok" --}}
-                                        {{-- placeholder="Masukkan kelompok"> --}}
-                                    {{-- <div class="invalid-feedback"></div> --}}
-                                {{-- </div> --}}
-                                {{-- <div class="form-group mb-3"> --}}
-                                    {{-- <label class="form-label">Jenis <span class="text-danger">*</span></label> --}}
-                                    {{-- <input type="text" class="form-control" id="jenis" name="jenis" --}}
-                                        {{-- placeholder="Masukkan jenis"> --}}
-                                    {{-- <div class="invalid-feedback"></div> --}}
-                                {{-- </div> --}}
                                 <div class="form-group mb-4">
                                     <label class="form-label">Satuan <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="satuan" name="satuan"
@@ -188,16 +184,45 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal History Gov Price -->
+    <div class="modal fade" id="modalGovPriceHistory" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content"
+                style="border-radius:15px; border:1px solid #ddd; box-shadow:0 8px 20px rgba(0,0,0,0.2);">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title text-white">History Gov Price - <span id="history_bahan_name"></span></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Perubahan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gov_price_history"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('js')
     <script>
         $(document).ready(function() {
             $('#tableBahanBaku').DataTable();
-            $('#kategori').select2({
-                tags: true,
-                tokenSeparators: [','],
-                placeholder: "Pilih atau tambah kategori"
+            $(document).ready(function() {
+                $('.select2-multi').select2({
+                    theme: "bootstrap-5",
+                    tags: true,
+                    tokenSeparators: [','],
+                    width: '100%'
+                });
             });
         });
 
@@ -323,6 +348,66 @@
                                     'Terjadi kesalahan saat menghapus data'
                             });
                         }
+                    });
+                }
+            });
+        }
+    </script>
+    <script>
+        function showGovPriceHistory(id) {
+            $.ajax({
+                url: "{{ route('bahanbaku.index') }}/" + id,
+                method: 'GET',
+                success: function(response) {
+                    $('#history_bahan_name').text(response.nama);
+
+                    $('#gov_price_history').empty();
+                    if (response.activities && response.activities.length > 0) {
+                        response.activities.forEach(function(activity, index) {
+                            const props = activity.properties;
+                            const createdAt = activity.created_at ? new Date(activity.created_at)
+                                .toLocaleString('id-ID') : '-';
+
+                            let changes = [];
+                            const trackedFields = {
+                                'gov_price': 'Gov Price'
+                            };
+
+                            if (props.old && props.attributes) {
+                                Object.keys(trackedFields).forEach(field => {
+                                    if (props.old[field] !== props.attributes[field]) {
+                                        const oldValue = props.old[field] ? 'Rp ' + new Intl
+                                            .NumberFormat('id-ID').format(props.old[field]) :
+                                            '-';
+                                        const newValue = props.attributes[field] ? 'Rp ' +
+                                            new Intl.NumberFormat('id-ID').format(props
+                                                .attributes[field]) : '-';
+                                        changes.push(
+                                            `${trackedFields[field]}: ${oldValue} → ${newValue}`
+                                        );
+                                    }
+                                });
+                            }
+
+                            let row = '<tr>' +
+                                '<td>' + createdAt + '</td>' +
+                                '<td>' + (changes.length > 0 ? changes.join('<br>') : '-') + '</td>' +
+                                '</tr>';
+
+                            $('#gov_price_history').append(row);
+                        });
+                    } else {
+                        $('#gov_price_history').append(
+                            '<tr><td colspan="2" class="text-center">Tidak ada data history</td></tr>');
+                    }
+
+                    $('#modalGovPriceHistory').modal('show');
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Terjadi kesalahan saat mengambil data history'
                     });
                 }
             });

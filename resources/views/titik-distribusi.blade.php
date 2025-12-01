@@ -95,7 +95,7 @@
 
         function initMapSchool() {
             //titik Se Indonesia
-            mapSchool = L.map('map-school').setView([-5.135, 119.422], 13);
+            mapSchool = L.map('map-school').setView([-2.5489, 118.0149], 4);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
@@ -170,7 +170,7 @@
 
         function initMapSupplier() {
             //titik Se Indonesia
-            mapSupplier = L.map('map-supplier').setView([-5.135, 119.422], 13);
+            mapSupplier = L.map('map-supplier').setView([-2.5489, 118.0149], 4);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
@@ -262,7 +262,7 @@
             if (foundMarkers.length === 1) {
                 // Single result - zoom directly to it
                 const marker = foundMarkers[0];
-                mapSchool.setView([marker.schoolData.lat, marker.schoolData.long], 16);
+                mapSchool.setView([marker.schoolData.lat, marker.schoolData.long], 5);
                 marker.openPopup();
             } else {
                 // Multiple results - show bounds and list
@@ -303,7 +303,7 @@
 
             if (foundMarkers.length === 1) {
                 const marker = foundMarkers[0];
-                mapSupplier.setView([marker.supplierData.lat, marker.supplierData.long], 16);
+                mapSupplier.setView([marker.supplierData.lat, marker.supplierData.long], 5);
                 marker.openPopup();
             } else {
                 const group = new L.featureGroup(foundMarkers);

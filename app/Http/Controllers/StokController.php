@@ -12,8 +12,9 @@ class StokController extends Controller
 {
     public function index()
     {
-        //TODO : orderItem quantity_diterima sudah diterima/true
-        $bahanBakuStok = BahanBaku::whereHas('orderItems')
+        $bahanBakuStok = BahanBaku::whereHas('orderItems', function ($query) {
+            $query->where('quantity_diterima', true);
+        })
             ->select(
                 'bahan_bakus.id',
                 'bahan_bakus.nama',
@@ -56,7 +57,9 @@ class StokController extends Controller
             });
 
         // Replace the BahanOperasional query
-        $bahanOperasionalStok = BahanOperasional::whereHas('orderItems')
+        $bahanOperasionalStok = BahanOperasional::whereHas('orderItems', function ($query) {
+            $query->where('quantity_diterima', true);
+        })
             ->select(
                 'bahan_operasionals.id',
                 'bahan_operasionals.nama',
@@ -107,13 +110,18 @@ class StokController extends Controller
             // $query->where('status', 'posted');
         })
             ->where($columnName, $item->id)
+            ->where('quantity_diterima', true)
             ->get();
 
         // Calculate totals
         $totalQty = $orderItems->sum('quantity');
         $lastPurchasePrice = $orderItems->sortByDesc('created_at')->first()?->unit_cost ?? 0;
-        //TODO ganti rumus avgCost
-        $avgCost = $orderItems->avg('unit_cost') ?? 0;
+
+        // Calculate average cost: total purchase value / total quantity
+        $totalPurchaseValue = $orderItems->sum(function ($item) {
+            return $item->quantity * $item->unit_cost;
+        });
+        $avgCost = $totalQty > 0 ? $totalPurchaseValue / $totalQty : 0;
 
         // Get kategori value
         $kategori = '-';

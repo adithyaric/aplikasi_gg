@@ -205,17 +205,13 @@
             $('.form-control').removeClass('is-invalid');
             $('.invalid-feedback').text('');
         }
-
         $('#formSupplier').on('submit', function(e) {
             e.preventDefault();
-
             $('.form-control').removeClass('is-invalid');
             $('.invalid-feedback').text('');
-
             let id = $('#supplier_id').val();
             let url = id ? "{{ route('supplier.index') }}/" + id : "{{ route('supplier.store') }}";
             let method = id ? 'PUT' : 'POST';
-
             $.ajax({
                 url: url,
                 method: method,
@@ -267,14 +263,12 @@
                     $('#form_method').val('PUT');
                     $('#modalSupplierLabel').text('Edit Supplier');
                     $('#modalSupplier').modal('show');
-
                     setTimeout(function() {
                         if (response.lat && response.long) {
                             clearSearchMarkers();
                             if (markerSupplier) {
                                 mapSupplier.removeLayer(markerSupplier);
                             }
-
                             var redIcon = L.icon({
                                 iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
                                 shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
@@ -283,13 +277,12 @@
                                 popupAnchor: [1, -34],
                                 shadowSize: [41, 41]
                             });
-
                             markerSupplier = L.marker([response.lat, response.long], {
                                     icon: redIcon
                                 }).addTo(mapSupplier)
                                 .bindPopup(response.nama)
                                 .openPopup();
-                            mapSupplier.setView([response.lat, response.long], 15);
+                            mapSupplier.setView([response.lat, response.long], 5);
                         }
                     }, 400);
                 }
@@ -341,47 +334,25 @@
     <script>
         let mapSupplier, markerSupplier, searchMarkers = [];
 
-        const makassarBounds = {
-            north: -5.0556,
-            south: -5.2096,
-            east: 119.5377,
-            west: 119.3737
-        };
-
         function initMapSupplier() {
             if (!document.getElementById('map-supplier') || $('#map-supplier').is(':hidden')) {
                 return;
             }
-
-            //titik Se Indonesia
-            mapSupplier = L.map('map-supplier').setView([-5.135, 119.422], 13);
-
+            // Center of Indonesia
+            mapSupplier = L.map('map-supplier').setView([-2.5489, 118.0149], 4);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
             }).addTo(mapSupplier);
-
-            mapSupplier.setMaxBounds([
-                [makassarBounds.south, makassarBounds.west],
-                [makassarBounds.north, makassarBounds.east]
-            ]);
 
             mapSupplier.on('click', async function(e) {
                 let lat = e.latlng.lat;
                 let lng = e.latlng.lng;
 
-                if (lat < makassarBounds.south || lat > makassarBounds.north ||
-                    lng < makassarBounds.west || lng > makassarBounds.east) {
-                    Swal.fire('Peringatan', 'Silakan pilih lokasi dalam area Makassar', 'warning');
-                    return;
-                }
-
                 $('#lat').val(lat);
                 $('#long').val(lng);
-
                 if (markerSupplier) {
                     mapSupplier.removeLayer(markerSupplier);
                 }
-
                 var redIcon = L.icon({
                     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
                     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
@@ -390,13 +361,11 @@
                     popupAnchor: [1, -34],
                     shadowSize: [41, 41]
                 });
-
                 markerSupplier = L.marker([lat, lng], {
                         icon: redIcon
                     }).addTo(mapSupplier)
                     .bindPopup('Lokasi Supplier Terpilih')
                     .openPopup();
-
                 await getAddressFromCoordinates(lat, lng);
             });
         }
@@ -407,36 +376,28 @@
             });
             searchMarkers = [];
         }
-
         async function searchLocation(query) {
             try {
                 let searchQuery = query;
                 const supplierKeywords = ['supplier', 'toko', 'perusahaan', 'gudang', 'distributor'];
                 const hasSupplierKeyword = supplierKeywords.some(keyword => query.toLowerCase().includes(keyword));
-
                 if (!hasSupplierKeyword) {
-                    searchQuery = `${query} supplier Makassar`;
+                    searchQuery = `${query} supplier Indonesia`;
                 } else {
-                    searchQuery = `${query} Makassar`;
+                    searchQuery = `${query} Indonesia`;
                 }
-
                 const response = await fetch(
                     `https://nominatim.openstreetmap.org/search?` +
                     `format=json&` +
                     `q=${encodeURIComponent(searchQuery)}&` +
                     `countrycodes=id&` +
-                    `viewbox=${makassarBounds.west},${makassarBounds.north},${makassarBounds.east},${makassarBounds.south}&` +
-                    `bounded=1&` +
                     `limit=10`
                 );
-
                 const data = await response.json();
-
                 if (data.length > 0) {
                     clearSearchMarkers();
                     $('#search-results').show();
                     $('#results-list').empty();
-
                     var blueIcon = L.icon({
                         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
                         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
@@ -446,31 +407,15 @@
                         shadowSize: [41, 41]
                     });
 
-                    const makassarResults = data.filter(result => {
-                        const lat = parseFloat(result.lat);
-                        const lon = parseFloat(result.lon);
-                        return lat >= makassarBounds.south && lat <= makassarBounds.north &&
-                            lon >= makassarBounds.west && lon <= makassarBounds.east;
-                    });
-
-                    if (makassarResults.length === 0) {
-                        $('#search-results').hide();
-                        Swal.fire('Peringatan', 'Tidak ditemukan supplier di area Makassar', 'warning');
-                        return;
-                    }
-
-                    makassarResults.forEach((result, index) => {
+                    data.forEach((result, index) => {
                         const lat = parseFloat(result.lat);
                         const lng = parseFloat(result.lon);
-
                         let displayName = result.display_name;
                         let supplierName = result.display_name.split(',')[0];
                         if (result.name && result.name !== '') {
                             supplierName = result.name;
                         }
-
                         const resultId = `result-${index}`;
-
                         const marker = L.marker([lat, lng], {
                                 icon: blueIcon
                             }).addTo(mapSupplier)
@@ -487,9 +432,7 @@
                                 </a>
                             </div>
                         `);
-
                         searchMarkers.push(marker);
-
                         $('#results-list').append(`
                         <div class="p-3 border-bottom">
                             <div class="d-flex justify-content-between align-items-start">
@@ -508,12 +451,11 @@
                         </div>
                     `);
                     });
-
                     const group = new L.featureGroup(searchMarkers);
                     mapSupplier.fitBounds(group.getBounds().pad(0.1));
                 } else {
                     $('#search-results').hide();
-                    Swal.fire('Peringatan', 'Tidak ditemukan supplier dengan kata kunci tersebut di Makassar',
+                    Swal.fire('Peringatan', 'Tidak ditemukan supplier dengan kata kunci tersebut di Indonesia',
                         'warning');
                 }
             } catch (error) {
@@ -521,7 +463,6 @@
                 Swal.fire('Error', 'Terjadi kesalahan saat mencari lokasi', 'error');
             }
         }
-
         $(document).on('click', '.select-location', function(e) {
             e.preventDefault();
             const lat = $(this).data('lat');
@@ -535,19 +476,15 @@
             clearSearchMarkers();
             $('#search-results').hide();
             $('#search-location').val('');
-
             $('#lat').val(lat);
             $('#long').val(lng);
             $('#alamat').val(address);
-
             if (supplierName && !$('#nama').val()) {
                 $('#nama').val(supplierName);
             }
-
             if (markerSupplier) {
                 mapSupplier.removeLayer(markerSupplier);
             }
-
             var redIcon = L.icon({
                 iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
                 shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
@@ -556,16 +493,13 @@
                 popupAnchor: [1, -34],
                 shadowSize: [41, 41]
             });
-
             markerSupplier = L.marker([lat, lng], {
                     icon: redIcon
                 }).addTo(mapSupplier)
                 .bindPopup('<strong>Lokasi Supplier Terpilih</strong><br>' + address)
                 .openPopup();
-
-            mapSupplier.setView([lat, lng], 15);
+            mapSupplier.setView([lat, lng], 5);
         }
-
         async function getAddressFromCoordinates(lat, lng) {
             try {
                 const response = await fetch(
@@ -578,7 +512,6 @@
                 console.error('Reverse geocoding error:', error);
             }
         }
-
         $(document).on('click', '#btn-search', function(e) {
             e.preventDefault();
             const query = $('#search-location').val().trim();
@@ -588,7 +521,6 @@
                 Swal.fire('Peringatan', 'Masukkan kata kunci pencarian', 'warning');
             }
         });
-
         $('#search-location').on('keypress', function(e) {
             if (e.which === 13) {
                 e.preventDefault();
@@ -609,19 +541,16 @@
             $('#search-location').val('');
             $('#search-results').hide();
             $('#results-list').empty();
-
             clearSearchMarkers();
             if (markerSupplier) {
                 mapSupplier.removeLayer(markerSupplier);
                 markerSupplier = null;
             }
-
             if (mapSupplier) {
-                //titik Se Indonesia
-                mapSupplier.setView([-5.135, 119.422], 13);
+                // Center of Indonesia
+                mapSupplier.setView([-2.5489, 118.0149], 4);
             }
         }
-
         $('#modalSupplier').on('shown.bs.modal', function() {
             setTimeout(function() {
                 if (!mapSupplier) {

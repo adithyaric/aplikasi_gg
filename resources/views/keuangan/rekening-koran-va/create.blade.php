@@ -128,8 +128,7 @@
                                 </div>
                                 <div class="form-group col-4">
                                     <label class="form-label" for="kategori_transaksi">Kategori Transaksi</label>
-                                    <select
-                                        class="form-select shadow-none @error('kategori_transaksi') is-invalid @enderror"
+                                    <select class="form-select shadow-none @error('kategori_transaksi') is-invalid @enderror"
                                         id="kategori_transaksi" name="kategori_transaksi" required>
                                         <option selected disabled>Pilih Kategori</option>
                                         <option value="Penerimaan dari BGN"
@@ -200,13 +199,13 @@
                                             <input class="form-check-input" type="radio" name="jenis_transaksi"
                                                 id="jenis_debit" value="debit"
                                                 {{ old('jenis_transaksi') == 'debit' ? 'checked' : '' }} required>
-                                            <label class="form-check-label" for="jenis_debit">Debit</label>
+                                            <label class="form-check-label" for="jenis_debit">Debit (Pengeluaran)</label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="jenis_transaksi"
                                                 id="jenis_kredit" value="kredit"
                                                 {{ old('jenis_transaksi') == 'kredit' ? 'checked' : '' }} required>
-                                            <label class="form-check-label" for="jenis_kredit">Kredit</label>
+                                            <label class="form-check-label" for="jenis_kredit">Kredit (Pemasukan)</label>
                                         </div>
                                     </div>
                                     <input type="number" step="0.01" class="form-control" id="debit"

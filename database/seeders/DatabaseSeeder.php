@@ -222,161 +222,161 @@ class DatabaseSeeder extends Seeder
             $supplierIds[] = $sup->id;
         }
 
-        // Menu
-        $menus = [
-            ['nama' => 'Nasi Goreng Ayam'],
-            ['nama' => 'Sayur Sop'],
-            ['nama' => 'Ayam Goreng'],
-            ['nama' => 'Capcay'],
-        ];
+        // // Menu
+        // $menus = [
+        //     ['nama' => 'Nasi Goreng Ayam'],
+        //     ['nama' => 'Sayur Sop'],
+        //     ['nama' => 'Ayam Goreng'],
+        //     ['nama' => 'Capcay'],
+        // ];
 
-        $menuIds = [];
-        foreach ($menus as $menu) {
-            $m = Menu::create($menu);
-            $menuIds[] = $m->id;
-        }
+        // $menuIds = [];
+        // foreach ($menus as $menu) {
+        //     $m = Menu::create($menu);
+        //     $menuIds[] = $m->id;
+        // }
 
-        // Paket Menu
-        $paketMenus = [
-            ['nama' => 'Paket Makan Siang A'],
-            ['nama' => 'Paket Makan Siang B'],
-            ['nama' => 'Paket Sarapan'],
-        ];
+        // // Paket Menu
+        // $paketMenus = [
+        //     ['nama' => 'Paket Makan Siang A'],
+        //     ['nama' => 'Paket Makan Siang B'],
+        //     ['nama' => 'Paket Sarapan'],
+        // ];
 
-        $paketMenuIds = [];
-        foreach ($paketMenus as $paket) {
-            $pm = PaketMenu::create($paket);
-            $paketMenuIds[] = $pm->id;
-        }
+        // $paketMenuIds = [];
+        // foreach ($paketMenus as $paket) {
+        //     $pm = PaketMenu::create($paket);
+        //     $paketMenuIds[] = $pm->id;
+        // }
 
-        // Attach menus to paket menus
-        PaketMenu::find($paketMenuIds[0])->menus()->attach([$menuIds[0], $menuIds[1]]);
-        PaketMenu::find($paketMenuIds[1])->menus()->attach([$menuIds[2], $menuIds[3]]);
-        PaketMenu::find($paketMenuIds[2])->menus()->attach([$menuIds[0]]);
+        // // Attach menus to paket menus
+        // PaketMenu::find($paketMenuIds[0])->menus()->attach([$menuIds[0], $menuIds[1]]);
+        // PaketMenu::find($paketMenuIds[1])->menus()->attach([$menuIds[2], $menuIds[3]]);
+        // PaketMenu::find($paketMenuIds[2])->menus()->attach([$menuIds[0]]);
 
-        // Attach bahan bakus to menus
-        Menu::find($menuIds[0])->bahanBakus()->attach([$bahanBakuIds[0], $bahanBakuIds[1]]);
-        Menu::find($menuIds[1])->bahanBakus()->attach([$bahanBakuIds[2]]);
-        Menu::find($menuIds[2])->bahanBakus()->attach([$bahanBakuIds[1]]);
+        // // Attach bahan bakus to menus
+        // Menu::find($menuIds[0])->bahanBakus()->attach([$bahanBakuIds[0], $bahanBakuIds[1]]);
+        // Menu::find($menuIds[1])->bahanBakus()->attach([$bahanBakuIds[2]]);
+        // Menu::find($menuIds[2])->bahanBakus()->attach([$bahanBakuIds[1]]);
 
-        // Rencana Menu
-        $rencanaMenus = [
-            [
-                'periode' => 'Januari 2024',
-                'start_date' => '2024-01-01',
-                'end_date' => '2024-01-31',
-            ],
-            [
-                'periode' => 'Februari 2024',
-                'start_date' => '2024-02-01',
-                'end_date' => '2024-02-29',
-            ],
-        ];
+        // // Rencana Menu
+        // $rencanaMenus = [
+        //     [
+        //         'periode' => 'Januari 2024',
+        //         'start_date' => '2024-01-01',
+        //         'end_date' => '2024-01-31',
+        //     ],
+        //     [
+        //         'periode' => 'Februari 2024',
+        //         'start_date' => '2024-02-01',
+        //         'end_date' => '2024-02-29',
+        //     ],
+        // ];
 
-        $rencanaMenuIds = [];
-        foreach ($rencanaMenus as $rencana) {
-            $rm = RencanaMenu::create($rencana);
-            $rencanaMenuIds[] = $rm->id;
-        }
+        // $rencanaMenuIds = [];
+        // foreach ($rencanaMenus as $rencana) {
+        //     $rm = RencanaMenu::create($rencana);
+        //     $rencanaMenuIds[] = $rm->id;
+        // }
 
-        // Attach paket menus to rencana menus with porsi
-        RencanaMenu::find($rencanaMenuIds[0])->paketMenu()->attach([
-            $paketMenuIds[0] => ['porsi' => 100],
-            $paketMenuIds[1] => ['porsi' => 150],
-        ]);
+        // // Attach paket menus to rencana menus with porsi
+        // RencanaMenu::find($rencanaMenuIds[0])->paketMenu()->attach([
+        //     $paketMenuIds[0] => ['porsi' => 100],
+        //     $paketMenuIds[1] => ['porsi' => 150],
+        // ]);
 
-        // Orders
-        $orders = [
-            [
-                'order_number' => 'PO-001-2024',
-                'supplier_id' => $supplierIds[0],
-                'tanggal_po' => '2024-01-15',
-                'tanggal_penerimaan' => '2024-01-17',
-                'grand_total' => 2500000,
-                'status' => 'posted',
-                'status_penerimaan' => 'confirmed',
-                'notes' => 'Pesanan bahan baku untuk bulan Januari',
-            ],
-            [
-                'order_number' => 'PO-002-2024',
-                'supplier_id' => $supplierIds[1],
-                'tanggal_po' => '2024-01-16',
-                'tanggal_penerimaan' => '2024-01-18',
-                'grand_total' => 1800000,
-                'status' => 'draft',
-                'status_penerimaan' => 'draft',
-                'notes' => 'Pesanan daging ayam',
-            ],
-        ];
+        // // Orders
+        // $orders = [
+        //     [
+        //         'order_number' => 'PO-001-2024',
+        //         'supplier_id' => $supplierIds[0],
+        //         'tanggal_po' => '2024-01-15',
+        //         'tanggal_penerimaan' => '2024-01-17',
+        //         'grand_total' => 2500000,
+        //         'status' => 'posted',
+        //         'status_penerimaan' => 'confirmed',
+        //         'notes' => 'Pesanan bahan baku untuk bulan Januari',
+        //     ],
+        //     [
+        //         'order_number' => 'PO-002-2024',
+        //         'supplier_id' => $supplierIds[1],
+        //         'tanggal_po' => '2024-01-16',
+        //         'tanggal_penerimaan' => '2024-01-18',
+        //         'grand_total' => 1800000,
+        //         'status' => 'draft',
+        //         'status_penerimaan' => 'draft',
+        //         'notes' => 'Pesanan daging ayam',
+        //     ],
+        // ];
 
-        $orderIds = [];
-        foreach ($orders as $order) {
-            $o = Order::create($order);
-            $orderIds[] = $o->id;
-        }
+        // $orderIds = [];
+        // foreach ($orders as $order) {
+        //     $o = Order::create($order);
+        //     $orderIds[] = $o->id;
+        // }
 
-        // Order Items
-        $orderItems = [
-            [
-                'order_id' => $orderIds[0],
-                'bahan_baku_id' => $bahanBakuIds[0],
-                'quantity' => 100,
-                'quantity_diterima' => 100,
-                'satuan' => 'kg',
-                'unit_cost' => 15000,
-                'subtotal' => 1500000,
-                'notes' => 'Beras merah kualitas premium',
-            ],
-            [
-                'order_id' => $orderIds[0],
-                'bahan_baku_id' => $bahanBakuIds[2],
-                'quantity' => 50,
-                'quantity_diterima' => 50,
-                'satuan' => 'kg',
-                'unit_cost' => 20000,
-                'subtotal' => 1000000,
-                'notes' => 'Wortel segar',
-            ],
-            [
-                'order_id' => $orderIds[1],
-                'bahan_baku_id' => $bahanBakuIds[1],
-                'quantity' => 80,
-                'quantity_diterima' => 0,
-                'satuan' => 'kg',
-                'unit_cost' => 22500,
-                'subtotal' => 1800000,
-                'notes' => 'Daging ayam potong',
-            ],
-        ];
+        // // Order Items
+        // $orderItems = [
+        //     [
+        //         'order_id' => $orderIds[0],
+        //         'bahan_baku_id' => $bahanBakuIds[0],
+        //         'quantity' => 100,
+        //         'quantity_diterima' => 100,
+        //         'satuan' => 'kg',
+        //         'unit_cost' => 15000,
+        //         'subtotal' => 1500000,
+        //         'notes' => 'Beras merah kualitas premium',
+        //     ],
+        //     [
+        //         'order_id' => $orderIds[0],
+        //         'bahan_baku_id' => $bahanBakuIds[2],
+        //         'quantity' => 50,
+        //         'quantity_diterima' => 50,
+        //         'satuan' => 'kg',
+        //         'unit_cost' => 20000,
+        //         'subtotal' => 1000000,
+        //         'notes' => 'Wortel segar',
+        //     ],
+        //     [
+        //         'order_id' => $orderIds[1],
+        //         'bahan_baku_id' => $bahanBakuIds[1],
+        //         'quantity' => 80,
+        //         'quantity_diterima' => 0,
+        //         'satuan' => 'kg',
+        //         'unit_cost' => 22500,
+        //         'subtotal' => 1800000,
+        //         'notes' => 'Daging ayam potong',
+        //     ],
+        // ];
 
-        foreach ($orderItems as $item) {
-            OrderItem::create($item);
-        }
+        // foreach ($orderItems as $item) {
+        //     OrderItem::create($item);
+        // }
 
-        // Transactions
-        $transactions = [
-            [
-                'order_id' => $orderIds[0],
-                'payment_date' => '2024-01-20',
-                'payment_method' => 'bank_transfer',
-                'payment_reference' => 'TRX-001',
-                'amount' => 2500000,
-                'status' => 'unpaid',
-                'notes' => 'Pembayaran lunas untuk PO-001-2024',
-            ],
-            [
-                'order_id' => $orderIds[1],
-                'payment_date' => '2024-01-18',
-                'payment_method' => 'bank_transfer',
-                'payment_reference' => 'TRX-002',
-                'amount' => 900000,
-                'status' => 'unpaid',
-                'notes' => 'DP 50% untuk PO-002-2024',
-            ],
-        ];
+        // // Transactions
+        // $transactions = [
+        //     [
+        //         'order_id' => $orderIds[0],
+        //         'payment_date' => '2024-01-20',
+        //         'payment_method' => 'bank_transfer',
+        //         'payment_reference' => 'TRX-001',
+        //         'amount' => 2500000,
+        //         'status' => 'unpaid',
+        //         'notes' => 'Pembayaran lunas untuk PO-001-2024',
+        //     ],
+        //     [
+        //         'order_id' => $orderIds[1],
+        //         'payment_date' => '2024-01-18',
+        //         'payment_method' => 'bank_transfer',
+        //         'payment_reference' => 'TRX-002',
+        //         'amount' => 900000,
+        //         'status' => 'unpaid',
+        //         'notes' => 'DP 50% untuk PO-002-2024',
+        //     ],
+        // ];
 
-        foreach ($transactions as $transaction) {
-            Transaction::create($transaction);
-        }
+        // foreach ($transactions as $transaction) {
+        //     Transaction::create($transaction);
+        // }
     }
 }

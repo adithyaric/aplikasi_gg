@@ -138,7 +138,7 @@
                                 </div>
                             </div>
                             <div class="row mt-1">
-                                <div class="form-group col-12">
+                                <div class="form-group col-6">
                                     <label class="form-label" for="nominal">Nominal</label>
                                     <input type="number" step="0.01"
                                         class="form-control @error('nominal') is-invalid @enderror" id="nominal"
@@ -148,6 +148,14 @@
                                     @error('nominal')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
+                                </div>
+                                <div class="form-group col-6">
+                                    <label class="form-label" for="saldo">Saldo</label>
+                                    <input type="text" class="form-control bg-light" id="saldo_display"
+                                        value="Rp {{ number_format($lastSaldo, 0, ',', '.') }}" readonly>
+                                    <input type="number" step="0.01" name="saldo" id="saldo"
+                                        value="{{ $lastSaldo }}" hidden>
+                                    <small class="text-muted">Saldo akhir setelah transaksi</small>
                                 </div>
                             </div>
                             <div class="form-group mt-1">

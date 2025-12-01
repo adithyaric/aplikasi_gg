@@ -174,6 +174,21 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="mb-1" id="payment_history_section" style="display:none;">
+                        <label class="form-label fw-bold">Riwayat Perubahan</label>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Tanggal</th>
+                                        <th>Perubahan</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="payment_history"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -248,6 +263,60 @@ function showPembayaranDetail(id) {
                 }
                 $('#pembayaran_notes').val(response.transaction.notes || 'Tidak ada catatan...');
                 $('#pembayaran_amount').val('Rp ' + new Intl.NumberFormat('id-ID').format(response.transaction.amount || 0));
+
+                // Populate payment history
+                $('#payment_history').empty();
+                if (response.transaction?.activities && response.transaction.activities.length > 0) {
+                    $('#payment_history_section').show();
+
+                    response.transaction.activities.forEach(function(activity, index) {
+                        const props = activity.properties;
+                        const createdAt = activity.created_at ? new Date(activity.created_at)
+                            .toLocaleString('id-ID') : '-';
+
+                        let changes = [];
+                        const trackedFields = {
+                            'payment_date': 'Tanggal Bayar',
+                            'payment_method': 'Metode Pembayaran',
+                            'payment_reference': 'No. Bukti/Referensi',
+                            'status': 'Status',
+                            'amount': 'Jumlah Pembayaran',
+                            'bukti_transfer': 'Bukti Transfer',
+                            'notes': 'Catatan'
+                        };
+
+                        if (props.old && props.attributes) {
+                            Object.keys(trackedFields).forEach(field => {
+                                if (props.old[field] !== props.attributes[field]) {
+                                    if (field === 'bukti_transfer') {
+                                        const oldBukti = props.old[field];
+                                        const newBukti = props.attributes[field];
+                                        let buktiChange = [];
+
+                                        if (oldBukti) buktiChange.push(`Bukti Lama: <a href="/storage/${oldBukti.replace('public/', '')}" target="_blank">Lihat</a>`);
+                                        if (newBukti) buktiChange.push(`Bukti Baru: <a href="/storage/${newBukti.replace('public/', '')}" target="_blank">Lihat</a>`);
+
+                                        if (buktiChange.length) changes.push(buktiChange.join(' → '));
+                                    } else {
+                                        const oldValue = props.old[field] || '-';
+                                        const newValue = props.attributes[field] || '-';
+                                        changes.push(`${trackedFields[field]}: ${oldValue} → ${newValue}`);
+                                    }
+                                }
+                            });
+                        }
+
+                        let row = '<tr>' +
+                            '<td>' + createdAt + '</td>' +
+                            '<td>' + (changes.length > 0 ? changes.join('<br>') : '-') + '</td>' +
+                            '</tr>';
+
+                        $('#payment_history').append(row);
+                    });
+                } else {
+                    $('#payment_history_section').hide();
+                }
+
             } else {
                 $('#pembayaran_transaction_section').hide();
             }

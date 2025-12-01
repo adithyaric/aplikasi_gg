@@ -61,7 +61,8 @@ class BahanOperasionalController extends Controller
 
     public function show(BahanOperasional $bahanoperasional)
     {
-        //
+        $bahanoperasional->load('activities');
+        return response()->json($bahanoperasional);
     }
 
     public function edit(BahanOperasional $bahanoperasional)
