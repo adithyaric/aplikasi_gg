@@ -119,7 +119,7 @@
                                         <option value="">-- Pilih Jenis Bahan --</option>
                                         @foreach ($jenisBahanOptions as $option)
                                             <option value="{{ $option }}"
-                                                {{ old('jenis_bahan', $rekeningBKU?->jenis_bahan ?? '') == $option ? 'selected' : '' }}>
+                                                {{ old('jenis_bahan') == $option ? 'selected' : '' }}>
                                                 {{ $option }}
                                             </option>
                                         @endforeach
@@ -137,7 +137,7 @@
                                             @foreach ($bahanbakus as $bahan)
                                                 <option value="{{ $bahan->nama }}" data-satuan="{{ $bahan->satuan }}"
                                                     data-type="bahan_baku"
-                                                    {{ old('nama_bahan', $rekeningBKU?->nama_bahan ?? '') == $bahan->nama ? 'selected' : '' }}>
+                                                    {{ old('nama_bahan') == $bahan->nama ? 'selected' : '' }}>
                                                     {{ $bahan->nama }}
                                                 </option>
                                             @endforeach
@@ -146,7 +146,7 @@
                                             @foreach ($bahanoperasionals as $bahan)
                                                 <option value="{{ $bahan->nama }}" data-satuan="{{ $bahan->satuan }}"
                                                     data-type="bahan_operasional"
-                                                    {{ old('nama_bahan', $rekeningBKU?->nama_bahan ?? '') == $bahan->nama ? 'selected' : '' }}>
+                                                    {{ old('nama_bahan') == $bahan->nama ? 'selected' : '' }}>
                                                     {{ $bahan->nama }}
                                                 </option>
                                             @endforeach
@@ -184,7 +184,7 @@
                                         <option value="">-- Pilih Supplier --</option>
                                         @foreach ($suppliers as $sup)
                                             <option value="{{ $sup->nama }}"
-                                                {{ old('supplier', $rekeningBKU?->supplier ?? '') == $sup->nama ? 'selected' : '' }}>
+                                                {{ old('supplier') == $sup->nama ? 'selected' : '' }}>
                                                 {{ $sup->nama }}
                                             </option>
                                         @endforeach
@@ -203,14 +203,14 @@
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="jenis_transaksi"
                                                 id="jenis_debit" value="debit"
-                                                {{ old('jenis_transaksi', ($rekeningBKU?->kredit ?? 0) > 0 ? 'debit' : 'kredit') == 'debit' ? 'checked' : '' }}
+                                                {{ old('jenis_transaksi') == 'debit' ? 'checked' : '' }}
                                                 required>
                                             <label class="form-check-label" for="jenis_debit">Pengeluaran (Kredit)</label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="jenis_transaksi"
                                                 id="jenis_kredit" value="kredit"
-                                                {{ old('jenis_transaksi', ($rekeningBKU?->debit ?? 0) > 0 ? 'kredit' : 'debit') == 'kredit' ? 'checked' : '' }}
+                                                {{ old('jenis_transaksi') == 'kredit' ? 'checked' : '' }}
                                                 required>
                                             <label class="form-check-label" for="jenis_kredit">Pemasukan (Debit)</label>
                                         </div>
@@ -235,7 +235,7 @@
                                     <input type="number" step="0.01"
                                         class="form-control @error('nominal') is-invalid @enderror" id="nominal"
                                         name="nominal"
-                                        value="{{ old('nominal', max($rekeningBKU?->debit ?? 0, $rekeningBKU?->kredit ?? 0)) }}"
+                                        value="{{ old('nominal') }}"
                                         placeholder="0" required>
                                     @error('nominal')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -244,16 +244,16 @@
                                 <div class="form-group col-6">
                                     <label class="form-label">Saldo Setelah Transaksi</label>
                                     <input type="text" class="form-control bg-light" id="saldo_display"
-                                        value="Rp {{ number_format($rekeningBKU?->saldo ?? $lastSaldo, 0, ',', '.') }}"
+                                        value="Rp {{ number_format($lastSaldo, 0, ',', '.') }}"
                                         readonly>
                                     <small class="text-muted">Saldo akan dihitung ulang</small>
                                 </div>
                             </div>
 
                             <input type="hidden" id="debit" name="debit"
-                                value="{{ old('debit', $rekeningBKU?->debit ?? 0) }}">
+                                value="{{ old('debit') }}">
                             <input type="hidden" id="kredit" name="kredit"
-                                value="{{ old('kredit', $rekeningBKU?->kredit ?? 0) }}">
+                                value="{{ old('kredit') }}">
 
                             <div class="d-flex justify-content-end mt-4">
                                 <a href="{{ route('rekening-rekap-bku.index') }}" class="btn btn-secondary me-2">
