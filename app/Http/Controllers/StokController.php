@@ -146,6 +146,20 @@ class StokController extends Controller
         ];
     }
 
+    public function show($bahanId, $type)
+    {
+        $bahan = $type === 'bahan_baku'
+            ? BahanBaku::find($bahanId)
+            : BahanOperasional::find($bahanId);
+
+        if (!$bahan) {
+            return response()->json(['error' => 'Not found'], 404);
+        }
+
+        $bahan->load('activities');
+        return response()->json($bahan);
+    }
+
     public function kartu(Request $request)
     {
         $bahanbakus = BahanBaku::orderBy('nama')->get(['id', 'nama', 'satuan']);

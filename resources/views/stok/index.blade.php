@@ -72,12 +72,43 @@
                                                     -
                                                 @endif
                                             </td>
-                                            <td>Rp {{ number_format($item->gov_price, 0, ',', '.') }}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-info"
+                                                    onclick="showGovPriceHistory('{{ $item->id }}', '{{ $item->type }}')">
+                                                    Rp {{ number_format($item->gov_price, 0, ',', '.') }}
+                                                </button>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal History Gov Price -->
+    <div class="modal fade" id="modalGovPriceHistory" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content"
+                style="border-radius:15px; border:1px solid #ddd; box-shadow:0 8px 20px rgba(0,0,0,0.2);">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title text-white">History Gov Price - <span id="history_bahan_name"></span></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Perubahan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gov_price_history"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -90,5 +121,56 @@
         $(document).ready(function() {
             $('#datatable').DataTable();
         });
+
+        function showGovPriceHistory(id, type) {
+            $.ajax({
+                url: "{{ route('stok.show', ['bahanId' => 'ID', 'type' => 'TYPE']) }}"
+                    .replace('ID', id)
+                    .replace('TYPE', type),
+                success: function(response) {
+                    $('#history_bahan_name').text(response.nama);
+                    $('#gov_price_history').empty();
+
+                    if (response.activities && response.activities.length > 0) {
+                        response.activities.forEach(function(activity) {
+                            const props = activity.properties;
+                            const createdAt = activity.created_at ?
+                                new Date(activity.created_at).toLocaleString('id-ID') :
+                                '-';
+
+                            let changes = [];
+
+                            if (props.old && props.attributes) {
+                                if (props.old.gov_price !== props.attributes.gov_price) {
+                                    const oldValue = props.old.gov_price ?
+                                        'Rp ' + new Intl.NumberFormat('id-ID').format(props.old
+                                            .gov_price) :
+                                        '-';
+                                    const newValue = props.attributes.gov_price ?
+                                        'Rp ' + new Intl.NumberFormat('id-ID').format(props.attributes
+                                            .gov_price) :
+                                        '-';
+
+                                    changes.push(`Gov Price: ${oldValue} → ${newValue}`);
+                                }
+                            }
+
+                            $('#gov_price_history').append(`
+                        <tr>
+                            <td>${createdAt}</td>
+                            <td>${changes.length > 0 ? changes.join('<br>') : '-'}</td>
+                        </tr>
+                    `);
+                        });
+                    } else {
+                        $('#gov_price_history').append(
+                            '<tr><td colspan="2" class="text-center">Tidak ada data history</td></tr>'
+                        );
+                    }
+
+                    $('#modalGovPriceHistory').modal('show');
+                }
+            });
+        }
     </script>
 @endpush
