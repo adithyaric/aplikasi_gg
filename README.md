@@ -44,7 +44,7 @@ Halaman Keuangan
 <!-- Rekap BKU -> crud biasa + transaksi PO (ngurangi saldo) -->
 <!-- PO = kredit -->
 
-Revisi :
+<!-- Revisi : -->
 <!-- `1. Bahan baku & Bahan Operasional - kelompok = kategori` -->
 <!-- `2. Bahan baku & Bahan Operasional - kategori tidak ada drop down` -->
 <!-- `3. ⁠⁠Bahan baku & Bahan Operasional - jenis dihilangkan` -->
@@ -77,5 +77,5 @@ Revisi :
 <!-- `30. Rekap BKU - Hapus Bulan & Minggu` -->
 <!-- 31. Rekap BKU - Jika Menambahkan Data, Rekap BKU Di Waktu Sebelumnya Maka Saldo Tidak Sesuai -->
 
-`32. Kartu Stock Dibuat Sekalian`
-33. Stock Opname Dibuat Sekalian
+<!-- `32. Kartu Stock Dibuat Sekalian` -->
+<!-- `33. Stock Opname Dibuat Sekalian` -->

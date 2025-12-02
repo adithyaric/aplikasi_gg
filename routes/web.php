@@ -90,6 +90,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/stok/{bahanId}/{type}', [StokController::class, 'show'])->name('stok.show');
 
     Route::get('/stok-opname', [StokController::class, 'opname'])->name('stok.opname');
+    Route::get('/stok-opname/data', [StokController::class, 'getOpnameData'])->name('stok.opname.data');
 
     Route::resource('rekening-koran-va', RekeningKoranVaController::class);
     Route::resource('rekening-rekap-bku', RekeningRekapBKUController::class);

@@ -12,10 +12,7 @@ class StokController extends Controller
 {
     public function index()
     {
-        $bahanBakuStok = BahanBaku::whereHas('orderItems', function ($query) {
-            $query->where('quantity_diterima', true);
-        })
-            ->select(
+        $bahanBakuStok = BahanBaku::select(
                 'bahan_bakus.id',
                 'bahan_bakus.nama',
                 'bahan_bakus.kategori',
@@ -57,10 +54,7 @@ class StokController extends Controller
             });
 
         // Replace the BahanOperasional query
-        $bahanOperasionalStok = BahanOperasional::whereHas('orderItems', function ($query) {
-            $query->where('quantity_diterima', true);
-        })
-            ->select(
+        $bahanOperasionalStok = BahanOperasional::select(
                 'bahan_operasionals.id',
                 'bahan_operasionals.nama',
                 'bahan_operasionals.kategori',
@@ -266,6 +260,86 @@ class StokController extends Controller
 
     public function opname(Request $request)
     {
-        return view('stok.opname', []);
+        $bahanbakus = BahanBaku::orderBy('nama')->get(['id', 'nama', 'satuan']);
+        $bahanoperasionals = BahanOperasional::orderBy('nama')->get(['id', 'nama', 'satuan']);
+
+        $bahans = $bahanbakus->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'nama' => $item->nama,
+                'satuan' => $item->satuan,
+                'type' => 'bahan_baku'
+            ];
+        })->merge($bahanoperasionals->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'nama' => $item->nama,
+                'satuan' => $item->satuan,
+                'type' => 'bahan_operasional'
+            ];
+        }));
+
+        return view('stok.opname', [
+            'bahans' => $bahans,
+        ]);
+    }
+
+    public function getOpnameData(Request $request)
+    {
+        $bahanBakuStok = BahanBaku::select(
+            'bahan_bakus.id',
+            'bahan_bakus.nama',
+            'bahan_bakus.satuan'
+        )
+            ->leftJoin('order_items', function ($join) {
+                $join->on('bahan_bakus.id', '=', 'order_items.bahan_baku_id')
+                    ->whereNull('order_items.deleted_at');
+            })
+            ->leftJoin('orders', function ($join) {
+                $join->on('order_items.order_id', '=', 'orders.id')
+                    ->whereNull('orders.deleted_at');
+            })
+            ->groupBy('bahan_bakus.id', 'bahan_bakus.nama', 'bahan_bakus.satuan')
+            ->get()
+            ->map(function ($item) {
+                return $this->calculateStockData($item, 'bahan_baku');
+            })
+            ->filter(function ($item) {
+                return $item->qty > 0;
+            });
+
+        $bahanOperasionalStok = BahanOperasional::select(
+            'bahan_operasionals.id',
+            'bahan_operasionals.nama',
+            'bahan_operasionals.satuan'
+        )
+            ->leftJoin('order_items', function ($join) {
+                $join->on('bahan_operasionals.id', '=', 'order_items.bahan_operasional_id')
+                    ->whereNull('order_items.deleted_at');
+            })
+            ->leftJoin('orders', function ($join) {
+                $join->on('order_items.order_id', '=', 'orders.id')
+                    ->whereNull('orders.deleted_at');
+            })
+            ->groupBy('bahan_operasionals.id', 'bahan_operasionals.nama', 'bahan_operasionals.satuan')
+            ->get()
+            ->map(function ($item) {
+                return $this->calculateStockData($item, 'bahan_operasional');
+            })
+            ->filter(function ($item) {
+                return $item->qty > 0;
+            });
+
+        $stok = $bahanBakuStok->merge($bahanOperasionalStok);
+
+        return response()->json([
+            'stok' => $stok->values()
+        ]);
+    }
+
+    public function cetakOpname(Request $request)
+    {
+        //menambah stok (force) simpan ke tabel baru bukan ke orderitems
+        //di index orderitems + tabel baru
     }
 }
