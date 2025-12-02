@@ -505,12 +505,12 @@
                     tbody.append(`
                 <tr>
                     <td>${index + 1}</td>
-                    <td><input type="date" class="form-control" value="${item.tanggal}" /></td>
-                    <td><input type="number" class="form-control stok-awal" value="${item.stok_awal}" /></td>
-                    <td><input type="number" class="form-control masuk" value="${item.masuk}" /></td>
-                    <td><input type="number" class="form-control keluar" value="${item.keluar}" /></td>
+                    <td><input type="date" class="form-control" value="${item.tanggal}" disabled /></td>
+                    <td><input type="number" class="form-control stok-awal" value="${item.stok_awal}" disabled /></td>
+                    <td><input type="number" class="form-control masuk" value="${item.masuk}" disabled /></td>
+                    <td><input type="number" class="form-control keluar" value="${item.keluar}" disabled /></td>
                     <td><input type="number" class="form-control stok-akhir" value="${item.stok_akhir}" disabled /></td>
-                    <td><input type="number" class="form-control harga" value="${item.harga}" /></td>
+                    <td><input type="number" class="form-control harga" value="${item.harga}" disabled /></td>
                     <td><input type="number" class="form-control nilai" value="${item.nilai}" disabled /></td>
                     <td><input type="text" class="form-control" value="${item.keterangan}" /></td>
                 </tr>
