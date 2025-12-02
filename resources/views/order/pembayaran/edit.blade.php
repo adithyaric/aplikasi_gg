@@ -168,13 +168,12 @@
                                 <div class="form-group">
                                     <label class="form-label">Tanggal Bayar</label>
                                     <input type="datetime-local" name="payment_date" class="form-control"
-                                        value="{{ $order->transaction?->payment_date?->format('Y-m-d\TH:i') }}" required />
+                                        value="{{ $order->transaction?->payment_date?->format('Y-m-d\TH:i') }}" required @if ($order->transaction->status === 'paid') disabled @endif />
                                 </div>
 
                                 <div class="form-group">
                                     <label class="form-label">Metode Pembayaran</label>
-                                    <select name="payment_method" class="form-select shadow-none" id="paymentMethod"
-                                        required>
+                                    <select name="payment_method" class="form-select shadow-none" id="paymentMethod" required @if ($order->transaction->status === 'paid') disabled @endif>
                                         <option value="">Pilih Metode Pembayaran</option>
                                         <option value="cash"
                                             {{ $order->transaction?->payment_method == 'cash' ? 'selected' : '' }}>
@@ -195,7 +194,7 @@
                                     <label class="form-label">No. Bukti / Referensi</label>
                                     <input type="text" name="payment_reference" class="form-control"
                                         id="paymentReference" value="{{ $order->transaction?->payment_reference }}"
-                                        placeholder="Mis. TRF-0925-00123" />
+                                        placeholder="Mis. TRF-0925-00123" required @if ($order->transaction->status === 'paid') disabled @endif />
                                     @if ($order->supplier->bank_nama && $order->supplier->bank_no_rek)
                                         <small class="text-muted">
                                             Rekening: {{ $order->supplier->bank_nama }} -
@@ -209,14 +208,12 @@
                                     <input type="number" name="amount" class="form-control" id="amountInput"
                                         value="0" step="0.01" min="0"
                                         max="{{ $order->grand_total - ($order->transaction?->amount ?? 0) }}"
-                                        placeholder="Masukkan jumlah yang dibayar" required />
+                                        placeholder="Masukkan jumlah yang dibayar" required @if ($order->transaction->status === 'paid') disabled @endif />
                                     <small class="text-muted">
                                         @if($order->transaction && $order->transaction->status === 'partial')
                                             Sudah dibayar: Rp {{ number_format($order->transaction->amount, 0, ',', '.') }}<br>
                                             Sisa: Rp {{ number_format($order->grand_total - $order->transaction->amount, 0, ',', '.') }}<br>
                                             Max input: Rp {{ number_format($order->grand_total - $order->transaction->amount, 0, ',', '.') }}
-                                        @else
-                                            Max: Rp {{ number_format($order->grand_total, 0, ',', '.') }}
                                         @endif
                                     </small>
                                 </div>
@@ -224,7 +221,7 @@
                                 <div class="form-group">
                                     <label class="form-label">Bukti Transfer</label>
                                     <input type="file" name="bukti_transfer" class="form-control"
-                                        accept="image/*,.pdf" />
+                                        accept="image/*,.pdf" @if ($order->transaction->status === 'paid') disabled @endif />
                                     @if ($order->transaction?->bukti_transfer)
                                         <small class="text-muted">
                                             <a href="{{ Storage::disk('uploads')->url($order->transaction->bukti_transfer) }}"
@@ -255,7 +252,7 @@
 
                                 <div class="form-group">
                                     <label class="form-label">Catatan</label>
-                                    <textarea name="notes" class="form-control" rows="3" placeholder="Catatan tambahan (opsional)">{{ $order->transaction?->notes }}</textarea>
+                                    <textarea name="notes" class="form-control" rows="3" placeholder="Catatan tambahan (opsional)" @if ($order->transaction->status === 'paid') disabled @endif>{{ $order->transaction?->notes }}</textarea>
                                 </div>
 
                                 <div class="d-flex justify-content-end align-items-center">

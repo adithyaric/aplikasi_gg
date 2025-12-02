@@ -57,7 +57,7 @@
                                             <td>{{ $item->kategori }}</td>
                                             <td>{{ $item->merek }}</td>
                                             {{-- <td>{{ $item->satuan }}</td> --}}
-                                            <td>{{ number_format($item->qty, 0, ',', '.') }}</td>
+                                            <td>{{ $item->qty }}</td>
                                             <td>
                                                 @if ($item->qty > 0 && $item->last_purchase_price > 0)
                                                     Rp {{ number_format($item->last_purchase_price, 0, ',', '.') }}
