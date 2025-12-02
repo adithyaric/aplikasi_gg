@@ -421,8 +421,22 @@
 
                         // Close modal
                         $('#modalTambahBahan').modal('hide');
+                        $('.modal-backdrop').remove();
+                        $('body').removeClass('modal-open').css({
+                            'padding-right': '',
+                            'overflow': 'auto'
+                        });
+                        $('body').focus();
+                        // Force remove any remaining backdrop
+                        $('body > .modal-backdrop').remove();
 
-                        alert('Menu berhasil ditambahkan ke PO');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            timer: 1000,
+                            showConfirmButton: false
+                        });
                     }
                 },
                 error: function(xhr) {
