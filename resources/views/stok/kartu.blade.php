@@ -65,15 +65,7 @@
                                 <td>
                                     :
                                     <input type="text" id="namaBahan" class="form-control d-inline-block"
-                                        style="width: 70%" value="Beras" placeholder="Masukkan nama bahan..." />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Kode Akun</td>
-                                <td>
-                                    :
-                                    <input type="text" id="kodeAkun" class="form-control d-inline-block"
-                                        style="width: 70%" value="BP001" placeholder="Masukkan kode akun..." />
+                                        style="width: 70%" value="" disabled/>
                                 </td>
                             </tr>
                             <tr>
@@ -81,7 +73,7 @@
                                 <td>
                                     :
                                     <input type="text" id="satuan" class="form-control d-inline-block"
-                                        style="width: 70%" value="Gram" placeholder="Masukkan kode akun..." />
+                                        style="width: 70%" value="" disabled/>
                                 </td>
                             </tr>
                         </table>

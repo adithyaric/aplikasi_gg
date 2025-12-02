@@ -207,61 +207,48 @@ class StokController extends Controller
             return response()->json(['error' => 'Bahan tidak ditemukan'], 404);
         }
 
-        // Get all order items with orders
+        // Get all order items with orders, ordered by tanggal_penerimaan and created_at
         $orderItems = OrderItem::with('order')
             ->whereHas('order', function ($query) {
-                $query->whereNull('deleted_at');
+                $query->whereNull('deleted_at')
+                    ->whereNotNull('tanggal_penerimaan');
             })
             ->where($columnName, $bahanId)
             ->where('quantity_diterima', true)
             ->whereNull('deleted_at')
-            ->orderBy('created_at')
-            ->get();
+            ->get()
+            ->sortBy(function ($item) {
+                return $item->order->tanggal_penerimaan->timestamp;
+            });
 
-        // Group by date and calculate daily transactions
-        $transactions = [];
+        // Build transactions with proper running stock
+        $result = [];
         $runningStock = 0;
 
         foreach ($orderItems as $item) {
-            $date = $item->created_at->format('Y-m-d');
+            $date = $item->order->tanggal_penerimaan->format('Y-m-d');
 
-            if (!isset($transactions[$date])) {
-                $transactions[$date] = [
-                    'tanggal' => $date,
-                    'stok_awal' => $runningStock,
-                    'masuk' => 0,
-                    'keluar' => 0,
-                    'harga' => $item->unit_cost,
-                    'keterangan' => ''
-                ];
-            }
+            $masuk = 0;
+            $keluar = 0;
 
-            // Assuming positive quantity is "masuk" (purchase)
-            // If you have a field to distinguish masuk/keluar, adjust here
             if ($item->quantity > 0) {
-                $transactions[$date]['masuk'] += $item->quantity;
+                $masuk = $item->quantity;
             } else {
-                $transactions[$date]['keluar'] += abs($item->quantity);
+                $keluar = abs($item->quantity);
             }
 
-            $transactions[$date]['harga'] = $item->unit_cost; // Last price for that date
-        }
-
-        // Calculate stok_akhir and nilai for each transaction
-        $result = [];
-        foreach ($transactions as $trans) {
-            $stokAkhir = $trans['stok_awal'] + $trans['masuk'] - $trans['keluar'];
-            $nilai = $stokAkhir * $trans['harga'];
+            $stokAkhir = $runningStock + $masuk - $keluar;
+            $nilai = $stokAkhir * $item->unit_cost;
 
             $result[] = [
-                'tanggal' => $trans['tanggal'],
-                'stok_awal' => $trans['stok_awal'],
-                'masuk' => $trans['masuk'],
-                'keluar' => $trans['keluar'],
+                'tanggal' => $date,
+                'stok_awal' => $runningStock,
+                'masuk' => $masuk,
+                'keluar' => $keluar,
                 'stok_akhir' => $stokAkhir,
-                'harga' => $trans['harga'],
+                'harga' => $item->unit_cost,
                 'nilai' => $nilai,
-                'keterangan' => $trans['keterangan']
+                'keterangan' => $item->order->order_number ?? ''
             ];
 
             $runningStock = $stokAkhir;
