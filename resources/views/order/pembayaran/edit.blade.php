@@ -232,8 +232,7 @@
 
                                 <div class="form-group">
                                     <label class="form-label">Status</label>
-                                    <select name="status" class="form-select shadow-none" id="paymentStatus"
-                                        required>
+                                    <select name="status" class="form-select shadow-none" id="paymentStatus" required @if ($order->transaction->status === 'paid') disabled @endif>
                                         <option value="">Pilih Status Pembayaran</option>
                                         <option value="unpaid"
                                             {{ $order->transaction?->status == 'unpaid' ? 'selected' : '' }}>
@@ -255,9 +254,11 @@
                                     <textarea name="notes" class="form-control" rows="3" placeholder="Catatan tambahan (opsional)" @if ($order->transaction->status === 'paid') disabled @endif>{{ $order->transaction?->notes }}</textarea>
                                 </div>
 
+                                @if ($order->transaction->status !== 'paid')
                                 <div class="d-flex justify-content-end align-items-center">
                                     <button type="submit" class="btn btn-success">Simpan Pembayaran</button>
                                 </div>
+                                @endif
                             </form>
                         </div>
                     </div>
