@@ -420,15 +420,15 @@
                         calculateTotal();
 
                         // Close modal
-                        $('#modalTambahBahan').modal('hide');
-                        $('.modal-backdrop').remove();
-                        $('body').removeClass('modal-open').css({
-                            'padding-right': '',
-                            'overflow': 'auto'
-                        });
-                        $('body').focus();
-                        // Force remove any remaining backdrop
-                        $('body > .modal-backdrop').remove();
+                        // $('#modalTambahBahan').modal('hide');
+                        // $('.modal-backdrop').remove();
+                        // $('body').removeClass('modal-open').css({
+                        //     'padding-right': '',
+                        //     'overflow': 'auto'
+                        // });
+                        // $('body').focus();
+                        // // Force remove any remaining backdrop
+                        // $('body > .modal-backdrop').remove();
 
                         Swal.fire({
                             icon: 'success',
