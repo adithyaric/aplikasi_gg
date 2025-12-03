@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BahanBaku;
 use App\Models\BahanOperasional;
 use App\Models\OrderItem;
+use App\Models\StockAdjustment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,19 +14,19 @@ class StokController extends Controller
     public function index()
     {
         $bahanBakuStok = BahanBaku::select(
-                'bahan_bakus.id',
-                'bahan_bakus.nama',
-                'bahan_bakus.kategori',
-                'bahan_bakus.merek',
-                'bahan_bakus.satuan',
-                'bahan_bakus.gov_price',
-                'bahan_bakus.kelompok',
-                'bahan_bakus.jenis',
-                'bahan_bakus.ukuran',
-                'bahan_bakus.created_at',
-                'bahan_bakus.updated_at',
-                'bahan_bakus.deleted_at'
-            )
+            'bahan_bakus.id',
+            'bahan_bakus.nama',
+            'bahan_bakus.kategori',
+            'bahan_bakus.merek',
+            'bahan_bakus.satuan',
+            'bahan_bakus.gov_price',
+            'bahan_bakus.kelompok',
+            'bahan_bakus.jenis',
+            'bahan_bakus.ukuran',
+            'bahan_bakus.created_at',
+            'bahan_bakus.updated_at',
+            'bahan_bakus.deleted_at'
+        )
             ->leftJoin('order_items', function ($join) {
                 $join->on('bahan_bakus.id', '=', 'order_items.bahan_baku_id')
                     ->whereNull('order_items.deleted_at');
@@ -55,16 +56,16 @@ class StokController extends Controller
 
         // Replace the BahanOperasional query
         $bahanOperasionalStok = BahanOperasional::select(
-                'bahan_operasionals.id',
-                'bahan_operasionals.nama',
-                'bahan_operasionals.kategori',
-                'bahan_operasionals.merek',
-                'bahan_operasionals.satuan',
-                'bahan_operasionals.gov_price',
-                'bahan_operasionals.created_at',
-                'bahan_operasionals.updated_at',
-                'bahan_operasionals.deleted_at'
-            )
+            'bahan_operasionals.id',
+            'bahan_operasionals.nama',
+            'bahan_operasionals.kategori',
+            'bahan_operasionals.merek',
+            'bahan_operasionals.satuan',
+            'bahan_operasionals.gov_price',
+            'bahan_operasionals.created_at',
+            'bahan_operasionals.updated_at',
+            'bahan_operasionals.deleted_at'
+        )
             ->leftJoin('order_items', function ($join) {
                 $join->on('bahan_operasionals.id', '=', 'order_items.bahan_operasional_id')
                     ->whereNull('order_items.deleted_at');
@@ -107,15 +108,22 @@ class StokController extends Controller
             ->where('quantity_diterima', true)
             ->get();
 
-        // Calculate totals
+        // Calculate totals from order items
         $totalQty = $orderItems->sum('quantity');
+
+        // Get stock adjustments
+        $adjustments = StockAdjustment::where($columnName, $item->id)->sum('quantity');
+
+        // Total quantity = order items + adjustments
+        $totalQty += $adjustments;
+
         $lastPurchasePrice = $orderItems->sortByDesc('created_at')->first()?->unit_cost ?? 0;
 
-        // Calculate average cost: total purchase value / total quantity
+        // Calculate average cost: total purchase value / total quantity from orders only
         $totalPurchaseValue = $orderItems->sum(function ($item) {
             return $item->quantity * $item->unit_cost;
         });
-        $avgCost = $totalQty > 0 ? $totalPurchaseValue / $totalQty : 0;
+        $avgCost = $orderItems->sum('quantity') > 0 ? $totalPurchaseValue / $orderItems->sum('quantity') : 0;
 
         // Get kategori value
         $kategori = '-';
@@ -201,7 +209,7 @@ class StokController extends Controller
             return response()->json(['error' => 'Bahan tidak ditemukan'], 404);
         }
 
-        // Get all order items with orders, ordered by tanggal_penerimaan and created_at
+        // Get order items
         $orderItems = OrderItem::with('order')
             ->whereHas('order', function ($query) {
                 $query->whereNull('deleted_at')
@@ -210,42 +218,81 @@ class StokController extends Controller
             ->where($columnName, $bahanId)
             ->where('quantity_diterima', true)
             ->whereNull('deleted_at')
-            ->get()
-            ->sortBy(function ($item) {
-                return $item->order->tanggal_penerimaan->timestamp;
-            });
+            ->get();
 
-        // Build transactions with proper running stock
+        // Get stock adjustments
+        $adjustments = StockAdjustment::where($columnName, $bahanId)
+            ->whereNull('deleted_at')
+            ->get();
+
+        // Combine and sort all transactions
+        $allTransactions = collect();
+
+        foreach ($orderItems as $item) {
+            $allTransactions->push([
+                'date' => $item->order->tanggal_penerimaan,
+                'type' => 'order',
+                'data' => $item
+            ]);
+        }
+
+        foreach ($adjustments as $adj) {
+            $allTransactions->push([
+                'date' => $adj->adjustment_date,
+                'type' => 'adjustment',
+                'data' => $adj
+            ]);
+        }
+
+        $allTransactions = $allTransactions->sortBy(function ($item) {
+            return $item['date']->timestamp;
+        });
+
+        // Build result
         $result = [];
         $runningStock = 0;
 
-        foreach ($orderItems as $item) {
-            $date = $item->order->tanggal_penerimaan->format('Y-m-d');
+        foreach ($allTransactions as $transaction) {
+            if ($transaction['type'] === 'order') {
+                $item = $transaction['data'];
+                $date = $item->order->tanggal_penerimaan->format('Y-m-d');
+                $masuk = $item->quantity > 0 ? $item->quantity : 0;
+                $keluar = $item->quantity < 0 ? abs($item->quantity) : 0;
+                $stokAkhir = $runningStock + $masuk - $keluar;
+                $nilai = $stokAkhir * $item->unit_cost;
 
-            $masuk = 0;
-            $keluar = 0;
+                $result[] = [
+                    'tanggal' => $date,
+                    'stok_awal' => $runningStock,
+                    'masuk' => $masuk,
+                    'keluar' => $keluar,
+                    'stok_akhir' => $stokAkhir,
+                    'harga' => $item->unit_cost,
+                    'nilai' => $nilai,
+                    'keterangan' => $item->order->order_number ?? ''
+                ];
 
-            if ($item->quantity > 0) {
-                $masuk = $item->quantity;
+                $runningStock = $stokAkhir;
             } else {
-                $keluar = abs($item->quantity);
+                $adj = $transaction['data'];
+                $date = $adj->adjustment_date->format('Y-m-d');
+                $masuk = $adj->quantity > 0 ? $adj->quantity : 0;
+                $keluar = $adj->quantity < 0 ? abs($adj->quantity) : 0;
+                $stokAkhir = $runningStock + $masuk - $keluar;
+
+                $result[] = [
+                    'tanggal' => $date,
+                    'stok_awal' => $runningStock,
+                    'masuk' => $masuk,
+                    'keluar' => $keluar,
+                    'stok_akhir' => $stokAkhir,
+                    'harga' => 0,
+                    'nilai' => 0,
+                    'keterangan' => 'Penyesuaian Stok: ' . ($adj->keterangan ?? '-')
+                ];
+
+                $runningStock = $stokAkhir;
             }
-
-            $stokAkhir = $runningStock + $masuk - $keluar;
-            $nilai = $stokAkhir * $item->unit_cost;
-
-            $result[] = [
-                'tanggal' => $date,
-                'stok_awal' => $runningStock,
-                'masuk' => $masuk,
-                'keluar' => $keluar,
-                'stok_akhir' => $stokAkhir,
-                'harga' => $item->unit_cost,
-                'nilai' => $nilai,
-                'keterangan' => $item->order->order_number ?? ''
-            ];
-
-            $runningStock = $stokAkhir;
         }
 
         return response()->json([
@@ -337,9 +384,37 @@ class StokController extends Controller
         ]);
     }
 
-    public function cetakOpname(Request $request)
+    public function saveOpname(Request $request)
     {
-        //menambah stok (force) simpan ke tabel baru bukan ke orderitems
-        //di index orderitems + tabel baru
+        $request->validate([
+            'adjustment_date' => 'required|date',
+            'items' => 'required|array',
+            'items.*.bahan_id' => 'required',
+            'items.*.type' => 'required|in:bahan_baku,bahan_operasional',
+            'items.*.selisih' => 'required|numeric',
+            'items.*.keterangan' => 'nullable|string',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            foreach ($request->items as $item) {
+                if ($item['selisih'] != 0) {
+                    $columnName = $item['type'] === 'bahan_baku' ? 'bahan_baku_id' : 'bahan_operasional_id';
+
+                    StockAdjustment::create([
+                        'adjustment_date' => $request->adjustment_date,
+                        $columnName => $item['bahan_id'],
+                        'quantity' => $item['selisih'],
+                        'keterangan' => $item['keterangan'],
+                    ]);
+                }
+            }
+
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Stok opname berhasil disimpan']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Gagal menyimpan: ' . $e->getMessage()], 500);
+        }
     }
 }

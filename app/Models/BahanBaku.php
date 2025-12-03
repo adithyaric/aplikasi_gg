@@ -52,6 +52,11 @@ class BahanBaku extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function stockAdjustments()
+    {
+        return $this->hasMany(StockAdjustment::class);
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

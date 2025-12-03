@@ -66,17 +66,17 @@
                                                 </h5>
                                             </td>
                                             <td>
-                                                @if ($order->status_penerimaan == 'draft')
+                                                {{-- @if ($order->status_penerimaan == 'draft') --}}
                                                 <a href="{{ route('penerimaan.edit', $order->id) }}"
                                                     class="btn btn-sm btn-success">
                                                     Edit
                                                 </a>
-                                                @else
+                                                {{-- @else --}}
                                                 <button type="button" class="btn btn-sm btn-info"
                                                     onclick="showPenerimaanDetail({{ $order->id }})">
                                                     Detail
                                                 </button>
-                                                @endif
+                                                {{-- @endif --}}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -185,6 +185,8 @@
                                             <th>Qty</th>
                                             <th>Unit Cost</th>
                                             <th>Subtotal</th>
+                                            <th>Diterima</th>
+                                            <th>Keterangan</th>
                                         </tr>
                                     </thead>
                                     <tbody id="penerimaan_items"></tbody>
@@ -232,7 +234,6 @@
                     $('#penerimaan_status').val(response.status_penerimaan || '-');
                     $('#penerimaan_grand_total').text('Rp ' + new Intl.NumberFormat('id-ID').format(response.grand_total || 0));
 
-                    //TODO tambah keterangan & status diterima/tidak diterima
                     $('#penerimaan_items').empty();
                     if (response.items && response.items.length > 0) {
                         response.items.forEach(function(item) {
@@ -241,10 +242,10 @@
                                 '<td>' + (item.bahan_baku?.nama || item.bahan_operasional?.nama) + '</td>' +
                                 '<td>' + (item.satuan || '-') + '</td>' +
                                 '<td>' + (item.quantity || 0) + '</td>' +
-                                '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.unit_cost ||
-                                    0) + '</td>' +
-                                '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.subtotal ||
-                                    0) + '</td>' +
+                                '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.unit_cost || 0) + '</td>' +
+                                '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.subtotal || 0) + '</td>' +
+                                '<td>' + (item.quantity_diterima ? 'sesuai' : 'tidak sesuai' || '-') + '</td>' +
+                                '<td>' + (item.notes || '-') + '</td>' +
                                 '</tr>'
                             );
                         });

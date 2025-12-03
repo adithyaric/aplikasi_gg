@@ -70,7 +70,6 @@
                                     </div>
                                     <div class="form-group col-md-4 col-8">
                                         <label class="form-label">Jumlah Porsi</label>
-                                        {{-- //TODO ambil dari sum porsi 8k + prosi 10k semua sekolah --}}
                                         <input type="number" class="form-control porsi-input" min="1" value="{{ $porsiSekolah }}">
                                     </div>
                                     <div class="form-group col-md-2 col-4 d-flex align-items-end mt-5">

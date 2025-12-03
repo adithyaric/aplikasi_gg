@@ -43,7 +43,8 @@
                             <tr>
                                 <td>Tanggal Stok Opname</td>
                                 <td> :
-                                    <input type="date" id="tglStockOpname" class="form-control d-inline-block" style="width: 100%" value="{{ date('Y-m-d') }}" />
+                                    <input type="date" id="tglStockOpname" class="form-control d-inline-block"
+                                        style="width: 100%" value="{{ date('Y-m-d') }}" />
                                 </td>
                             </tr>
                         </table>
@@ -68,12 +69,14 @@
                             </table>
                         </div>
                         <!-- Tombol Tambah -->
-                        <div class="text-end mt-3 d-flex justify-content-between">
+                        <div class="text-end mt-1 d-flex justify-content-between">
                             <button id="tambahBaris" class="btn btn-primary">
                                 <i class="bi bi-plus-circle"></i> Tambah Baris
                             </button>
-                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCetakKartu">
-                                {{-- //TODO force update qty Stok save to db without creating orderItems --}}
+                            <button class="btn btn-success" id="btnSaveOpname">
+                                <i class="bi bi-save"></i> Save Stok Opname
+                            </button>
+                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalCetakKartu">
                                 <i class="bi bi-printer"></i> Cetak Stok Opname
                             </button>
                         </div>
@@ -168,7 +171,7 @@
                     <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <i class="bi bi-x-circle"></i> Tutup
                     </button>
-                    <button class="btn btn-success" id="btnCetakNow">
+                    <button class="btn btn-warning" id="btnCetakNow">
                         <i class="bi bi-printer-fill"></i> Cetak
                     </button>
                 </div>
@@ -302,6 +305,79 @@
             tambahBarisBtn.addEventListener("click", function(e) {
                 e.preventDefault();
                 buatBarisBaru();
+            });
+
+            document.getElementById("btnSaveOpname").addEventListener("click", function() {
+                const tglStockOpname = document.getElementById("tglStockOpname").value;
+
+                if (!tglStockOpname) {
+                    alert('Tanggal Stok Opname harus diisi!');
+                    return;
+                }
+
+                const rows = tableBody.querySelectorAll("tr");
+                let items = [];
+
+                rows.forEach((row) => {
+                    const namaBahanInput = row.querySelector("td:nth-child(2) input");
+                    const namaBahanSelect = row.querySelector("td:nth-child(2) select");
+
+                    let bahanId = row.querySelector(".kode").value.trim();
+                    let bahanType = '';
+
+                    if (namaBahanInput) {
+                        bahanType = namaBahanInput.dataset.type;
+                    } else if (namaBahanSelect && namaBahanSelect.value) {
+                        bahanId = namaBahanSelect.value;
+                        bahanType = namaBahanSelect.options[namaBahanSelect.selectedIndex].dataset.type;
+                    }
+
+                    const selisih = parseFloat(row.querySelector(".selisih").value) || 0;
+                    const keterangan = row.querySelector(".keterangan").value.trim();
+
+                    if (bahanId && selisih !== 0) {
+                        items.push({
+                            bahan_id: bahanId,
+                            type: bahanType,
+                            selisih: selisih,
+                            keterangan: keterangan
+                        });
+                    }
+                });
+
+                if (items.length === 0) {
+                    alert('Tidak ada perubahan stok untuk disimpan!');
+                    return;
+                }
+
+                if (!confirm(`Simpan ${items.length} penyesuaian stok?`)) {
+                    return;
+                }
+
+                fetch('{{ route('stok.opname.save') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        adjustment_date: tglStockOpname,
+                        items: items
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Stok opname berhasil disimpan!');
+                        location.reload();
+                    } else {
+                        alert('Gagal menyimpan: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat menyimpan data');
+                });
             });
 
             // Modal print logic

@@ -91,6 +91,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/stok-opname', [StokController::class, 'opname'])->name('stok.opname');
     Route::get('/stok-opname/data', [StokController::class, 'getOpnameData'])->name('stok.opname.data');
+    Route::post('/stok-opname/save', [StokController::class, 'saveOpname'])->name('stok.opname.save');
 
     Route::resource('rekening-koran-va', RekeningKoranVaController::class);
     Route::resource('rekening-rekap-bku', RekeningRekapBKUController::class);
