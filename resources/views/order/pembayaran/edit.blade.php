@@ -123,7 +123,7 @@
                 <tbody>
                     @foreach($paymentHistory as $history)
                     <tr>
-                        <td>{{ \Carbon\Carbon::parse($history['payment_date'])->format('d/m/Y H:i') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($history['payment_date'])->format('d/M/Y H:i T') }}</td>
                         <td>Rp {{ number_format($history['amount'], 0, ',', '.') }}</td>
                         <td>{{ ucfirst(str_replace('_', ' ', $history['payment_method'])) }}</td>
                         <td>{{ $history['payment_reference'] ?? '-' }}</td>

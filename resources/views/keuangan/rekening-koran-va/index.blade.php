@@ -75,7 +75,7 @@
                                     @foreach ($rekeningKoran as $index => $item)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
-                                            <td>{{ $item->tanggal_transaksi->format('d/m/y H:i T') }}</td>
+                                            <td>{{ $item->tanggal_transaksi->format('d/M/Y H:i T') }}</td>
                                             <td>{{ $item->uraian }}</td>
                                             <td>{{ $item->ref }}</td>
                                             <td>{{ $item->debit > 0 ? number_format($item->debit, 0, ',', '.') : '-' }}

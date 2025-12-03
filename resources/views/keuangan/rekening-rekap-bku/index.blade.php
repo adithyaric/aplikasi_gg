@@ -104,7 +104,7 @@
                                     @foreach ($rekeningBKU as $index => $item)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
-                                            <td>{{ $item->tanggal_transaksi->format('d/m/y') }}</td>
+                                            <td>{{ $item->tanggal_transaksi->format('d/M/Y H:i T') }}</td>
                                             <td>{{ $item->no_bukti ?? '-' }}</td>
                                             <td>
                                                 @if ($item->link_bukti)

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnggaranController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BahanBakuController;
 use App\Http\Controllers\BahanOperasionalController;
@@ -96,6 +97,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('rekening-koran-va', RekeningKoranVaController::class);
     Route::resource('rekening-rekap-bku', RekeningRekapBKUController::class);
 
+    Route::resource('anggaran', AnggaranController::class);
     // Route::resource('surats', SuratController::class);
     // Route::get('/surats/{id}/cetak', [SuratController::class, 'cetak'])->name('surats.cetak');
     // Route::prefix('skm')->name('skm.')->group(function () {
