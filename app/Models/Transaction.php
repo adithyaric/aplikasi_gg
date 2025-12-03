@@ -44,6 +44,11 @@ class Transaction extends Model
         return $this->hasOne(RekeningRekapBKU::class);
     }
 
+    public function rekeningRekapBKUs() //partial
+    {
+        return $this->hasMany(RekeningRekapBKU::class);
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

@@ -254,7 +254,7 @@
             <select class="form-control select-bahan">
                 <option value="">-- Pilih Bahan --</option>
                 @foreach ($bahans as $bahan)
-                    <option value="{{ $bahan['id'] }}" data-type="{{ $bahan['type'] }}" data-satuan="{{ $bahan['satuan'] }}" data-qty="">{{ $bahan['nama'] }} ({{ $bahan['type'] === 'bahan_baku' ? 'Bahan Baku' : 'Bahan Operasional' }})</option>
+                    <option value="{{ $bahan['id'] }}" data-type="{{ $bahan['type'] }}" data-satuan="{{ $bahan['satuan'] }}" data-qty="">({{ $bahan['type'] === 'bahan_baku' ? 'Bahan Baku' : 'Bahan Operasional' }}) : {{ $bahan['nama'] }}</option>
                 @endforeach
             </select>
         </td>

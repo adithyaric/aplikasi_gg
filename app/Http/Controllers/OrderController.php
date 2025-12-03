@@ -153,7 +153,7 @@ class OrderController extends Controller
                 12 => 'XII'
             ][$month];
 
-            $latestOrder = Order::where('order_number', 'like', "PO/{$year}/{$romanMonth}/%")
+            $latestOrder = Order::withTrashed()->where('order_number', 'like', "PO/{$year}/{$romanMonth}/%")
                 ->latest()
                 ->first();
 
@@ -460,6 +460,9 @@ class OrderController extends Controller
             $previousAmount = $order->transaction?->amount ?? 0;
             $newTotalAmount = $previousAmount + $request->amount;
 
+            // Determine if this is a partial payment
+            $isPartialPayment = $request->amount > 0 && ($request->amount < $maxAmount || $request->amount != $order->grand_total);
+
             // Handle file upload
             $buktiPath = null;
             if ($request->hasFile('bukti_transfer')) {
@@ -479,7 +482,7 @@ class OrderController extends Controller
                         'amount' => $request->amount,
                         'payment_method' => $request->payment_method,
                         'payment_reference' => $request->payment_reference,
-                        'bukti_transfer' => $buktiPath ?? $order->transaction->bukti_transfer,
+                        'bukti_transfer' => $buktiPath ?? null,
                         'notes' => $request->notes,
                         'created_at' => now()->toDateTimeString(),
                     ];
@@ -533,7 +536,7 @@ class OrderController extends Controller
                 $transaction = $order->transaction()->create($transactionData);
             }
 
-            $this->createOrUpdateRekeningRekapBKU($transaction, $order);
+            $this->createOrUpdateRekeningRekapBKU($transaction, $order, $isPartialPayment);
 
             DB::commit();
             return response()->json([
@@ -673,139 +676,150 @@ class OrderController extends Controller
         }
     }
 
-    private function createOrUpdateRekeningRekapBKU($transaction, $order)
+    private function createOrUpdateRekeningRekapBKU($transaction, $order, $isPartialPayment = false)
     {
         DB::beginTransaction();
         try {
-            // Prepare common data
-            $uraian = "Pembayaran PO {$order->order_number} - {$order->supplier->nama}";
-            $tanggal = $transaction->payment_date;
-            $debit = 0;
-            $kredit = $transaction->amount;
+            $paymentHistory = $transaction->payment_history ?? [];
+            $latestPayment = end($paymentHistory);
 
-            // If there's an existing linked RekeningRekapBKU, lock it
-            $existing = $transaction->rekeningRekapBKU ? \App\Models\RekeningRekapBKU::lockForUpdate()->find($transaction->rekeningRekapBKU->id) : null;
+            // Handle NON-PARTIAL payments
+            if (!$isPartialPayment) {
+                $uraian = "Pembayaran PO {$order->order_number} - {$order->supplier->nama}";
+                $tanggal = $transaction->payment_date;
+                $debit = 0;
+                $kredit = $transaction->amount;
 
-            if ($existing) {
-                // Find previous entry relative to the (possibly updated) tanggal and excluding current record
-                $prevEntry = \App\Models\RekeningRekapBKU::where(function ($q) use ($tanggal, $existing) {
-                    $q->where('tanggal_transaksi', '<', $tanggal)
-                        ->orWhere(function ($q2) use ($tanggal, $existing) {
-                            $q2->where('tanggal_transaksi', '=', $tanggal)
-                                ->where('id', '<', $existing->id);
-                        });
-                })
-                    ->orderBy('tanggal_transaksi', 'desc')
-                    ->orderBy('id', 'desc')
-                    ->lockForUpdate()
-                    ->first();
+                $existing = $transaction->rekeningRekapBKU ?
+                    \App\Models\RekeningRekapBKU::lockForUpdate()->find($transaction->rekeningRekapBKU->id) :
+                    null;
 
-                $prevSaldo = $prevEntry ? $prevEntry->saldo : 0;
+                if ($existing) {
+                    // UPDATE existing
+                    $prevEntry = \App\Models\RekeningRekapBKU::where(function ($q) use ($tanggal, $existing) {
+                        $q->where('tanggal_transaksi', '<', $tanggal)
+                            ->orWhere(function ($q2) use ($tanggal, $existing) {
+                                $q2->where('tanggal_transaksi', '=', $tanggal)
+                                    ->where('id', '<', $existing->id);
+                            });
+                    })
+                        ->orderBy('tanggal_transaksi', 'desc')
+                        ->orderBy('id', 'desc')
+                        ->lockForUpdate()
+                        ->first();
 
-                // New saldo for this record (payment = kredit => saldo decreases)
-                $newSaldoForCurrent = $prevSaldo + $debit - $kredit;
+                    $prevSaldo = $prevEntry ? $prevEntry->saldo : 0;
+                    $newSaldoForCurrent = $prevSaldo + $debit - $kredit;
 
-                $rekeningData = [
-                    'tanggal_transaksi' => $tanggal,
-                    'no_bukti' => $transaction->payment_reference,
-                    'link_bukti' => $transaction->bukti_transfer,
-                    'jenis_bahan' => null,
-                    'nama_bahan' => null,
-                    'kuantitas' => null,
-                    'satuan' => null,
-                    'supplier' => $order->supplier->nama,
-                    'uraian' => $uraian,
-                    'debit' => $debit,
-                    'kredit' => $kredit,
-                    'saldo' => $newSaldoForCurrent,
-                    'bulan' => date('n', strtotime($tanggal)),
-                    'minggu' => null,
-                ];
+                    $existing->update([
+                        'tanggal_transaksi' => $tanggal,
+                        'no_bukti' => $transaction->payment_reference,
+                        'link_bukti' => $transaction->bukti_transfer,
+                        'supplier' => $order->supplier->nama,
+                        'uraian' => $uraian,
+                        'debit' => $debit,
+                        'kredit' => $kredit,
+                        'saldo' => $newSaldoForCurrent,
+                        'bulan' => date('n', strtotime($tanggal)),
+                    ]);
 
-                // Update existing record
-                $existing->update($rekeningData);
+                    $this->recalculateSubsequentEntries($existing);
+                } else {
+                    // CREATE new
+                    $prevEntry = \App\Models\RekeningRekapBKU::where('tanggal_transaksi', '<', $tanggal)
+                        ->orWhere(function ($q) use ($tanggal) {
+                            $q->where('tanggal_transaksi', '=', $tanggal);
+                        })
+                        ->orderBy('tanggal_transaksi', 'desc')
+                        ->orderBy('id', 'desc')
+                        ->lockForUpdate()
+                        ->first();
 
-                // Recalculate subsequent entries (those after the current record in ordering)
-                $nextEntries = \App\Models\RekeningRekapBKU::where(function ($q) use ($existing) {
-                    $q->where('tanggal_transaksi', '>', $existing->tanggal_transaksi)
-                        ->orWhere(function ($q2) use ($existing) {
-                            $q2->where('tanggal_transaksi', '=', $existing->tanggal_transaksi)
-                                ->where('id', '>', $existing->id);
-                        });
-                })
-                    ->orderBy('tanggal_transaksi', 'asc')
-                    ->orderBy('id', 'asc')
-                    ->lockForUpdate()
-                    ->get();
+                    $prevSaldo = $prevEntry ? $prevEntry->saldo : 0;
+                    $newSaldo = $prevSaldo + $debit - $kredit;
 
-                $currentSaldo = $existing->saldo;
-                foreach ($nextEntries as $entry) {
-                    $currentSaldo = $currentSaldo + $entry->debit - $entry->kredit;
-                    $entry->update(['saldo' => $currentSaldo]);
+                    $created = \App\Models\RekeningRekapBKU::create([
+                        'tanggal_transaksi' => $tanggal,
+                        'no_bukti' => $transaction->payment_reference,
+                        'link_bukti' => $transaction->bukti_transfer,
+                        'supplier' => $order->supplier->nama,
+                        'uraian' => $uraian,
+                        'debit' => $debit,
+                        'kredit' => $kredit,
+                        'saldo' => $newSaldo,
+                        'bulan' => date('n', strtotime($tanggal)),
+                        'transaction_id' => $transaction->id,
+                    ]);
+
+                    $this->recalculateSubsequentEntries($created);
                 }
-            } else {
-                // CREATE CASE
-                // Find previous entry relative to new tanggal
-                $prevEntry = \App\Models\RekeningRekapBKU::where(function ($q) use ($tanggal) {
-                    $q->where('tanggal_transaksi', '<', $tanggal)
-                        ->orWhere(function ($q2) use ($tanggal) {
-                            $q2->where('tanggal_transaksi', '=', $tanggal)
-                                ->where('id', '<', PHP_INT_MAX);
-                        });
-                })
+            }
+            // Handle PARTIAL payments
+            else {
+                if (!$latestPayment || $latestPayment['amount'] == 0) {
+                    DB::commit();
+                    return;
+                }
+
+                $uraian = "Pembayaran Parsial PO {$order->order_number} - {$order->supplier->nama} (Cicilan ke-" . count($paymentHistory) . ")";
+                $tanggal = $latestPayment['payment_date'];
+                $debit = 0;
+                $kredit = $latestPayment['amount'];
+
+                // Always CREATE new entry for partial payments
+                $prevEntry = \App\Models\RekeningRekapBKU::where('tanggal_transaksi', '<', $tanggal)
+                    ->orWhere(function ($q) use ($tanggal) {
+                        $q->where('tanggal_transaksi', '=', $tanggal);
+                    })
                     ->orderBy('tanggal_transaksi', 'desc')
                     ->orderBy('id', 'desc')
                     ->lockForUpdate()
                     ->first();
 
                 $prevSaldo = $prevEntry ? $prevEntry->saldo : 0;
-
                 $newSaldo = $prevSaldo + $debit - $kredit;
 
-                $rekeningData = [
+                $created = \App\Models\RekeningRekapBKU::create([
                     'tanggal_transaksi' => $tanggal,
-                    'no_bukti' => $transaction->payment_reference,
-                    'link_bukti' => $transaction->bukti_transfer,
-                    'jenis_bahan' => null,
-                    'nama_bahan' => null,
-                    'kuantitas' => null,
-                    'satuan' => null,
+                    'no_bukti' => $transaction->payment_reference . '-' . count($paymentHistory),
+                    'link_bukti' => $latestPayment['bukti_transfer'] ?? null,
                     'supplier' => $order->supplier->nama,
                     'uraian' => $uraian,
                     'debit' => $debit,
                     'kredit' => $kredit,
                     'saldo' => $newSaldo,
                     'bulan' => date('n', strtotime($tanggal)),
-                    'minggu' => null,
                     'transaction_id' => $transaction->id,
-                ];
+                ]);
 
-                $created = \App\Models\RekeningRekapBKU::create($rekeningData);
-
-                // Recalculate subsequent entries (those after the newly created record)
-                $nextEntries = \App\Models\RekeningRekapBKU::where(function ($q) use ($created) {
-                    $q->where('tanggal_transaksi', '>', $created->tanggal_transaksi)
-                        ->orWhere(function ($q2) use ($created) {
-                            $q2->where('tanggal_transaksi', '=', $created->tanggal_transaksi)
-                                ->where('id', '>', $created->id);
-                        });
-                })
-                    ->orderBy('tanggal_transaksi', 'asc')
-                    ->orderBy('id', 'asc')
-                    ->lockForUpdate()
-                    ->get();
-
-                $currentSaldo = $created->saldo;
-                foreach ($nextEntries as $entry) {
-                    $currentSaldo = $currentSaldo + $entry->debit - $entry->kredit;
-                    $entry->update(['saldo' => $currentSaldo]);
-                }
+                $this->recalculateSubsequentEntries($created);
             }
 
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
+        }
+    }
+
+    private function recalculateSubsequentEntries($entry)
+    {
+        $nextEntries = \App\Models\RekeningRekapBKU::where(function ($q) use ($entry) {
+            $q->where('tanggal_transaksi', '>', $entry->tanggal_transaksi)
+                ->orWhere(function ($q2) use ($entry) {
+                    $q2->where('tanggal_transaksi', '=', $entry->tanggal_transaksi)
+                        ->where('id', '>', $entry->id);
+                });
+        })
+            ->orderBy('tanggal_transaksi', 'asc')
+            ->orderBy('id', 'asc')
+            ->lockForUpdate()
+            ->get();
+
+        $currentSaldo = $entry->saldo;
+        foreach ($nextEntries as $nextEntry) {
+            $currentSaldo = $currentSaldo + $nextEntry->debit - $nextEntry->kredit;
+            $nextEntry->update(['saldo' => $currentSaldo]);
         }
     }
 }

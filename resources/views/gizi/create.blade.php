@@ -71,7 +71,7 @@
                                                         <option value="">-- Pilih Bahan Baku --</option>
                                                         @foreach ($bahanbakus as $bahan)
                                                             <option value="{{ $bahan->id }}" {{ old('bahan_baku_id') == $bahan->id ? 'selected' : '' }}>
-                                                                {{ $bahan->nama }} ({{ $bahan->kelompok }})
+                                                                ({{ $bahan->kelompok }}) : {{ $bahan->nama }}
                                                             </option>
                                                         @endforeach
                                                     </select>

@@ -47,7 +47,7 @@
                                     @foreach ($bahans as $bahan)
                                         <option value="{{ $bahan['id'] }}" data-type="{{ $bahan['type'] }}"
                                             data-satuan="{{ $bahan['satuan'] }}">
-                                            {{ $bahan['nama'] }} ({{ ucfirst(str_replace('_', ' ', $bahan['type'])) }})
+                                            ({{ ucfirst(str_replace('_', ' ', $bahan['type'])) }}) : {{ $bahan['nama'] }}
                                         </option>
                                     @endforeach
                                 </select>
