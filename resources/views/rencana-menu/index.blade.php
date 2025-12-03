@@ -103,7 +103,7 @@
                                     @foreach ($rencanaMenus as $rencana)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $rencana->start_date }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($rencana->start_date)->translatedFormat('d M Y') }}</td>
                                             <td class="text-center">
                                                 <button class="btn btn-sm btn-info btn-detail" data-id="{{ $rencana->id }}"
                                                     data-start_date="{{ $rencana->start_date }}">
@@ -133,6 +133,16 @@
 @push('js')
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
+        flatpickr("#dateRange", {
+            mode: "range",
+            dateFormat: "d/m/Y",
+            locale: "id", // biar pakai bahasa Indonesia
+            altInput: true,
+            altFormat: "j F Y", // contoh: 24 April 2025
+            allowInput: true,
+        });
+    </script>
+    <script>
         document.addEventListener("DOMContentLoaded", function() {
             function parseDateDMY(str) {
                 if (!str) return null;
@@ -157,6 +167,8 @@
                 mode: "range",
                 dateFormat: "d/m/Y",
                 locale: "id",
+                altInput: true,
+                altFormat: "j F Y",
                 allowInput: true,
             });
 

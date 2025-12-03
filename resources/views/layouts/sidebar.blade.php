@@ -458,7 +458,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../finance/rekonsiliasi.html">
+                    <a class="nav-link {{ request()->routeIs('rekonsiliasi') ? 'active' : '' }}" href="{{ route('rekonsiliasi') }}">
                         <i class="icon">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
