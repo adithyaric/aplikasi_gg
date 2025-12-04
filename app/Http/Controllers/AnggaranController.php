@@ -19,10 +19,14 @@ class AnggaranController extends Controller
 
     public function create()
     {
+        //TODO tidak perlu pilih sekolah
+        //akumulasi porsi_8k, porsi_10k semua sekolah
         $sekolahs = Sekolah::get(['id', 'nama', 'porsi_8k', 'porsi_10k']);
+        $total_porsi_8k = Sekolah::sum('porsi_8k');
+        $total_porsi_10k = Sekolah::sum('porsi_8k');
         $title = 'Tambah Proposal';
 
-        return view('anggaran.create', compact('sekolahs', 'title'));
+        return view('anggaran.create', compact('sekolahs', 'total_porsi_8k', 'total_porsi_10k', 'title'));
     }
 
     public function store(Request $request)

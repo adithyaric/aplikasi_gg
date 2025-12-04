@@ -96,15 +96,15 @@ class DashboardController extends Controller
             $bku = $bkuByDate[$date] ?? ['count' => 0, 'total_debit' => 0, 'total_kredit' => 0];
 
             // Calculate difference (adjust based on your logic - using kredit for Koran and debit for BKU)
-            $selisih = $koran['total_kredit'] - $bku['total_debit'];
+            $selisih = ($koran['total_kredit'] + $koran['total_debit']) - ($bku['total_debit'] + $bku['total_kredit']);
 
             $reconciliationData[] = [
                 'no' => $no++,
                 'tanggal' => \Carbon\Carbon::parse($date)->translatedFormat('j F Y'),
                 'jml_rek' => $koran['count'],
-                'nilai_rek' => $koran['total_kredit'],
+                'nilai_rek' => ($koran['total_kredit'] + $koran['total_debit']),
                 'jml_buku' => $bku['count'],
-                'nilai_buku' => $bku['total_debit'],
+                'nilai_buku' => ($bku['total_debit'] + $bku['total_kredit']),
                 'selisih' => $selisih,
                 'status' => abs($selisih) < 0.01 ? 'Match' : 'No Match' // Using epsilon for float comparison
             ];

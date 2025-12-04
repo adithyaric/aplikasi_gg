@@ -57,19 +57,19 @@
                                         value="{{ $anggaran->start_date }}">
                                     <input type="hidden" id="end_date" name="end_date" value="{{ $anggaran->end_date }}">
                                 </div>
-                                <div class="form-group col-md-6">
-                                    <label class="form-label" for="sekolah_id">Sekolah</label>
-                                    <select class="form-select" id="sekolah_id" name="sekolah_id" required disabled>
-                                        <option value="" disabled>Pilih Sekolah</option>
-                                        @foreach ($sekolahs as $sekolah)
-                                            <option value="{{ $sekolah->id }}" data-porsi8k="{{ $sekolah->porsi_8k }}"
-                                                data-porsi10k="{{ $sekolah->porsi_10k }}"
-                                                {{ $anggaran->sekolah_id == $sekolah->id ? 'selected' : '' }}>
-                                                {{ $sekolah->nama }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                                {{-- <div class="form-group col-md-6"> --}}
+                                    {{-- <label class="form-label" for="sekolah_id">Sekolah</label> --}}
+                                    {{-- <select class="form-select" id="sekolah_id" name="sekolah_id" required disabled> --}}
+                                        {{-- <option value="" disabled>Pilih Sekolah</option> --}}
+                                        {{-- @foreach ($sekolahs as $sekolah) --}}
+                                            {{-- <option value="{{ $sekolah->id }}" data-porsi8k="{{ $sekolah->porsi_8k }}" --}}
+                                                {{-- data-porsi10k="{{ $sekolah->porsi_10k }}" --}}
+                                                {{-- {{ $anggaran->sekolah_id == $sekolah->id ? 'selected' : '' }}> --}}
+                                                {{-- {{ $sekolah->nama }} --}}
+                                            {{-- </option> --}}
+                                        {{-- @endforeach --}}
+                                    {{-- </select> --}}
+                                {{-- </div> --}}
                             </div>
 
                             <div class="row mt-3">

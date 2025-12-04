@@ -30,8 +30,7 @@
 <!-- `Avg. FIFO = hapus!` -->
 <!-- Gov. Price = di bahan baku & bahan operasional `(laravel-activitylog)` -->
 
-Halaman Keuangan
-`Anggaran -> crud biasa skip!`
+<!-- Halaman Keuangan `Anggaran -> crud biasa skip!` -->
 
 <!-- Formulir Rekening Koran VA -->
 <!-- -> crud biasa + transaksi PO (nambah saldo) -->
