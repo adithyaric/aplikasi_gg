@@ -47,7 +47,8 @@
                                     @foreach ($bahans as $bahan)
                                         <option value="{{ $bahan['id'] }}" data-type="{{ $bahan['type'] }}"
                                             data-satuan="{{ $bahan['satuan'] }}">
-                                            ({{ ucfirst(str_replace('_', ' ', $bahan['type'])) }}) : {{ $bahan['nama'] }}
+                                            ({{ ucfirst(str_replace('_', ' ', $bahan['type'])) }})
+                                            : {{ $bahan['nama'] }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -65,7 +66,7 @@
                                 <td>
                                     :
                                     <input type="text" id="namaBahan" class="form-control d-inline-block"
-                                        style="width: 70%" value="" disabled/>
+                                        style="width: 70%" value="" disabled />
                                 </td>
                             </tr>
                             <tr>
@@ -73,7 +74,7 @@
                                 <td>
                                     :
                                     <input type="text" id="satuan" class="form-control d-inline-block"
-                                        style="width: 70%" value="" disabled/>
+                                        style="width: 70%" value="" disabled />
                                 </td>
                             </tr>
                         </table>
@@ -303,25 +304,26 @@
             function renderCetakTable(data) {
                 const tbody = $("#tabelCetak tbody");
                 tbody.empty();
-                let total = 0;
 
+                let latestNilai = 0;
                 data.forEach((item, index) => {
-                    total += item.nilai;
+                    latestNilai = item.nilai; // Keep updating to get last
                     tbody.append(`
-                <tr>
-                  <td>${index + 1}</td>
-                  <td>${item.tanggal}</td>
-                  <td>${item.stokAwal}</td>
-                  <td>${item.masuk}</td>
-                  <td>${item.keluar}</td>
-                  <td>${item.stokAkhir}</td>
-                  <td>${item.harga.toLocaleString("id-ID")}</td>
-                  <td>${item.nilai.toLocaleString("id-ID")}</td>
-                  <td>${item.ket}</td>
-                </tr>
-              `);
+            <tr>
+                <td>${index + 1}</td>
+                <td>${item.tanggal}</td>
+                <td>${item.stokAwal}</td>
+                <td>${item.masuk}</td>
+                <td>${item.keluar}</td>
+                <td>${item.stokAkhir}</td>
+                <td>${item.harga.toLocaleString("id-ID")}</td>
+                <td>${item.nilai.toLocaleString("id-ID")}</td>
+                <td>${item.ket}</td>
+            </tr>
+        `);
                 });
-                $("#totalCetakNilai").text(total.toLocaleString("id-ID"));
+
+                $("#totalCetakNilai").text(latestNilai.toLocaleString("id-ID"));
             }
 
             // Saat modal dibuka
@@ -497,27 +499,25 @@
                     return;
                 }
 
-                let totalNilai = 0;
-
+                let latestNilai = 0;
                 transactions.forEach((item, index) => {
-                    totalNilai += item.nilai;
-
+                    latestNilai = item.nilai; // Keep updating, last one wins
                     tbody.append(`
-                <tr>
-                    <td>${index + 1}</td>
-                    <td><input type="date" class="form-control" value="${item.tanggal}" disabled /></td>
-                    <td><input type="number" class="form-control stok-awal" value="${item.stok_awal}" disabled /></td>
-                    <td><input type="number" class="form-control masuk" value="${item.masuk}" disabled /></td>
-                    <td><input type="number" class="form-control keluar" value="${item.keluar}" disabled /></td>
-                    <td><input type="number" class="form-control stok-akhir" value="${item.stok_akhir}" disabled /></td>
-                    <td><input type="number" class="form-control harga" value="${item.harga}" disabled /></td>
-                    <td><input type="number" class="form-control nilai" value="${item.nilai}" disabled /></td>
-                    <td><input type="text" class="form-control" value="${item.keterangan}" /></td>
-                </tr>
-            `);
+            <tr>
+                <td>${index + 1}</td>
+                <td><input type="date" class="form-control" value="${item.tanggal}" disabled /></td>
+                <td><input type="number" class="form-control stok-awal" value="${item.stok_awal}" disabled /></td>
+                <td><input type="number" class="form-control masuk" value="${item.masuk}" disabled /></td>
+                <td><input type="number" class="form-control keluar" value="${item.keluar}" disabled /></td>
+                <td><input type="number" class="form-control stok-akhir" value="${item.stok_akhir}" disabled /></td>
+                <td><input type="number" class="form-control harga" value="${item.harga}" disabled /></td>
+                <td><input type="number" class="form-control nilai" value="${item.nilai}" disabled /></td>
+                <td><input type="text" class="form-control" value="${item.keterangan}" /></td>
+            </tr>
+        `);
                 });
 
-                $('#totalPersediaan').text(totalNilai.toLocaleString('id-ID'));
+                $('#totalPersediaan').text(latestNilai.toLocaleString('id-ID'));
             }
 
             // Update getTabelUtamaData function to work with dynamic data
@@ -543,11 +543,10 @@
 
     <script>
         function hitungPersediaan() {
-            let total = 0;
+            let latestNilai = 0;
             let previousStokAkhir = 0;
 
             $("#datatable tbody tr").each(function(index) {
-                // Set stok awal from previous row's stok akhir
                 if (index > 0) {
                     $(this).find(".stok-awal").val(previousStokAkhir);
                 }
@@ -564,10 +563,10 @@
                 $(this).find(".nilai").val(nilai);
 
                 previousStokAkhir = stokAkhir;
-                total += nilai;
+                latestNilai = nilai; // Keep updating to get the last one
             });
 
-            $("#totalPersediaan").text(total.toLocaleString("id-ID"));
+            $("#totalPersediaan").text(latestNilai.toLocaleString("id-ID"));
         }
 
         $(document).ready(function() {

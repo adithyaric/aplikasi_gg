@@ -184,7 +184,6 @@ class StokController extends Controller
             ];
         }));
 
-        //TODO untuk stok keluar harga satuan dari harga terakhir (sekarang default 0)
         return view('stok.kartu', [
             'bahans' => $bahans,
         ]);
