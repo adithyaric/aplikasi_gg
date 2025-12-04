@@ -761,7 +761,7 @@ class OrderController extends Controller
                     return;
                 }
 
-                $uraian = "Pembayaran Parsial PO {$order->order_number} - {$order->supplier->nama} (Cicilan ke-" . count($paymentHistory) . ")";
+                $uraian = "Pembayaran Parsial PO {$order->order_number} - {$order->supplier->nama} (Pembayaran ke-" . count($paymentHistory) . ")";
                 $tanggal = $latestPayment['payment_date'];
                 $debit = 0;
                 $kredit = $latestPayment['amount'];

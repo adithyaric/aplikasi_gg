@@ -23,7 +23,8 @@ class AnggaranController extends Controller
         //akumulasi porsi_8k, porsi_10k semua sekolah
         $sekolahs = Sekolah::get(['id', 'nama', 'porsi_8k', 'porsi_10k']);
         $total_porsi_8k = Sekolah::sum('porsi_8k');
-        $total_porsi_10k = Sekolah::sum('porsi_8k');
+        $total_porsi_10k = Sekolah::sum('porsi_10k');
+
         $title = 'Tambah Proposal';
 
         return view('anggaran.create', compact('sekolahs', 'total_porsi_8k', 'total_porsi_10k', 'title'));
@@ -79,9 +80,12 @@ class AnggaranController extends Controller
     public function edit(Anggaran $anggaran)
     {
         $sekolahs = Sekolah::get(['id', 'nama', 'porsi_8k', 'porsi_10k']);
+        $total_porsi_8k = Sekolah::sum('porsi_8k');
+        $total_porsi_10k = Sekolah::sum('porsi_10k');
+
         $title = 'Edit Anggaran';
 
-        return view('anggaran.edit', compact('anggaran', 'sekolahs', 'title'));
+        return view('anggaran.edit', compact('anggaran', 'sekolahs', 'total_porsi_8k', 'total_porsi_10k', 'title'));
     }
 
     public function update(Request $request, Anggaran $anggaran)

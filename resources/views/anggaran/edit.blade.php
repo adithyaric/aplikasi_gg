@@ -58,17 +58,17 @@
                                     <input type="hidden" id="end_date" name="end_date" value="{{ $anggaran->end_date }}">
                                 </div>
                                 {{-- <div class="form-group col-md-6"> --}}
-                                    {{-- <label class="form-label" for="sekolah_id">Sekolah</label> --}}
-                                    {{-- <select class="form-select" id="sekolah_id" name="sekolah_id" required disabled> --}}
-                                        {{-- <option value="" disabled>Pilih Sekolah</option> --}}
-                                        {{-- @foreach ($sekolahs as $sekolah) --}}
-                                            {{-- <option value="{{ $sekolah->id }}" data-porsi8k="{{ $sekolah->porsi_8k }}" --}}
-                                                {{-- data-porsi10k="{{ $sekolah->porsi_10k }}" --}}
-                                                {{-- {{ $anggaran->sekolah_id == $sekolah->id ? 'selected' : '' }}> --}}
-                                                {{-- {{ $sekolah->nama }} --}}
-                                            {{-- </option> --}}
-                                        {{-- @endforeach --}}
-                                    {{-- </select> --}}
+                                {{-- <label class="form-label" for="sekolah_id">Sekolah</label> --}}
+                                {{-- <select class="form-select" id="sekolah_id" name="sekolah_id" required disabled> --}}
+                                {{-- <option value="" disabled>Pilih Sekolah</option> --}}
+                                {{-- @foreach ($sekolahs as $sekolah) --}}
+                                {{-- <option value="{{ $sekolah->id }}" data-porsi8k="{{ $sekolah->porsi_8k }}" --}}
+                                {{-- data-porsi10k="{{ $sekolah->porsi_10k }}" --}}
+                                {{-- {{ $anggaran->sekolah_id == $sekolah->id ? 'selected' : '' }}> --}}
+                                {{-- {{ $sekolah->nama }} --}}
+                                {{-- </option> --}}
+                                {{-- @endforeach --}}
+                                {{-- </select> --}}
                                 {{-- </div> --}}
                             </div>
 
@@ -80,13 +80,13 @@
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label class="form-label" for="porsi_10k">Porsi 10k</label>
-                                    <input type="number" min="0" class="form-control" id="porsi_10k" name="porsi_10k"
-                                        value="{{ $anggaran->porsi_10k }}" required>
+                                    <input type="number" min="0" class="form-control" id="porsi_10k"
+                                        name="porsi_10k" value="{{ $anggaran->porsi_10k }}" required>
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label class="form-label" for="total_porsi">Total Porsi</label>
-                                    <input type="number" min="0" class="form-control" id="total_porsi" name="total_porsi"
-                                        value="{{ $anggaran->total_porsi }}" disabled>
+                                    <input type="number" min="0" class="form-control" id="total_porsi"
+                                        name="total_porsi" value="{{ $anggaran->total_porsi }}" disabled>
                                 </div>
                             </div>
 
@@ -153,6 +153,11 @@
             const dateRangeInput = document.getElementById('dateRange');
             const startDateInput = document.getElementById('start_date');
             const endDateInput = document.getElementById('end_date');
+            const porsi8k = parseInt(document.getElementById('porsi_8k').value) || 0;
+            const porsi10k = parseInt(document.getElementById('porsi_10k').value) || 0;
+            const totalPorsi = porsi8k + porsi10k;
+
+            updateRadioButtons(totalPorsi);
 
             // Format dates for display
             const formatDateForDisplay = (dateStr) => {
@@ -188,12 +193,29 @@
                 return 'Rp ' + value.toLocaleString('id-ID');
             }
 
+            function updateRadioButtons(totalPorsi) {
+                const aturan1Radio = document.getElementById('aturan_1');
+                const aturan2Radio = document.getElementById('aturan_2');
+
+                if (totalPorsi > 3000) {
+                    aturan2Radio.checked = true;
+                    aturan1Radio.disabled = true;
+                    aturan2Radio.disabled = false;
+                } else {
+                    aturan1Radio.disabled = false;
+                    aturan2Radio.disabled = false;
+                }
+            }
+
             function calculateBudget() {
                 const porsi8k = parseInt(document.getElementById('porsi_8k').value) || 0;
                 const porsi10k = parseInt(document.getElementById('porsi_10k').value) || 0;
                 const totalPorsi = porsi8k + porsi10k;
 
                 document.getElementById('total_porsi').value = totalPorsi;
+
+                // Update radio buttons based on total porsi
+                updateRadioButtons(totalPorsi);
 
                 const budgetPorsi8k = porsi8k * 8000;
                 const budgetPorsi10k = porsi10k * 10000;
@@ -213,6 +235,7 @@
                 document.getElementById('budget_operasional').value = formatCurrency(budgetOperasional);
                 document.getElementById('budget_sewa').value = formatCurrency(budgetSewa);
             }
+
 
             document.getElementById('porsi_8k').addEventListener('input', calculateBudget);
             document.getElementById('porsi_10k').addEventListener('input', calculateBudget);
