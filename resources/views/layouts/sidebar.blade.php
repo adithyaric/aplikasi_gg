@@ -83,16 +83,6 @@
                         <span class="mini-icon">-</span>
                     </a>
                 </li>
-                {{-- <li class="nav-item"> --}}
-                {{-- <a class="nav-link {{ request()->routeIs('surats.*') ? 'active' : '' }}" href="{{ route('surats.index') }}"> --}}
-                {{-- <i class="icon"> --}}
-                {{-- <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> --}}
-                {{-- <path fill-rule="evenodd" clip-rule="evenodd" d="M10.7044 3.51898C10.034 3.51898 9.46373 3.9848 9.30365 4.61265H14.6863C14.5263 3.9848 13.956 3.51898 13.2856 3.51898H10.7044ZM16.2071 4.61264H18.1881C20.2891 4.61264 22 6.34428 22 8.47085C22 8.47085 21.94 9.3711 21.92 10.6248C21.918 10.724 21.8699 10.8212 21.7909 10.88C21.3097 11.2354 20.8694 11.5291 20.8294 11.5493C19.1686 12.6632 17.2386 13.447 15.1826 13.8369C15.0485 13.8632 14.9165 13.7934 14.8484 13.6739C14.2721 12.6754 13.1956 12.0253 11.995 12.0253C10.8024 12.0253 9.71586 12.6683 9.12256 13.6678C9.05353 13.7853 8.92346 13.8531 8.7904 13.8278C6.75138 13.4369 4.82141 12.6541 3.17059 11.5594L2.21011 10.8911C2.13007 10.8405 2.08004 10.7493 2.08004 10.6481C2.05003 10.1316 2 8.47085 2 8.47085C2 6.34428 3.71086 4.61264 5.81191 4.61264H7.78289C7.97299 3.1443 9.2036 2 10.7044 2H13.2856C14.7864 2 16.017 3.1443 16.2071 4.61264ZM21.6598 12.8152L21.6198 12.8355C19.5988 14.1924 17.1676 15.0937 14.6163 15.4684C14.2561 15.519 13.8959 15.2861 13.7959 14.9216C13.5758 14.0912 12.8654 13.5443 12.015 13.5443H12.005H11.985C11.1346 13.5443 10.4242 14.0912 10.2041 14.9216C10.1041 15.2861 9.74387 15.519 9.38369 15.4684C6.83242 15.0937 4.4012 14.1924 2.38019 12.8355C2.37019 12.8254 2.27014 12.7646 2.1901 12.8152C2.10005 12.8659 2.10005 12.9874 2.10005 12.9874L2.17009 18.1519C2.17009 20.2785 3.87094 22 5.97199 22H18.018C20.1191 22 21.8199 20.2785 21.8199 18.1519L21.9 12.9874C21.9 12.9874 21.9 12.8659 21.8099 12.8152C21.7599 12.7849 21.6999 12.795 21.6598 12.8152ZM12.7454 17.0583C12.7454 17.4836 12.4152 17.8177 11.995 17.8177C11.5848 17.8177 11.2446 17.4836 11.2446 17.0583V15.7519C11.2446 15.3367 11.5848 14.9924 11.995 14.9924C12.4152 14.9924 12.7454 15.3367 12.7454 15.7519V17.0583Z" fill="currentColor"></path> --}}
-                {{-- </svg> --}}
-                {{-- </i> --}}
-                {{-- <span class="item-name">Laporan Kehilangan</span> --}}
-                {{-- </a> --}}
-                {{-- </li> --}}
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('bahanbaku.*') ? 'active' : '' }}"
                         href="{{ route('bahanbaku.index') }}">
@@ -210,6 +200,57 @@
                             </svg>
                         </i>
                         <span class="item-name">Titik Distribusi</span>
+                    </a>
+                </li>
+                <li>
+                    <hr class="hr-horizontal" />
+                </li>
+
+                <!-- RELAWAN -->
+                <li class="nav-item static-item">
+                    <a class="nav-link static-item disabled" href="#" tabindex="-1">
+                        <span class="default-icon">Relawan</span>
+                        <span class="mini-icon">-</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('kategori-karyawan.*') ? 'active' : '' }}"
+                        href="{{ route('kategori-karyawan.index') }}">
+                        <i class="icon">
+                            <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path opacity="0.4"
+                                    d="M11.9993 21.9981C11.2303 21.9981 10.4623 21.7061 9.87526 21.1231L9.14526 20.3931C8.86226 20.1111 8.48326 19.9551 8.08126 19.9541H7.05426C5.39426 19.9541 4.04326 18.6031 4.04326 16.9431V15.9151C4.04226 15.5141 3.88626 15.1351 3.60326 14.8501L2.88526 14.1331C1.70926 12.9641 1.70426 11.0531 2.87426 9.87615L3.60426 9.14515C3.88626 8.86215 4.04226 8.48315 4.04326 8.08115V7.05515C4.04326 5.39415 5.39426 4.04315 7.05426 4.04315H8.08226C8.48326 4.04315 8.86126 3.88715 9.14626 3.60215L9.86526 2.88515C11.0343 1.70915 12.9443 1.70315 14.1223 2.87415L14.8523 3.60415C15.1363 3.88715 15.5143 4.04315 15.9153 4.04315H16.9433C18.6033 4.04315 19.9543 5.39415 19.9543 7.05515V8.08215C19.9553 8.48315 20.1113 8.86215 20.3943 9.14715L21.1123 9.86515C21.6813 10.4311 21.9963 11.1851 21.9993 11.9901C22.0013 12.7901 21.6933 13.5431 21.1323 14.1121C21.1223 14.1221 21.1133 14.1331 21.1033 14.1421L20.3933 14.8521C20.1113 15.1351 19.9553 15.5141 19.9543 15.9161V16.9431C19.9543 18.6031 18.6033 19.9541 16.9433 19.9541H15.9153C15.5143 19.9551 15.1353 20.1111 14.8513 20.3941L14.1323 21.1121C13.5463 21.7021 12.7723 21.9981 11.9993 21.9981Z"
+                                    fill="currentColor"></path>
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M10.0428 10.0508C9.87776 10.2158 9.66376 10.3048 9.42676 10.3048C9.20476 10.3048 8.98676 10.2138 8.81176 10.0498C8.64576 9.88483 8.55176 9.65883 8.55176 9.42983C8.55176 9.21183 8.64376 8.98783 8.80576 8.81483C8.89476 8.72483 9.00076 8.65683 9.10676 8.62083C9.40876 8.48283 9.80976 8.56383 10.0478 8.81383C10.1328 8.89883 10.1978 8.99183 10.2408 9.08883C10.2878 9.19283 10.3118 9.31083 10.3118 9.42983C10.3118 9.66783 10.2168 9.88883 10.0428 10.0508ZM15.1905 8.80973C14.8495 8.46973 14.2945 8.46973 13.9535 8.80973L8.81346 13.9497C8.47246 14.2907 8.47246 14.8457 8.81346 15.1877C8.97946 15.3527 9.19846 15.4437 9.43246 15.4437C9.66646 15.4437 9.88546 15.3527 10.0505 15.1877L15.1905 10.0477C15.5315 9.70573 15.5315 9.15173 15.1905 8.80973ZM14.9058 13.7638C14.5818 13.6278 14.1978 13.7018 13.9418 13.9578C13.8888 14.0198 13.8138 14.1158 13.7628 14.2288C13.7088 14.3508 13.7018 14.4818 13.7018 14.5698C13.7018 14.6578 13.7088 14.7878 13.7628 14.9098C13.8128 15.0218 13.8728 15.1128 13.9518 15.1918C14.1328 15.3598 14.3428 15.4448 14.5768 15.4448C14.7988 15.4448 15.0168 15.3548 15.1958 15.1878C15.3548 15.0288 15.4418 14.8088 15.4418 14.5698C15.4418 14.3298 15.3548 14.1108 15.1948 13.9508C15.1068 13.8638 15.0008 13.7958 14.9058 13.7638Z"
+                                    fill="currentColor"></path>
+                            </svg>
+                        </i>
+                        <span class="item-name">Kategori Relawan</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('karyawan.*') ? 'active' : '' }}"
+                        href="{{ route('karyawan.index') }}">
+                        <i class="icon">
+                            <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M9 2C6.38 2 4.25 4.13 4.25 6.75C4.25 9.32 6.26 11.4 8.88 11.49C8.96 11.48 9.04 11.48 9.1 11.49C9.12 11.49 9.13 11.49 9.15 11.49C9.16 11.49 9.16 11.49 9.17 11.49C11.73 11.4 13.74 9.32 13.75 6.75C13.75 4.13 11.62 2 9 2Z"
+                                    fill="currentColor" />
+                                <path
+                                    d="M14.08 14.1499C11.29 12.2899 6.73996 12.2899 3.92996 14.1499C2.65996 14.9999 1.95996 16.1499 1.95996 17.3799C1.95996 18.6099 2.65996 19.7499 3.91996 20.5899C5.31996 21.5299 7.15996 21.9999 8.99996 21.9999C10.84 21.9999 12.68 21.5299 14.08 20.5899C15.34 19.7399 16.04 18.5999 16.04 17.3599C16.03 16.1299 15.34 14.9899 14.08 14.1499Z"
+                                    fill="currentColor" />
+                                <path opacity="0.4"
+                                    d="M19.99 7.3401C20.15 9.2801 18.77 10.9801 16.86 11.2101C16.85 11.2101 16.85 11.2101 16.84 11.2101H16.81C16.75 11.2101 16.69 11.2101 16.64 11.2301C15.67 11.2801 14.78 10.9701 14.11 10.4001C15.14 9.4801 15.73 8.1001 15.61 6.6001C15.54 5.7901 15.26 5.0501 14.84 4.4201C15.22 4.2301 15.66 4.1101 16.11 4.0701C18.07 3.9001 19.82 5.3601 19.99 7.3401Z"
+                                    fill="currentColor" />
+                                <path opacity="0.4"
+                                    d="M21.99 16.5904C21.91 17.5604 21.29 18.4004 20.25 18.9704C19.25 19.5204 17.99 19.7804 16.74 19.7504C17.46 19.1004 17.88 18.2904 17.96 17.4304C18.06 16.1904 17.47 15.0004 16.29 14.0504C15.62 13.5204 14.84 13.1004 13.99 12.7904C16.2 12.1504 18.98 12.5804 20.69 13.9604C21.61 14.7004 22.08 15.6304 21.99 16.5904Z"
+                                    fill="currentColor" />
+                            </svg>
+                        </i>
+                        <span class="item-name">Relawan</span>
                     </a>
                 </li>
                 <li>
@@ -354,7 +395,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('stok.index') ? 'active' : '' }}" href="{{ route('stok.index') }}">
+                    <a class="nav-link {{ request()->routeIs('stok.index') ? 'active' : '' }}"
+                        href="{{ route('stok.index') }}">
                         <i class="icon">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -370,7 +412,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('stok.kartu') ? 'active' : '' }}" href="{{ route('stok.kartu') }}">
+                    <a class="nav-link {{ request()->routeIs('stok.kartu') ? 'active' : '' }}"
+                        href="{{ route('stok.kartu') }}">
                         <i class="icon">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -386,7 +429,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('stok.opname') ? 'active' : '' }}" href="{{ route('stok.opname') }}">
+                    <a class="nav-link {{ request()->routeIs('stok.opname') ? 'active' : '' }}"
+                        href="{{ route('stok.opname') }}">
                         <i class="icon">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -411,7 +455,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('anggaran.*') ? 'active' : '' }}" href="{{ route('anggaran.index') }}">
+                    <a class="nav-link {{ request()->routeIs('anggaran.*') ? 'active' : '' }}"
+                        href="{{ route('anggaran.index') }}">
                         <i class="icon">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -426,7 +471,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('rekening-koran-va.*') ? 'active' : '' }}" href="{{ route('rekening-koran-va.index') }}">
+                    <a class="nav-link {{ request()->routeIs('rekening-koran-va.*') ? 'active' : '' }}"
+                        href="{{ route('rekening-koran-va.index') }}">
                         <i class="icon">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -442,7 +488,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('rekening-rekap-bku.*') ? 'active' : '' }}" href="{{ route('rekening-rekap-bku.index') }}">
+                    <a class="nav-link {{ request()->routeIs('rekening-rekap-bku.*') ? 'active' : '' }}"
+                        href="{{ route('rekening-rekap-bku.index') }}">
                         <i class="icon">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -458,7 +505,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('rekonsiliasi') ? 'active' : '' }}" href="{{ route('rekonsiliasi') }}">
+                    <a class="nav-link {{ request()->routeIs('rekonsiliasi') ? 'active' : '' }}"
+                        href="{{ route('rekonsiliasi') }}">
                         <i class="icon">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
