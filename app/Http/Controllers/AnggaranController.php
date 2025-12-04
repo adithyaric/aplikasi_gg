@@ -35,7 +35,7 @@ class AnggaranController extends Controller
         $request->validate([
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'sekolah_id' => 'required|exists:sekolahs,id',
+            // 'sekolah_id' => 'required|exists:sekolahs,id',
             'porsi_8k' => 'required|integer|min:0',
             'porsi_10k' => 'required|integer|min:0',
             'aturan_sewa' => 'required|in:aturan_1,aturan_2'
