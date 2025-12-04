@@ -114,14 +114,16 @@
                                     <label class="form-label">Aturan Budget Sewa</label>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="aturan_sewa" id="aturan_1"
-                                            value="aturan_1" {{ $anggaran->aturan_sewa == 'aturan_1' ? 'checked' : '' }}>
+                                            value="aturan_1"
+                                            {{ $anggaran->total_porsi <= 3000 && $anggaran->aturan_sewa == 'aturan_1' ? 'checked' : '' }}>
                                         <label class="form-check-label" for="aturan_1">
                                             Aturan 1: Porsi ≤ 3000 → Budget Sewa 2,000 × 3,000
                                         </label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="aturan_sewa" id="aturan_2"
-                                            value="aturan_2" {{ $anggaran->aturan_sewa == 'aturan_2' ? 'checked' : '' }}>
+                                            value="aturan_2"
+                                            {{ $anggaran->total_porsi > 3000 || $anggaran->aturan_sewa == 'aturan_2' ? 'checked' : '' }}>
                                         <label class="form-check-label" for="aturan_2">
                                             Aturan 2: Porsi > 3000 → Budget Sewa 2,000 × Total Porsi
                                         </label>
@@ -236,6 +238,8 @@
                 document.getElementById('budget_sewa').value = formatCurrency(budgetSewa);
             }
 
+            // Initial calculation
+            calculateBudget();
 
             document.getElementById('porsi_8k').addEventListener('input', calculateBudget);
             document.getElementById('porsi_10k').addEventListener('input', calculateBudget);
