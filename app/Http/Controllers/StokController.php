@@ -252,6 +252,7 @@ class StokController extends Controller
         // Build result
         $result = [];
         $runningStock = 0;
+        $lastKnownPrice = 0; // Track last purchase price
 
         foreach ($allTransactions as $transaction) {
             if ($transaction['type'] === 'order') {
@@ -261,6 +262,9 @@ class StokController extends Controller
                 $keluar = $item->quantity < 0 ? abs($item->quantity) : 0;
                 $stokAkhir = $runningStock + $masuk - $keluar;
                 $nilai = $stokAkhir * $item->unit_cost;
+
+                // Update last known price from orders
+                $lastKnownPrice = $item->unit_cost;
 
                 $result[] = [
                     'tanggal' => $date,
@@ -281,14 +285,17 @@ class StokController extends Controller
                 $keluar = $adj->quantity < 0 ? abs($adj->quantity) : 0;
                 $stokAkhir = $runningStock + $masuk - $keluar;
 
+                // Use last known price for adjustment value
+                $nilai = $stokAkhir * $lastKnownPrice;
+
                 $result[] = [
                     'tanggal' => $date,
                     'stok_awal' => $runningStock,
                     'masuk' => $masuk,
                     'keluar' => $keluar,
                     'stok_akhir' => $stokAkhir,
-                    'harga' => 0,
-                    'nilai' => 0,
+                    'harga' => $lastKnownPrice, // Use last known price instead of 0
+                    'nilai' => $nilai, // Calculate value based on last known price
                     'keterangan' => 'Penyesuaian Stok: ' . ($adj->keterangan ?? '-')
                 ];
 

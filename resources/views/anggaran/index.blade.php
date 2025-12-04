@@ -37,6 +37,7 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
+                        //TODO filter range start_date
                         <div class="header-title">
                             <h4 class="card-title fw-bold">Daftar Proposal</h4>
                         </div>
@@ -48,7 +49,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Tanggal</th>
-                                        <th>Nama Sekolah</th>
+                                        {{-- <th>Nama Sekolah</th> --}}
                                         <th>Porsi 8k</th>
                                         <th>Porsi 10k</th>
                                         <th>Total Porsi</th>
@@ -65,7 +66,7 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $anggaran->start_date->format('d/M/Y') }} -
                                                 {{ $anggaran->end_date->format('d/M/Y') }}</td>
-                                            <td>{{ $anggaran->sekolah?->nama }}</td>
+                                            {{-- <td>{{ $anggaran->sekolah?->nama }}</td> --}}
                                             <td>{{ number_format($anggaran->porsi_8k, 0, ',', '.') }}</td>
                                             <td>{{ number_format($anggaran->porsi_10k, 0, ',', '.') }}</td>
                                             <td>{{ number_format($anggaran->total_porsi, 0, ',', '.') }}</td>
