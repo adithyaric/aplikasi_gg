@@ -419,6 +419,76 @@ class OrderController extends Controller
         }
     }
 
+    //Penggunaan
+    public function penggunaanIndex()
+    {
+        $orders = Order::with(['supplier', 'items.bahanBaku', 'items.bahanOperasional'])
+            ->where('status_penerimaan', 'confirmed')
+            ->latest()
+            ->get();
+        $title = 'Penggunaan Barang';
+        return view('order.penggunaan.index', compact('orders', 'title'));
+    }
+
+    public function editPenggunaan(Order $order)
+    {
+        $order->load(['supplier', 'items.bahanBaku', 'items.bahanOperasional']);
+        $title = 'Edit Penggunaan Barang';
+        return view('order.penggunaan.edit', compact('order', 'title'));
+    }
+
+    public function updatePenggunaan(Request $request, Order $order)
+    {
+        $request->validate([
+            'status_penggunaan' => 'required|in:draft,confirmed',
+            'tanggal_penggunaan' => 'required|date',
+            'notes' => 'nullable|string',
+            'items' => 'required|array|min:1',
+            'items.*.id' => 'required|exists:order_items,id',
+            'items.*.input_type' => 'required|in:habis,sisa',
+            'items.*.quantity_value' => 'required|numeric|min:0',
+            'items.*.notes' => 'nullable|string',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $order->update([
+                'status_penggunaan' => $request->status_penggunaan,
+                'tanggal_penggunaan' => $request->tanggal_penggunaan,
+                'notes' => $request->notes,
+            ]);
+
+            foreach ($request->items as $itemData) {
+                $orderItem = $order->items()->where('id', $itemData['id'])->first();
+
+                // Calculate actual usage quantity
+                if ($itemData['input_type'] === 'habis') {
+                    $quantityPenggunaan = $orderItem->quantity;
+                } else { // sisa
+                    $quantityPenggunaan = $orderItem->quantity - $itemData['quantity_value'];
+                }
+
+                $orderItem->update([
+                    'quantity_penggunaan' => $quantityPenggunaan,
+                    'penggunaan_input_type' => $itemData['input_type'],
+                    'notes' => $itemData['notes'],
+                ]);
+            }
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Penggunaan Barang berhasil diupdate'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     //Pembayaran
     public function pembayaranIndex()
     {

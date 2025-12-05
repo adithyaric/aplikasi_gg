@@ -16,15 +16,18 @@ class Order extends Model
         'supplier_id',
         'tanggal_po',
         'tanggal_penerimaan',
+        'tanggal_penggunaan',
         'grand_total',
         'status', // draft, posted
         'status_penerimaan', // draft, confirmed
+        'status_penggunaan', // draft, confirmed
         'notes',
     ];
 
     protected $casts = [
         'tanggal_po' => 'date',
         'tanggal_penerimaan' => 'date',
+        'tanggal_penggunaan' => 'date',
         'grand_total' => 'float',
     ];
 
@@ -61,9 +64,11 @@ class Order extends Model
                 'supplier_id',
                 'tanggal_po',
                 'tanggal_penerimaan',
+                'tanggal_penggunaan',
                 'grand_total',
                 'status', // draft, posted
                 'status_penerimaan', // draft, confirmed
+                'status_penggunaan', // draft, confirmed
                 'notes',
             ])
             ->logOnlyDirty()

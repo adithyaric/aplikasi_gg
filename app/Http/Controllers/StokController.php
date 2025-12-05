@@ -100,30 +100,40 @@ class StokController extends Controller
     {
         $columnName = $type === 'bahan_baku' ? 'bahan_baku_id' : 'bahan_operasional_id';
 
-        // Get all order items for this material
-        $orderItems = OrderItem::whereHas('order', function ($query) {
-            // $query->where('status', 'posted');
+        // Get received items
+        $orderItemsReceived = OrderItem::whereHas('order', function ($query) {
+            $query->whereNotNull('tanggal_penerimaan');
         })
             ->where($columnName, $item->id)
             ->where('quantity_diterima', true)
             ->get();
 
-        // Calculate totals from order items
-        $totalQty = $orderItems->sum('quantity');
+        // Get used items
+        $orderItemsUsed = OrderItem::whereHas('order', function ($query) {
+            $query->whereNotNull('tanggal_penggunaan')
+                ->where('status_penggunaan', 'confirmed');
+        })
+            ->where($columnName, $item->id)
+            ->whereNotNull('quantity_penggunaan')
+            ->get();
+
+        // Calculate totals
+        $totalReceived = $orderItemsReceived->sum('quantity');
+        $totalUsed = $orderItemsUsed->sum('quantity_penggunaan');
 
         // Get stock adjustments
         $adjustments = StockAdjustment::where($columnName, $item->id)->sum('quantity');
 
-        // Total quantity = order items + adjustments
-        $totalQty += $adjustments;
+        // Total quantity = received + adjustments - used
+        $totalQty = $totalReceived + $adjustments - $totalUsed;
 
-        $lastPurchasePrice = $orderItems->sortByDesc('created_at')->first()?->unit_cost ?? 0;
+        $lastPurchasePrice = $orderItemsReceived->sortByDesc('created_at')->first()?->unit_cost ?? 0;
 
-        // Calculate average cost: total purchase value / total quantity from orders only
-        $totalPurchaseValue = $orderItems->sum(function ($item) {
+        // Calculate average cost
+        $totalPurchaseValue = $orderItemsReceived->sum(function ($item) {
             return $item->quantity * $item->unit_cost;
         });
-        $avgCost = $orderItems->sum('quantity') > 0 ? $totalPurchaseValue / $orderItems->sum('quantity') : 0;
+        $avgCost = $orderItemsReceived->sum('quantity') > 0 ? $totalPurchaseValue / $orderItemsReceived->sum('quantity') : 0;
 
         // Get kategori value
         $kategori = '-';
@@ -209,8 +219,8 @@ class StokController extends Controller
             return response()->json(['error' => 'Bahan tidak ditemukan'], 404);
         }
 
-        // Get order items
-        $orderItems = OrderItem::with('order')
+        // Get received order items
+        $orderItemsReceived = OrderItem::with('order')
             ->whereHas('order', function ($query) {
                 $query->whereNull('deleted_at')
                     ->whereNotNull('tanggal_penerimaan');
@@ -220,18 +230,38 @@ class StokController extends Controller
             ->whereNull('deleted_at')
             ->get();
 
+        // Get used order items
+        $orderItemsUsed = OrderItem::with('order')
+            ->whereHas('order', function ($query) {
+                $query->whereNull('deleted_at')
+                    ->whereNotNull('tanggal_penggunaan')
+                    ->where('status_penggunaan', 'confirmed');
+            })
+            ->where($columnName, $bahanId)
+            ->whereNotNull('quantity_penggunaan')
+            ->whereNull('deleted_at')
+            ->get();
+
         // Get stock adjustments
         $adjustments = StockAdjustment::where($columnName, $bahanId)
             ->whereNull('deleted_at')
             ->get();
 
-        // Combine and sort all transactions
+        // Combine all transactions
         $allTransactions = collect();
 
-        foreach ($orderItems as $item) {
+        foreach ($orderItemsReceived as $item) {
             $allTransactions->push([
                 'date' => $item->order->tanggal_penerimaan,
-                'type' => 'order',
+                'type' => 'penerimaan',
+                'data' => $item
+            ]);
+        }
+
+        foreach ($orderItemsUsed as $item) {
+            $allTransactions->push([
+                'date' => $item->order->tanggal_penggunaan,
+                'type' => 'penggunaan',
                 'data' => $item
             ]);
         }
@@ -251,15 +281,15 @@ class StokController extends Controller
         // Build result
         $result = [];
         $runningStock = 0;
-        $lastKnownPrice = 0; // Track last purchase price
+        $lastKnownPrice = 0;
 
         foreach ($allTransactions as $transaction) {
-            if ($transaction['type'] === 'order') {
+            if ($transaction['type'] === 'penerimaan') {
                 $item = $transaction['data'];
                 $date = $item->order->tanggal_penerimaan->format('Y-m-d');
-                $masuk = $item->quantity > 0 ? $item->quantity : 0;
-                $keluar = $item->quantity < 0 ? abs($item->quantity) : 0;
-                $stokAkhir = $runningStock + $masuk - $keluar;
+                $masuk = $item->quantity;
+                $keluar = 0;
+                $stokAkhir = $runningStock + $masuk;
                 $nilai = $stokAkhir * $item->unit_cost;
 
                 // Update last known price from orders
@@ -273,9 +303,27 @@ class StokController extends Controller
                     'stok_akhir' => $stokAkhir,
                     'harga' => $item->unit_cost,
                     'nilai' => $nilai,
-                    'keterangan' => $item->order->order_number ?? ''
+                    'keterangan' => 'Penerimaan: ' . ($item->order->order_number ?? '')
                 ];
+                $runningStock = $stokAkhir;
+            } elseif ($transaction['type'] === 'penggunaan') {
+                $item = $transaction['data'];
+                $date = $item->order->tanggal_penggunaan->format('Y-m-d');
+                $masuk = 0;
+                $keluar = $item->quantity_penggunaan;
+                $stokAkhir = $runningStock - $keluar;
+                $nilai = $stokAkhir * $lastKnownPrice;
 
+                $result[] = [
+                    'tanggal' => $date,
+                    'stok_awal' => $runningStock,
+                    'masuk' => $masuk,
+                    'keluar' => $keluar,
+                    'stok_akhir' => $stokAkhir,
+                    'harga' => $lastKnownPrice,
+                    'nilai' => $nilai,
+                    'keterangan' => 'Penggunaan: ' . ($item->order->order_number ?? '') . ($item->notes ? ' - ' . $item->notes : '')
+                ];
                 $runningStock = $stokAkhir;
             } else {
                 $adj = $transaction['data'];
@@ -293,8 +341,8 @@ class StokController extends Controller
                     'masuk' => $masuk,
                     'keluar' => $keluar,
                     'stok_akhir' => $stokAkhir,
-                    'harga' => $lastKnownPrice, // Use last known price instead of 0
-                    'nilai' => $nilai, // Calculate value based on last known price
+                    'harga' => $lastKnownPrice,
+                    'nilai' => $nilai,
                     'keterangan' => 'Penyesuaian Stok: ' . ($adj->keterangan ?? '-')
                 ];
 

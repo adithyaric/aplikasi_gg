@@ -55,9 +55,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders-add-menu-items', [OrderController::class, 'addMenuItems'])->name('orders.addMenuItems');
     Route::put('/orders/{order}/topost', [OrderController::class, 'UpdateToPost'])->name('orders.updateToPost');
 
+    //Penerimaan
     Route::get('/penerimaan', [OrderController::class, 'penerimaanIndex'])->name('penerimaan.index');
     Route::get('/penerimaan/{order}/edit', [OrderController::class, 'editPenerimaan'])->name('penerimaan.edit');
     Route::put('/penerimaan/{order}', [OrderController::class, 'updatePenerimaan'])->name('penerimaan.update');
+    //Penggunaan
+    Route::get('/penggunaan', [OrderController::class, 'penggunaanIndex'])->name('penggunaan.index');
+    Route::get('/penggunaan/{order}/edit', [OrderController::class, 'editPenggunaan'])->name('penggunaan.edit');
+    Route::put('/penggunaan/{order}', [OrderController::class, 'updatePenggunaan'])->name('penggunaan.update');
 
     Route::get('/pembayaran', [OrderController::class, 'pembayaranIndex'])->name('pembayaran.index');
     Route::get('/pembayaran/{order}/edit', [OrderController::class, 'editPembayaran'])->name('pembayaran.edit');

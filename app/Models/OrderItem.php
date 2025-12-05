@@ -17,6 +17,8 @@ class OrderItem extends Model
         'bahan_operasional_id',
         'quantity',
         'quantity_diterima',
+        'quantity_penggunaan',
+        'penggunaan_input_type',
         'satuan',
         'unit_cost',
         'subtotal',
@@ -25,6 +27,7 @@ class OrderItem extends Model
 
     protected $casts = [
         'quantity' => 'float',
+        'quantity_penggunaan' => 'float',
         'unit_cost' => 'float',
         'subtotal' => 'float',
         'quantity_diterima' => 'boolean',
@@ -54,6 +57,8 @@ class OrderItem extends Model
                 'bahan_operasional_id',
                 'quantity',
                 'quantity_diterima',
+                'quantity_penggunaan',
+                'penggunaan_input_type',
                 'satuan',
                 'unit_cost',
                 'subtotal',
