@@ -9,7 +9,7 @@ class AddPenggunaanOrdersTable extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('status_penggunaan')->nullable()->after('status_penerimaan'); // draft, confirmed
+            $table->string('status_penggunaan')->nullable()->default('draft')->after('status_penerimaan'); // draft, confirmed
             $table->date('tanggal_penggunaan')->nullable()->after('tanggal_penerimaan');
         });
 
