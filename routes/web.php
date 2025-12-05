@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AnggaranController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BahanBakuController;
 use App\Http\Controllers\BahanOperasionalController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GajiController;
 use App\Http\Controllers\GiziController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\KategoriKaryawanController;
@@ -76,6 +78,18 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('anggaran', AnggaranController::class);
 
+    //Karyawan, Absen & Gaji
     Route::resource('karyawan', KaryawanController::class);
     Route::resource('kategori-karyawan', KategoriKaryawanController::class);
+
+    Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
+    Route::get('/absensi/create', [AbsensiController::class, 'create'])->name('absensi.create');
+    Route::post('/absensi', [AbsensiController::class, 'store'])->name('absensi.store');
+    Route::get('/absensi/{tanggal}', [AbsensiController::class, 'show'])->name('absensi.show');
+
+    Route::get('/gaji', [GajiController::class, 'index'])->name('gaji.index');
+    Route::get('/gaji/create', [GajiController::class, 'create'])->name('gaji.create');
+    Route::post('/gaji', [GajiController::class, 'store'])->name('gaji.store');
+    Route::get('/gaji/{gaji}', [GajiController::class, 'show'])->name('gaji.show');
+    Route::post('/gaji/{gaji}/confirm', [GajiController::class, 'confirm'])->name('gaji.confirm');
 });

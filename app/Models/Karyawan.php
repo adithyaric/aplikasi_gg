@@ -27,4 +27,14 @@ class Karyawan extends Model
     {
         return $this->belongsTo(KategoriKaryawan::class, 'kategori_karyawan_id');
     }
+
+    public function absensis()
+    {
+        return $this->hasMany(Absensi::class);
+    }
+
+    public function gajis()
+    {
+        return $this->hasMany(Gaji::class);
+    }
 }
