@@ -61,9 +61,9 @@
                                                 {{ $gaji->tanggal_akhir->format('d/m/Y') }}
                                             </td>
                                             <td>{{ \Carbon\Carbon::create($gaji->periode_tahun, $gaji->periode_bulan)->format('F y') }}</td>
-                                            <td>{{ $gaji->karyawan->nama }}</td>
-                                            <td>{{ $gaji->karyawan->kategori->nama }} :
-                                                Rp. {{ number_format($gaji->karyawan->kategori->nominal_gaji, 0, ',', '.') }}
+                                            <td>{{ $gaji->karyawan?->nama }}</td>
+                                            <td>{{ $gaji->karyawan?->kategori->nama }} :
+                                                Rp. {{ number_format($gaji->karyawan?->kategori->nominal_gaji, 0, ',', '.') }}
                                             </td>
                                             <td>{{ $gaji->jumlah_hadir }} hari</td>
                                             <td>Rp. {{ number_format($gaji->total_gaji, 0, ',', '.') }}</td>
@@ -82,7 +82,7 @@
                                                 @if ($gaji->status === 'hold')
                                                     <button type="button" class="btn btn-sm btn-success btn-confirm"
                                                         data-id="{{ $gaji->id }}"
-                                                        data-nama="{{ $gaji->karyawan->nama }}">
+                                                        data-nama="{{ $gaji->karyawan?->nama }}">
                                                         Confirm
                                                     </button>
                                                 @endif

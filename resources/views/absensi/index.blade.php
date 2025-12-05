@@ -39,7 +39,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive text-nowrap custom-datatable-entries">
-                            <table id="datatable" class="table table-bordered table-sm" data-toggle="data-table">
+                            <table id="datatable" class="table table-bordered table-sm">
                                 <thead>
                                     <tr>
                                         <th width="50">No</th>

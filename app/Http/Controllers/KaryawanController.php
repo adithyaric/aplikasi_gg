@@ -103,7 +103,6 @@ class KaryawanController extends Controller
     {
         DB::beginTransaction();
         try {
-            $karyawan->kategoris()->detach();
             $karyawan->delete();
 
             DB::commit();
