@@ -60,7 +60,7 @@
                                                 {{ $gaji->tanggal_mulai->format('d/m/Y') }} -
                                                 {{ $gaji->tanggal_akhir->format('d/m/Y') }}
                                             </td>
-                                            <td>{{ \Carbon\Carbon::create($gaji->periode_tahun, $gaji->periode_bulan)->format('F y') }}</td>
+                                            <td>{{ \Carbon\Carbon::create($gaji->periode_tahun, $gaji->periode_bulan)->format('F Y') }}</td>
                                             <td>{{ $gaji->karyawan?->nama }}</td>
                                             <td>{{ $gaji->karyawan?->kategori->nama }} :
                                                 Rp. {{ number_format($gaji->karyawan?->kategori->nominal_gaji, 0, ',', '.') }}
@@ -75,6 +75,7 @@
                                                 @endif
                                             </td>
                                             <td>
+                                                Edit!
                                                 <button type="button" class="btn btn-sm btn-info btn-detail"
                                                     data-id="{{ $gaji->id }}">
                                                     Detail

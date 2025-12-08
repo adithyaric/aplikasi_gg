@@ -183,17 +183,17 @@
                                             <th>Satuan</th>
                                             <th>Qty</th>
                                             <th>Unit Cost</th>
-                                            <th>Subtotal</th>
-                                            <th>Diterima</th>
+                                            {{-- <th>Subtotal</th> --}}
+                                            {{-- <th>Diterima</th> --}}
+                                            <th>Digunakan (habis/sisa)</th>
                                             <th>Keterangan</th>
                                         </tr>
                                     </thead>
                                     <tbody id="penggunaan_items"></tbody>
                                 </table>
-                                <div class="d-flex justify-content-end align-items-center mb-3">
-                                    <p class="h4">Subtotal: <span class="badge bg-success"
-                                            id="penggunaan_grand_total"></span></p>
-                                </div>
+                                {{-- <div class="d-flex justify-content-end align-items-center mb-3"> --}}
+                                    {{-- <p class="h4">Subtotal: <span class="badge bg-success" id="penggunaan_grand_total"></span></p> --}}
+                                {{-- </div> --}}
                             </div>
                         </div>
                     </div>

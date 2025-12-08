@@ -82,7 +82,7 @@ class RekeningRekapBKUController extends Controller
             'Bahan Pokok',
             'Bahan Operasional',
             'Pembayaran Sewa',
-            'Pembayaran Operasional',
+            // 'Pembayaran Operasional',
             'Penerimaan BGN',
         ];
 
@@ -221,7 +221,7 @@ class RekeningRekapBKUController extends Controller
             'Bahan Pokok',
             'Bahan Operasional',
             'Pembayaran Sewa',
-            'Pembayaran Operasional',
+            // 'Pembayaran Operasional',
             'Penerimaan BGN',
         ];
 

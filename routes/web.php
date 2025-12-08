@@ -17,6 +17,7 @@ use App\Http\Controllers\PaketMenuController;
 use App\Http\Controllers\RekeningKoranVaController;
 use App\Http\Controllers\RekeningRekapBKUController;
 use App\Http\Controllers\RencanaMenuController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SekolahController;
 use App\Http\Controllers\StokController;
 use App\Http\Controllers\SupplierController;
@@ -97,4 +98,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/gaji', [GajiController::class, 'store'])->name('gaji.store');
     Route::get('/gaji/{gaji}', [GajiController::class, 'show'])->name('gaji.show');
     Route::post('/gaji/{gaji}/confirm', [GajiController::class, 'confirm'])->name('gaji.confirm');
+
+    Route::prefix('report')->controller(ReportController::class)->group(function () {
+        Route::get('rekap-porsi', 'rekapPorsi');
+        Route::get('rekap-penerimaan-dana', 'rekapPenerimaanDana');
+        Route::get('bku', 'bku');
+        Route::get('lpdb', 'lpdb');
+        Route::get('lbbp', 'lbbp');
+        Route::get('lbo', 'lbo');
+        Route::get('lbs', 'lbs');
+        Route::get('lra', 'lra');
+    });
 });

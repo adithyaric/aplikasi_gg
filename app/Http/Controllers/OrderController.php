@@ -427,6 +427,7 @@ class OrderController extends Controller
             ->latest()
             ->get();
         $title = 'Penggunaan Barang';
+        //TODO qty = qty item + StockAdjustment
         return view('order.penggunaan.index', compact('orders', 'title'));
     }
 
@@ -783,6 +784,7 @@ class OrderController extends Controller
 
                     $existing->update([
                         'tanggal_transaksi' => $tanggal,
+                        'jenis_bahan' => $jenis_bahan, //TODO jenis bahan otomatis
                         'no_bukti' => $transaction->payment_reference,
                         'link_bukti' => $transaction->bukti_transfer,
                         'supplier' => $order->supplier->nama,
@@ -810,6 +812,7 @@ class OrderController extends Controller
 
                     $created = \App\Models\RekeningRekapBKU::create([
                         'tanggal_transaksi' => $tanggal,
+                        'jenis_bahan' => $jenis_bahan, //TODO jenis bahan otomatis
                         'no_bukti' => $transaction->payment_reference,
                         'link_bukti' => $transaction->bukti_transfer,
                         'supplier' => $order->supplier->nama,

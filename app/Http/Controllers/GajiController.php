@@ -19,6 +19,8 @@ class GajiController extends Controller
             ->get();
         // dd($gajis?->toArray());
 
+        // groupBy periode/tanggal
+
         $title = 'Gaji Karyawan';
         return view('gaji.index', compact('gajis', 'title'));
     }
@@ -57,6 +59,9 @@ class GajiController extends Controller
 
         DB::beginTransaction();
         try {
+            //Rekening BKU group By periode
+            //Pembayaran Gaji xx Relawan periode (start_date - end_date)
+            //link_bukti
             $gaji->update(['status' => 'confirm']);
 
             DB::commit();

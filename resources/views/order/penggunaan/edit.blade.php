@@ -144,11 +144,9 @@
                                 </table>
                             </div>
                             <hr class="hr-horizontal" />
-                            <div class="d-flex justify-content-end align-items-center mb-3">
-                                <p class="h4">Subtotal: <span
-                                        class="badge bg-success">Rp.{{ number_format($order->grand_total, 0, ',', '.') }}</span>
-                                </p>
-                            </div>
+                            {{-- <div class="d-flex justify-content-end align-items-center mb-3"> --}}
+                                {{-- <p class="h4">Subtotal: <span class="badge bg-success">Rp.{{ number_format($order->grand_total, 0, ',', '.') }}</span></p> --}}
+                            {{-- </div> --}}
                             <div class="d-flex justify-content-end gap-2">
                                 <a href="{{ route('penggunaan.index') }}" class="btn btn-secondary">Kembali</a>
                                 <button type="submit" class="btn btn-success">Simpan</button>

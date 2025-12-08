@@ -47,6 +47,7 @@
                                         <th>Total Karyawan</th>
                                         <th>Hadir</th>
                                         <th>Tidak Hadir</th>
+                                        <th>Status</th>
                                         <th width="100">Aksi</th>
                                     </tr>
                                 </thead>
@@ -67,6 +68,7 @@
                                                 <span class="badge bg-danger">{{ $tidakHadir }}</span>
                                             </td>
                                             <td>
+                                                Edit!
                                                 <button type="button" class="btn btn-sm btn-info btn-detail"
                                                     data-tanggal="{{ $tanggal }}">
                                                     <i class="fas fa-eye"></i> Detail

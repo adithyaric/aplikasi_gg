@@ -23,6 +23,7 @@ class OrderItem extends Model
         'unit_cost',
         'subtotal',
         'notes',
+        'notes_penggunaan',
     ];
 
     protected $casts = [
