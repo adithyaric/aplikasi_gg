@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Anggaran;
 use App\Models\RekeningKoranVa;
 use App\Models\RekeningRekapBKU;
 use Illuminate\Http\Request;
@@ -10,16 +11,58 @@ class ReportController extends Controller
 {
     public function rekapPorsi()
     {
-        //Anggaran
+        // Get all anggaran data with sekolah relationship
+        $anggarans = Anggaran::with('sekolah')->get();
+
+        // Transform data into daily format
+        $rekapData = [];
+
+        foreach ($anggarans as $anggaran) {
+            $currentDate = $anggaran->start_date->copy();
+            $endDate = $anggaran->end_date->copy();
+
+            while ($currentDate <= $endDate) {
+                // Skip weekends if needed (optional)
+                // if (!$currentDate->isWeekend()) {
+                $rekapData[] = [
+                    'tanggal' => $currentDate->format('d/m/Y'),
+                    'rencana_total' => $anggaran->total_porsi,
+                    'rencana_10k' => $anggaran->porsi_10k,
+                    'rencana_8k' => $anggaran->porsi_8k,
+                    'realisasi_total' => 0, // Placeholder - you'll need actual realization data
+                    'realisasi_10k' => 0,  // Placeholder
+                    'realisasi_8k' => 0,   // Placeholder
+                    'keterangan' => $anggaran->aturan_sewa,
+                    'date_sort' => $currentDate->format('Y-m-d'),
+                ];
+                // }
+
+                $currentDate->addDay();
+            }
+        }
+
+        // Sort by date
+        usort($rekapData, function ($a, $b) {
+            return strcmp($a['date_sort'], $b['date_sort']);
+        });
+
+        // dd($rekapData);
         $title = 'Rekap Porsi';
-        return view('report.rekap-porsi', ['title' => $title]);
+        return view('report.rekap-porsi', compact('rekapData', 'title'));
     }
 
     public function rekapPenerimaanDana()
     {
         // RekeningKoranVa jenis transaksi credit
         $title = 'Rekap Penerimaan Dana';
-        return view('report.rekap-penerimaan-dana', ['title' => $title]);
+        $data = RekeningKoranVa::where('kredit', '>', 0)
+            ->orderBy('tanggal_transaksi', 'desc')
+            ->get();
+
+        return view('report.rekap-penerimaan-dana', [
+            'title' => $title,
+            'rekeningKoranVa' => $data
+        ]);
     }
 
     public function bku()

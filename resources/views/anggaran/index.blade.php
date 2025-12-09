@@ -37,18 +37,38 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
-                        //TODO filter range start_date
                         <div class="header-title">
                             <h4 class="card-title fw-bold">Daftar Proposal</h4>
                         </div>
                     </div>
                     <div class="card-body">
+                        <div class="custom-datatable-entries">
+                            <div class="row align-items-end mb-4 justify-content-between">
+                                <!-- 🔹 Bagian Kiri: Filter Tanggal -->
+                                <div class="col d-flex flex-wrap align-items-end gap-2">
+                                    <div class="col-auto">
+                                        <label class="form-label mb-1">Rentang Periode</label>
+                                        <input type="text" id="dateRange" class="form-control form-control-sm"
+                                            placeholder="Pilih rentang tanggal" />
+                                    </div>
+
+                                    <div class="col-auto mt-4">
+                                        <button id="filterDate" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-funnel"></i> Filter
+                                        </button>
+                                        <button id="resetDate" class="btn btn-sm btn-secondary">
+                                            <i class="bi bi-arrow-counterclockwise"></i> Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         <div class="table-responsive text-nowrap custom-datatable-entries">
                             <table id="datatable" class="table table-bordered table-sm" data-toggle="data-table">
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Tanggal</th>
+                                        <th>Tanggal Mulai</th>
+                                        <th>Tanggal Selesai</th>
                                         {{-- <th>Nama Sekolah</th> --}}
                                         <th>Porsi 8k</th>
                                         <th>Porsi 10k</th>
@@ -64,8 +84,8 @@
                                     @foreach ($anggarans as $anggaran)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $anggaran->start_date->format('d/M/Y') }} -
-                                                {{ $anggaran->end_date->format('d/M/Y') }}</td>
+                                            <td>{{ $anggaran->start_date->format('d/m/Y') }}</td>
+                                            <td>{{ $anggaran->end_date->format('d/m/Y') }}</td>
                                             {{-- <td>{{ $anggaran->sekolah?->nama }}</td> --}}
                                             <td>{{ number_format($anggaran->porsi_8k, 0, ',', '.') }}</td>
                                             <td>{{ number_format($anggaran->porsi_10k, 0, ',', '.') }}</td>
@@ -98,6 +118,23 @@
 @endsection
 
 @push('js')
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        flatpickr("#dateRange", {
+            mode: "range",
+            dateFormat: "d/m/Y",
+            locale: "id", // biar pakai bahasa Indonesia
+            altInput: true,
+            altFormat: "j F Y", // contoh: 24 April 2025
+            allowInput: true,
+        });
+    </script>
+    <script>
+        flatpickr("#startDate", {
+            inline: true,
+            dateFormat: "d/m/Y",
+        });
+    </script>
     <script>
         $(document).ready(function() {
             // Initialize DataTable
@@ -111,6 +148,55 @@
                     autoWidth: false,
                 });
             }
+
+            // 🔹 Inisialisasi Flatpickr (Range)
+            const fp = flatpickr("#dateRange", {
+                mode: "range",
+                dateFormat: "d/m/Y",
+                locale: "id",
+                altInput: true,
+                altFormat: "j F Y",
+                allowInput: true,
+            });
+
+            // 🔹 Fungsi bantu parse tanggal
+            function parseDate(str) {
+                if (!str) return null;
+                const [day, month, year] = str.split("/");
+                return new Date(`${year}-${month}-${day}`);
+            }
+
+            // 🔹 Tombol Filter ditekan
+            $("#filterDate").on("click", function() {
+                const range = fp.selectedDates;
+                if (range.length === 2) {
+                    const min = range[0];
+                    const max = range[1];
+
+                    $.fn.dataTable.ext.search.push(function(settings, data) {
+                        if (settings.nTable.id !== "datatable") return true;
+                        const tanggalTabel = data[1]; // kolom tanggal
+                        const date = parseDate(tanggalTabel);
+                        if (!date) return false;
+                        return date >= min && date <= max;
+                    });
+
+                    table.draw();
+                    $.fn.dataTable.ext.search.pop();
+                } else {
+                    alert("Silakan pilih rentang tanggal terlebih dahulu.");
+                }
+            });
+
+            // 🔹 Tombol Reset ditekan
+            $("#resetDate").on("click", function() {
+                fp.clear();
+                table.search("").draw();
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
 
             // Handle Delete Button Click
             $(document).on('click', '.btn-delete', function() {
