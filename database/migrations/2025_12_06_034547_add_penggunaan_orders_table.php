@@ -16,6 +16,7 @@ class AddPenggunaanOrdersTable extends Migration
         Schema::table('order_items', function (Blueprint $table) {
             $table->float('quantity_penggunaan')->nullable()->after('quantity_diterima');
             $table->string('penggunaan_input_type')->nullable()->after('quantity_penggunaan'); // 'habis' or 'sisa'
+            $table->text('notes_penggunaan')->nullable()->after('notes');
         });
     }
 
@@ -26,6 +27,7 @@ class AddPenggunaanOrdersTable extends Migration
             $table->dropColumn('tanggal_penggunaan');
         });
         Schema::table('order_items', function (Blueprint $table) {
+            $table->dropColumn('notes_penggunaan');
             $table->dropColumn('quantity_penggunaan');
             $table->dropColumn('penggunaan_input_type');
         });

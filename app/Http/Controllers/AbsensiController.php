@@ -21,7 +21,7 @@ class AbsensiController extends Controller
                 return $group->toArray();
             });
 
-        // dd($absensis?->toArray());
+        dd($absensis?->toArray());
 
         $title = 'Absensi Karyawan';
         return view('absensi.index', compact('absensis', 'title'));

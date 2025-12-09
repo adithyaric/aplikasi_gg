@@ -13,6 +13,7 @@ class CreateAbsensisTable extends Migration
             $table->foreignId('karyawan_id')->nullable()->constrained()->onDelete('cascade');
             $table->date('tanggal')->nullable();
             $table->enum('status', ['hadir', 'tidak_hadir'])->default('hadir');
+            $table->boolean('confirmed')->nullable()->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

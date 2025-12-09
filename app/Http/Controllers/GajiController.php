@@ -12,15 +12,14 @@ use Carbon\Carbon;
 
 class GajiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $gajis = Gaji::with(['karyawan.kategori', 'rekeningRekapBKU'])
             ->latest()
-            ->get();
-        // dd($gajis?->toArray());
+            ->get()
+            ->groupBy(['periode_tahun', 'periode_bulan']);
 
-        // groupBy periode/tanggal
-
+        dd($gajis?->toArray());
         $title = 'Gaji Karyawan';
         return view('gaji.index', compact('gajis', 'title'));
     }

@@ -228,8 +228,7 @@
                 method: 'GET',
                 success: function(response) {
                     $('#penggunaan_order_number').text(response.order_number);
-                    $('#penggunaan_tanggal').val(response.tanggal_penggunaan ? new Date(response
-                        .tanggal_penggunaan).toLocaleDateString('id-ID') : '-');
+                    $('#penggunaan_tanggal').val(response.tanggal_penggunaan ? new Date(response.tanggal_penggunaan).toLocaleDateString('id-ID') : '-');
                     $('#penggunaan_supplier').val(response.supplier?.nama || '-');
                     $('#penggunaan_catatan').val(response.notes || '-');
                     $('#penggunaan_status').val(response.status_penggunaan || '-');
@@ -239,19 +238,22 @@
                     $('#penggunaan_items').empty();
                     if (response.items && response.items.length > 0) {
                         response.items.forEach(function(item) {
+                            let penggunaanText = '-';
+                            if (item.penggunaan_input_type === 'habis') {
+                                penggunaanText = item.quantity_penggunaan + ' (habis)';
+                            } else if (item.penggunaan_input_type === 'sisa') {
+                                const sisa = item.quantity - item.quantity_penggunaan;
+                                penggunaanText = item.quantity_penggunaan + ' (sisa ' + sisa.toFixed(2) + ')';
+                            }
+
                             $('#penggunaan_items').append(
                                 '<tr>' +
-                                '<td>' + (item.bahan_baku?.nama || item.bahan_operasional?.nama) +
-                                '</td>' +
+                                '<td>' + (item.bahan_baku?.nama || item.bahan_operasional?.nama) + '</td>' +
                                 '<td>' + (item.satuan || '-') + '</td>' +
                                 '<td>' + (item.quantity || 0) + '</td>' +
-                                '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.unit_cost ||
-                                    0) + '</td>' +
-                                '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.subtotal ||
-                                    0) + '</td>' +
-                                '<td>' + (item.quantity_diterima ? 'sesuai' : 'tidak sesuai' ||
-                                '-') + '</td>' +
-                                '<td>' + (item.notes || '-') + '</td>' +
+                                '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.unit_cost || 0) + '</td>' +
+                                '<td>' + penggunaanText + '</td>' + // Added the Digunakan column
+                                '<td>' + (item.notes_penggunaan || '-') + '</td>' + // Changed from item.notes to item.notes_penggunaan
                                 '</tr>'
                             );
                         });

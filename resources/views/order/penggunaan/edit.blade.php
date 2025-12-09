@@ -135,8 +135,8 @@
                                                         <small>Qty Penggunaan: <strong class="usage-qty">0</strong></small>
                                                     </div>
 
-                                                    <textarea name="items[{{ $loop->index }}][notes]" class="form-control" placeholder="Catatan penggunaan..."
-                                                        rows="2">{{ $item->notes }}</textarea>
+                                                    <textarea name="items[{{ $loop->index }}][notes_penggunaan]" class="form-control" placeholder="Catatan penggunaan..."
+                                                        rows="2">{{ $item->notes_penggunaan }}</textarea>
                                                 </td>
                                             </tr>
                                         @endforeach

@@ -12,11 +12,13 @@ class Absensi extends Model
     protected $fillable = [
         'karyawan_id',
         'tanggal',
-        'status' // hadir, tidak_hadir
+        'status', // hadir, tidak_hadir
+        'confirmed' //true, false
     ];
 
     protected $casts = [
         'tanggal' => 'date',
+        'confirmed' => 'boolean',
     ];
 
     public function karyawan()

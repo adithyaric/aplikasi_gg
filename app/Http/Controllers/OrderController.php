@@ -448,7 +448,7 @@ class OrderController extends Controller
             'items.*.id' => 'required|exists:order_items,id',
             'items.*.input_type' => 'required|in:habis,sisa',
             'items.*.quantity_value' => 'required|numeric|min:0',
-            'items.*.notes' => 'nullable|string',
+            'items.*.notes_penggunaan' => 'nullable|string',
         ]);
 
         DB::beginTransaction();
@@ -472,7 +472,7 @@ class OrderController extends Controller
                 $orderItem->update([
                     'quantity_penggunaan' => $quantityPenggunaan,
                     'penggunaan_input_type' => $itemData['input_type'],
-                    'notes' => $itemData['notes'],
+                    'notes_penggunaan' => $itemData['notes_penggunaan'],
                 ]);
             }
 
