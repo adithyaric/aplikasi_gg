@@ -37,7 +37,8 @@
                             <div class="row">
                                 <div class="form-group col-md-12">
                                     <label class="form-label">Tanggal</label>
-                                    <input type="date" name="tanggal" id="tanggalAbsensi" class="form-control" value="{{ $tanggal }}" required />
+                                    <input type="date" name="tanggal" id="tanggalAbsensi" class="form-control"
+                                        value="{{ $tanggal }}" required />
                                 </div>
                             </div>
                             <hr class="hr-horizontal" />
@@ -50,6 +51,7 @@
                                             <th>Kategori</th>
                                             <th>Nominal Gaji/Hari</th>
                                             <th>Status Kehadiran</th>
+                                            <th>Confirmed</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -66,22 +68,38 @@
                                                         <input class="form-check-input" type="radio"
                                                             name="karyawan[{{ $loop->index }}][status]"
                                                             id="hadir_{{ $karyawan->id }}" value="hadir"
-                                                            {{ ($existingAbsensi[$karyawan->id] ?? 'hadir') == 'hadir' ? 'checked' : '' }}
+                                                            {{ ($existingAbsensi[$karyawan->id]['status'] ?? 'hadir') == 'hadir' ? 'checked' : '' }}
                                                             required>
-                                                        <label class="form-check-label" for="hadir_{{ $karyawan->id }}">
-                                                            Hadir
-                                                        </label>
+                                                        <label class="form-check-label"
+                                                            for="hadir_{{ $karyawan->id }}">Hadir</label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
                                                         <input class="form-check-input" type="radio"
                                                             name="karyawan[{{ $loop->index }}][status]"
                                                             id="tidak_hadir_{{ $karyawan->id }}" value="tidak_hadir"
-                                                            {{ ($existingAbsensi[$karyawan->id] ?? 'hadir') == 'tidak_hadir' ? 'checked' : '' }}
+                                                            {{ ($existingAbsensi[$karyawan->id]['status'] ?? 'hadir') == 'tidak_hadir' ? 'checked' : '' }}
                                                             required>
                                                         <label class="form-check-label"
-                                                            for="tidak_hadir_{{ $karyawan->id }}">
-                                                            Tidak Hadir
-                                                        </label>
+                                                            for="tidak_hadir_{{ $karyawan->id }}">Tidak Hadir</label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <input type="hidden" name="karyawan[{{ $loop->index }}][confirmed]"
+                                                        value="{{ $existingAbsensi[$karyawan->id]['confirmed'] ?? 0 }}"
+                                                        class="confirmed-input" id="confirmed_{{ $karyawan->id }}">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input confirmed-radio" type="radio"
+                                                            name="temp_confirmed_{{ $karyawan->id }}"
+                                                            data-target="#confirmed_{{ $karyawan->id }}" value="1"
+                                                            {{ ($existingAbsensi[$karyawan->id]['confirmed'] ?? 0) == 1 ? 'checked' : '' }}>
+                                                        <label class="form-check-label">Ya</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input confirmed-radio" type="radio"
+                                                            name="temp_confirmed_{{ $karyawan->id }}"
+                                                            data-target="#confirmed_{{ $karyawan->id }}" value="0"
+                                                            {{ ($existingAbsensi[$karyawan->id]['confirmed'] ?? 0) == 0 ? 'checked' : '' }}>
+                                                        <label class="form-check-label">Tidak</label>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -104,33 +122,50 @@
 
 @push('js')
     <script>
-        $('#tanggalAbsensi').on('change', function() {
-            const tanggal = $(this).val();
-            window.location.href = '{{ route('absensi.create') }}?tanggal=' + tanggal;
-        });
-        $('#absensiForm').submit(function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
+        $(document).ready(function() {
+            // Initialize confirmed values on page load
+            $('.confirmed-radio:checked').each(function() {
+                const target = $(this).data('target');
+                $(target).val($(this).val());
+            });
 
-            $.ajax({
-                url: '{{ route('absensi.store') }}',
-                method: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    if (response.success) {
-                        alert(response.message);
-                        window.location.href = '{{ route('absensi.index') }}';
+            // Handle confirmed radio buttons
+            $('.confirmed-radio').on('change', function() {
+                const target = $(this).data('target');
+                $(target).val($(this).val());
+            });
+
+            // Date change
+            $('#tanggalAbsensi').on('change', function() {
+                const tanggal = $(this).val();
+                window.location.href = '{{ route('absensi.create') }}?tanggal=' + tanggal;
+            });
+
+            // Form submit
+            $('#absensiForm').submit(function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+
+                $.ajax({
+                    url: '{{ route('absensi.store') }}',
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert(response.message);
+                            window.location.href = '{{ route('absensi.index') }}';
+                        }
+                    },
+                    error: function(xhr) {
+                        const errors = xhr.responseJSON?.message || 'Terjadi kesalahan';
+                        alert(errors);
                     }
-                },
-                error: function(xhr) {
-                    const errors = xhr.responseJSON?.message || 'Terjadi kesalahan';
-                    alert(errors);
-                }
+                });
             });
         });
     </script>

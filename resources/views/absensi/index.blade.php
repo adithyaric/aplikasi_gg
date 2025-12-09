@@ -47,7 +47,7 @@
                                         <th>Total Karyawan</th>
                                         <th>Hadir</th>
                                         <th>Tidak Hadir</th>
-                                        <th>Status</th>
+                                        <th>Terkonfirmasi</th>
                                         <th width="100">Aksi</th>
                                     </tr>
                                 </thead>
@@ -56,6 +56,7 @@
                                         @php
                                             $hadir = collect($items)->where('status', 'hadir')->count();
                                             $tidakHadir = collect($items)->where('status', 'tidak_hadir')->count();
+                                            $confirmed = collect($items)->where('confirmed', true)->count();
                                         @endphp
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
@@ -63,7 +64,7 @@
                                             <td>{{ count($items) }}</td>
                                             <td><span class="badge bg-success">{{ $hadir }}</span></td>
                                             <td><span class="badge bg-danger">{{ $tidakHadir }}</span></td>
-                                            <td>Hold/Confirm</td>
+                                            <td><span class="badge bg-info">{{ $confirmed }}</span></td>
                                             <td>
                                                 <a href="{{ route('absensi.create', ['tanggal' => $tanggal]) }}"
                                                     class="btn btn-sm btn-success">

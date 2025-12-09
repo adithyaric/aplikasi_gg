@@ -12,23 +12,62 @@ use Carbon\Carbon;
 
 class GajiController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         $gajis = Gaji::with(['karyawan.kategori', 'rekeningRekapBKU'])
             ->latest()
             ->get()
-            ->groupBy(['periode_tahun', 'periode_bulan']);
+            ->groupBy(function ($item) {
+                return Carbon::create($item->periode_tahun, $item->periode_bulan)->format('Y-m');
+            });
 
-        dd($gajis?->toArray());
+        $periods = collect();
+
+        // dd($gajis?->toArray());
+        foreach ($gajis as $periodKey => $gajiGroup) {
+            $first = $gajiGroup->first();
+            $periods->push([
+                'periode_tahun' => $first->periode_tahun,
+                'periode_bulan' => $first->periode_bulan,
+                'tanggal_mulai' => $gajiGroup->min('tanggal_mulai'),
+                'tanggal_akhir' => $gajiGroup->max('tanggal_akhir'),
+                'total_karyawan' => $gajiGroup->count(),
+                'total_gaji' => $gajiGroup->sum('total_gaji'),
+                'status' => $gajiGroup->every(fn($gaji) => $gaji->status === 'confirm') ? 'confirm' : 'hold',
+                'gaji_group' => $gajiGroup
+            ]);
+        }
+
+        // dd($periods?->toArray());
         $title = 'Gaji Karyawan';
-        return view('gaji.index', compact('gajis', 'title'));
+        return view('gaji.index', compact('periods', 'title'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $karyawans = Karyawan::with('kategori')->get();
-        $title = 'Proses Gaji';
-        return view('gaji.create', compact('karyawans', 'title'));
+
+        $periode_bulan = $request->input('periode_bulan');
+        $periode_tahun = $request->input('periode_tahun');
+
+        $existingGajis = collect();
+        $tanggal_mulai = null;
+        $tanggal_akhir = null;
+
+        if ($periode_bulan && $periode_tahun) {
+            $existingGajis = Gaji::where('periode_bulan', $periode_bulan)
+                ->where('periode_tahun', $periode_tahun)
+                ->get()
+                ->keyBy('karyawan_id');
+
+            if ($existingGajis->isNotEmpty()) {
+                $tanggal_mulai = $existingGajis->first()->tanggal_mulai?->format('Y-m-d');
+                $tanggal_akhir = $existingGajis->first()->tanggal_akhir?->format('Y-m-d');
+            }
+        }
+
+        $title = $periode_bulan ? 'Edit Gaji' : 'Proses Gaji';
+        return view('gaji.create', compact('karyawans', 'title', 'existingGajis', 'tanggal_mulai', 'tanggal_akhir', 'periode_bulan', 'periode_tahun'));
     }
 
     public function show(Gaji $gaji)
@@ -36,6 +75,7 @@ class GajiController extends Controller
         $gaji->load(['karyawan.kategori', 'rekeningRekapBKU']);
 
         $absensis = Absensi::where('karyawan_id', $gaji->karyawan_id)
+            ->where('confirmed', true)
             ->whereBetween('tanggal', [$gaji->tanggal_mulai, $gaji->tanggal_akhir])
             ->orderBy('tanggal')
             ->get();
@@ -44,6 +84,29 @@ class GajiController extends Controller
             'success' => true,
             'gaji' => $gaji,
             'absensis' => $absensis
+        ]);
+    }
+
+    public function periodDetail($periode_tahun, $periode_bulan)
+    {
+        $gajis = Gaji::with(['karyawan.kategori', 'rekeningRekapBKU'])
+            ->where('periode_bulan', $periode_bulan)
+            ->where('periode_tahun', $periode_tahun)
+            ->get();
+
+        $hadir = $gajis->sum('jumlah_hadir');
+        $totalGaji = $gajis->sum('total_gaji');
+
+        return response()->json([
+            'success' => true,
+            'periode' => Carbon::create($periode_tahun, $periode_bulan)->format('F Y'),
+            'tanggal_mulai' => $gajis->first()->tanggal_mulai->format('d/m/Y'),
+            'tanggal_akhir' => $gajis->first()->tanggal_akhir->format('d/m/Y'),
+            'total_karyawan' => $gajis->count(),
+            'hadir' => $hadir,
+            'total_gaji' => $totalGaji,
+            'status' => $gajis->every(fn($gaji) => $gaji->status === 'confirm') ? 'confirm' : 'hold',
+            'gajis' => $gajis
         ]);
     }
 
@@ -85,12 +148,24 @@ class GajiController extends Controller
             'tanggal_akhir' => 'required|date|after_or_equal:tanggal_mulai',
             'karyawan_ids' => 'required|array|min:1',
             'karyawan_ids.*' => 'exists:karyawans,id',
+            'periode_bulan' => 'nullable|integer',
+            'periode_tahun' => 'nullable|integer',
         ]);
 
         DB::beginTransaction();
         try {
             $tanggalMulai = Carbon::parse($request->tanggal_mulai);
             $tanggalAkhir = Carbon::parse($request->tanggal_akhir);
+
+            // If editing existing period
+            if ($request->has('periode_bulan') && $request->has('periode_tahun')) {
+                // Delete gaji for this period that are not in the new selection
+                Gaji::where('periode_bulan', $request->periode_bulan)
+                    ->where('periode_tahun', $request->periode_tahun)
+                    ->whereNotIn('karyawan_id', $request->karyawan_ids)
+                    ->delete();
+            }
+
             $periode_bulan = $tanggalMulai->month;
             $periode_tahun = $tanggalMulai->year;
 
@@ -98,6 +173,7 @@ class GajiController extends Controller
                 $karyawan = Karyawan::with('kategori')->find($karyawanId);
 
                 $jumlahHadir = Absensi::where('karyawan_id', $karyawanId)
+                    ->where('confirmed', true)
                     ->whereBetween('tanggal', [$tanggalMulai, $tanggalAkhir])
                     ->where('status', 'hadir')
                     ->count();
@@ -126,6 +202,29 @@ class GajiController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Gaji berhasil diproses'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function bulkConfirm(Request $request, $periode_tahun, $periode_bulan)
+    {
+        DB::beginTransaction();
+        try {
+            $gajis = Gaji::where('periode_bulan', $periode_bulan)
+                ->where('periode_tahun', $periode_tahun)
+                ->where('status', 'hold')
+                ->update(['status' => 'confirm']);
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Semua gaji pada periode ini berhasil dikonfirmasi'
             ]);
         } catch (\Exception $e) {
             DB::rollBack();

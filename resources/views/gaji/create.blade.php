@@ -34,14 +34,18 @@
                     <div class="card-body">
                         <form id="gajiForm">
                             @csrf
+                            @if ($periode_bulan && $periode_tahun)
+                                <input type="hidden" name="periode_bulan" value="{{ $periode_bulan }}">
+                                <input type="hidden" name="periode_tahun" value="{{ $periode_tahun }}">
+                            @endif
                             <div class="row">
                                 <div class="form-group col-md-6">
                                     <label class="form-label">Tanggal Mulai</label>
-                                    <input type="date" name="tanggal_mulai" class="form-control" required />
+                                    <input type="date" name="tanggal_mulai" value="{{ $tanggal_mulai }}" class="form-control" required />
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label class="form-label">Tanggal Akhir</label>
-                                    <input type="date" name="tanggal_akhir" class="form-control" required />
+                                    <input type="date" name="tanggal_akhir" value="{{ $tanggal_akhir }}" class="form-control" required />
                                 </div>
                             </div>
                             <hr class="hr-horizontal" />
@@ -67,8 +71,12 @@
                                         @foreach ($karyawans as $karyawan)
                                             <tr>
                                                 <td>
-                                                    <input type="checkbox" name="karyawan_ids[]" value="{{ $karyawan->id }}"
-                                                        class="form-check-input karyawan-checkbox">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input karyawan-checkbox" type="checkbox"
+                                                            name="karyawan_ids[]" value="{{ $karyawan->id }}"
+                                                            id="karyawan_{{ $karyawan->id }}"
+                                                            {{ $existingGajis->has($karyawan->id) ? 'checked' : '' }}>
+                                                    </div>
                                                 </td>
                                                 <td>{{ $karyawan->nama }}</td>
                                                 <td>{{ $karyawan->kategori->nama }}</td>

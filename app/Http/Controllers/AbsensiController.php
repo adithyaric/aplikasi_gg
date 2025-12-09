@@ -21,7 +21,7 @@ class AbsensiController extends Controller
                 return $group->toArray();
             });
 
-        dd($absensis?->toArray());
+        // dd($absensis?->toArray());
 
         $title = 'Absensi Karyawan';
         return view('absensi.index', compact('absensis', 'title'));
@@ -49,7 +49,13 @@ class AbsensiController extends Controller
     {
         $karyawans = Karyawan::with('kategori')->get();
         $tanggal = $request->input('tanggal', now()->format('Y-m-d'));
-        $existingAbsensi = Absensi::whereDate('tanggal', $tanggal)->pluck('status', 'karyawan_id');
+
+        // Change pluck to get multiple fields
+        $existingAbsensi = Absensi::whereDate('tanggal', $tanggal)
+            ->get(['karyawan_id', 'status', 'confirmed'])
+            ->keyBy('karyawan_id')
+            ->toArray();
+
         $title = 'Tambah Absensi';
         return view('absensi.create', compact('karyawans', 'tanggal', 'existingAbsensi', 'title'));
     }
@@ -61,6 +67,7 @@ class AbsensiController extends Controller
             'karyawan' => 'required|array|min:1',
             'karyawan.*.id' => 'required|exists:karyawans,id',
             'karyawan.*.status' => 'required|in:hadir,tidak_hadir',
+            'karyawan.*.confirmed' => 'required',
         ]);
 
         DB::beginTransaction();
@@ -73,6 +80,7 @@ class AbsensiController extends Controller
                     ],
                     [
                         'status' => $data['status'],
+                        'confirmed' => $data['confirmed'] ?? false,
                     ]
                 );
             }

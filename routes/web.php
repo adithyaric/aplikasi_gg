@@ -98,6 +98,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/gaji', [GajiController::class, 'store'])->name('gaji.store');
     Route::get('/gaji/{gaji}', [GajiController::class, 'show'])->name('gaji.show');
     Route::post('/gaji/{gaji}/confirm', [GajiController::class, 'confirm'])->name('gaji.confirm');
+    Route::get('/gaji/period-detail/{periode_tahun}/{periode_bulan}', [GajiController::class, 'periodDetail'])->name('gaji.period-detail');
+    Route::post('/gaji/bulk-confirm/{periode_tahun}/{periode_bulan}', [GajiController::class, 'bulkConfirm'])->name('gaji.bulk-confirm');
 
     Route::prefix('report')->controller(ReportController::class)->group(function () {
         Route::get('rekap-porsi', 'rekapPorsi');
