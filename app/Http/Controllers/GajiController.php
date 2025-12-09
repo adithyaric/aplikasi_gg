@@ -110,36 +110,6 @@ class GajiController extends Controller
         ]);
     }
 
-    public function confirm(Gaji $gaji)
-    {
-        if ($gaji->status === 'confirm') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gaji sudah dikonfirmasi'
-            ], 400);
-        }
-
-        DB::beginTransaction();
-        try {
-            //Rekening BKU group By periode
-            //Pembayaran Gaji xx Relawan periode (start_date - end_date)
-            //link_bukti
-            $gaji->update(['status' => 'confirm']);
-
-            DB::commit();
-            return response()->json([
-                'success' => true,
-                'message' => 'Gaji berhasil dikonfirmasi dan dicatat ke BKU'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
     public function store(Request $request)
     {
         // dd($request->all());
@@ -220,6 +190,29 @@ class GajiController extends Controller
                 ->where('periode_tahun', $periode_tahun)
                 ->where('status', 'hold')
                 ->update(['status' => 'confirm']);
+
+            //Rekening BKU group By periode
+            //Pembayaran Gaji xx Relawan periode (start_date - end_date)
+            //link_bukti
+
+            // Create BKU entry
+            // $bku = RekeningRekapBKU::create([
+            //     'tanggal_transaksi' => now(),
+            //     'no_bukti' => null,
+            //     'link_bukti' => null,
+            //     'jenis_bahan' => 'Bahan Operasional',
+            //     'nama_bahan' => null,
+            //     'kuantitas' => 1,
+            //     'satuan' => null,
+            //     'supplier' => null,
+            //     'uraian' => ///,
+            //     'debit' => 0,
+            //     'kredit' => //,
+            //     'saldo' => //,
+            //     'bulan' => //,
+            //     'minggu' => null,
+            //     'transaction_id' => null,
+            // ]);
 
             DB::commit();
             return response()->json([

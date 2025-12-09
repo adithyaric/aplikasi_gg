@@ -583,7 +583,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../report/rekap.porsi.html">
+                    <a class="nav-link {{ request()->routeIs('report.rekap-porsi') ? 'active' : '' }}" href="{{ route('report.rekap-porsi') }}">
                         <i class="icon">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -602,7 +602,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../report/rekap.penerimaan.dana.html">
+                    <a class="nav-link {{ request()->routeIs('report.rekap-penerimaan-dana') ? 'active' : '' }}" href="{{ route('report.rekap-penerimaan-dana') }}">
                         <i class="icon">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -621,7 +621,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../report/bku.html">
+                    <a class="nav-link {{ request()->routeIs('report.bku') ? 'active' : '' }}" href="{{ route('report.bku') }}">
                         <i class="icon">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -640,7 +640,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../report/lpdb.html">
+                    <a class="nav-link {{ request()->routeIs('report.lpdb') ? 'active' : '' }}" href="{{ route('report.lpdb') }}">
                         <i class="icon">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -659,7 +659,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../report/lbbp.html">
+                    <a class="nav-link {{ request()->routeIs('report.lbbp') ? 'active' : '' }}" href="{{ route('report.lbbp') }}">
                         <i class="icon">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -678,7 +678,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../report/lbo.html">
+                    <a class="nav-link {{ request()->routeIs('report.lbo') ? 'active' : '' }}" href="{{ route('report.lbo') }}">
                         <i class="icon">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -697,7 +697,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../report/lbs.html">
+                    <a class="nav-link {{ request()->routeIs('report.lbs') ? 'active' : '' }}" href="{{ route('report.lbs') }}">
                         <i class="icon">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -716,7 +716,7 @@
                     </a>
                 </li>
                 <li class="nav-item mb-5">
-                    <a class="nav-link" href="../report/lra.html">
+                    <a class="nav-link {{ request()->routeIs('report.lra') ? 'active' : '' }}" href="{{ route('report.lra') }}">
                         <i class="icon">
                             <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">

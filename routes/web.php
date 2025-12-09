@@ -97,18 +97,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/gaji/create', [GajiController::class, 'create'])->name('gaji.create');
     Route::post('/gaji', [GajiController::class, 'store'])->name('gaji.store');
     Route::get('/gaji/{gaji}', [GajiController::class, 'show'])->name('gaji.show');
-    Route::post('/gaji/{gaji}/confirm', [GajiController::class, 'confirm'])->name('gaji.confirm');
+
     Route::get('/gaji/period-detail/{periode_tahun}/{periode_bulan}', [GajiController::class, 'periodDetail'])->name('gaji.period-detail');
     Route::post('/gaji/bulk-confirm/{periode_tahun}/{periode_bulan}', [GajiController::class, 'bulkConfirm'])->name('gaji.bulk-confirm');
 
     Route::prefix('report')->controller(ReportController::class)->group(function () {
-        Route::get('rekap-porsi', 'rekapPorsi');
-        Route::get('rekap-penerimaan-dana', 'rekapPenerimaanDana');
-        Route::get('bku', 'bku');
-        Route::get('lpdb', 'lpdb');
-        Route::get('lbbp', 'lbbp');
-        Route::get('lbo', 'lbo');
-        Route::get('lbs', 'lbs');
-        Route::get('lra', 'lra');
+        Route::get('rekap-porsi', 'rekapPorsi')->name('report.rekap-porsi');
+        Route::get('rekap-penerimaan-dana', 'rekapPenerimaanDana')->name('report.rekap-penerimaan-dana');
+        Route::get('bku', 'bku')->name('report.bku');
+        Route::get('lpdb', 'lpdb')->name('report.lpdb');
+        Route::get('lbbp', 'lbbp')->name('report.lbbp');
+        Route::get('lbo', 'lbo')->name('report.lbo');
+        Route::get('lbs', 'lbs')->name('report.lbs');
+        Route::get('lra', 'lra')->name('report.lra');
     });
 });
