@@ -90,7 +90,7 @@
                                     @if ($rekeningBKU->link_bukti)
                                         <small class="text-success d-block mt-1">
                                             File saat ini:
-                                            <a href="{{ Storage::url($rekeningBKU->link_bukti) }}" target="_blank">Lihat
+                                            <a href="{{ Storage::disk('uploads')->url($rekeningBKU->link_bukti) }}" target="_blank">Lihat
                                                 Bukti</a>
                                         </small>
                                     @endif
