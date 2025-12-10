@@ -60,7 +60,7 @@
                                         @endphp
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($tanggal)->format('d/M/Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($tanggal)->formatId('d/M/Y') }}</td>
                                             <td>{{ count($items) }}</td>
                                             <td><span class="badge bg-success">{{ $hadir }}</span></td>
                                             <td><span class="badge bg-danger">{{ $tidakHadir }}</span></td>
@@ -81,6 +81,7 @@
                                                     data-tanggal="{{ $tanggal }}">
                                                     <i class="fas fa-eye"></i> Detail
                                                 </button>
+                                                button:confirmed bulk!
                                             </td>
                                         </tr>
                                     @empty

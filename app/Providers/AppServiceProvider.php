@@ -24,5 +24,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         \Carbon\Carbon::setLocale('id');
+
+        \Carbon\Carbon::macro('formatId', function ($format = 'd/m/Y') {
+            return $this->locale('id')->translatedFormat($format);
+        });
     }
 }

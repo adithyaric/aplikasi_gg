@@ -784,7 +784,7 @@ class OrderController extends Controller
 
                     $existing->update([
                         'tanggal_transaksi' => $tanggal,
-                        'jenis_bahan' => $jenis_bahan, //TODO jenis bahan otomatis
+                        'jenis_bahan' => $jenis_bahan, //TODO jenis bahan otomatis di BKU
                         'no_bukti' => $transaction->payment_reference,
                         'link_bukti' => $transaction->bukti_transfer,
                         'supplier' => $order->supplier->nama,

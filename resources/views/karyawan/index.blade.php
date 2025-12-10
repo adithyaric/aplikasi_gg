@@ -73,7 +73,7 @@
                                                 @if ($karyawan->lahir_tempat || $karyawan->lahir_tanggal)
                                                     {{ $karyawan->lahir_tempat ?? '' }}
                                                     @if ($karyawan->lahir_tanggal)
-                                                        / {{ $karyawan->lahir_tanggal->format('d F Y') }}
+                                                        / {{ $karyawan->lahir_tanggal->formatId('d F Y') }}
                                                         @php
                                                             $umur = $karyawan->lahir_tanggal->age;
                                                         @endphp

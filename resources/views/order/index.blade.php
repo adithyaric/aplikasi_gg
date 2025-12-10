@@ -126,8 +126,8 @@
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $order->order_number }}</td>
-                                            <td>{{ $order->tanggal_po->format('d/m/Y') }}</td>
-                                            <td>{{ $order->tanggal_penerimaan ? $order->tanggal_penerimaan->format('d/m/Y') : '-' }}
+                                            <td>{{ $order->tanggal_po->formatId('d/m/Y') }}</td>
+                                            <td>{{ $order->tanggal_penerimaan ? $order->tanggal_penerimaan->formatId('d/m/Y') : '-' }}
                                             </td>
                                             <td>{{ ucfirst($order->status) }}</td>
                                             <td>

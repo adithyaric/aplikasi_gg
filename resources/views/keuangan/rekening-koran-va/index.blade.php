@@ -42,7 +42,7 @@
                                 <p>Terdapat ketidaksesuaian dalam perhitungan saldo. Data mungkin perlu dikoreksi.</p>
                                 @foreach ($selisihDetails as $detail)
                                     <small>
-                                        Tanggal: {{ $detail['entry']->tanggal_transaksi->format('d/m/Y') }} -
+                                        Tanggal: {{ $detail['entry']->tanggal_transaksi->formatId('d/m/Y') }} -
                                         Selisih: Rp {{ number_format($detail['difference'], 0, ',', '.') }}
                                     </small><br>
                                 @endforeach
@@ -75,7 +75,7 @@
                                     @foreach ($rekeningKoran as $index => $item)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
-                                            <td>{{ $item->tanggal_transaksi->format('d/M/Y H:i T') }}</td>
+                                            <td>{{ $item->tanggal_transaksi->formatId('d/M/Y H:i T') }}</td>
                                             <td>{{ $item->uraian }}</td>
                                             <td>{{ $item->ref }}</td>
                                             <td>{{ $item->debit > 0 ? number_format($item->debit, 0, ',', '.') : '-' }}

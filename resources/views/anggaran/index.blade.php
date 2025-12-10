@@ -84,8 +84,8 @@
                                     @foreach ($anggarans as $anggaran)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $anggaran->start_date->format('d/m/Y') }}</td>
-                                            <td>{{ $anggaran->end_date->format('d/m/Y') }}</td>
+                                            <td>{{ $anggaran->start_date->formatId('d/m/Y') }}</td>
+                                            <td>{{ $anggaran->end_date->formatId('d/m/Y') }}</td>
                                             {{-- <td>{{ $anggaran->sekolah?->nama }}</td> --}}
                                             <td>{{ number_format($anggaran->porsi_8k, 0, ',', '.') }}</td>
                                             <td>{{ number_format($anggaran->porsi_10k, 0, ',', '.') }}</td>

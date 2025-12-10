@@ -69,7 +69,7 @@
                                 <p>Terdapat ketidaksesuaian dalam perhitungan saldo. Data mungkin perlu dikoreksi.</p>
                                 @foreach ($selisihDetails as $detail)
                                     <small>
-                                        Tanggal: {{ $detail['entry']->tanggal_transaksi->format('d/m/Y') }} -
+                                        Tanggal: {{ $detail['entry']->tanggal_transaksi->formatId('d/m/Y') }} -
                                         Selisih: Rp {{ number_format($detail['difference'], 0, ',', '.') }}
                                     </small><br>
                                 @endforeach
@@ -104,12 +104,12 @@
                                     @foreach ($rekeningBKU as $index => $item)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
-                                            <td>{{ $item->tanggal_transaksi->format('d/M/Y H:i T') }}</td>
+                                            <td>{{ $item->tanggal_transaksi->formatId('d/M/Y H:i T') }}</td>
                                             <td>{{ $item->no_bukti ?? '-' }}</td>
                                             <td>
                                                 @if ($item->link_bukti)
                                                 <button class="btn btn-sm btn-primary lihat-bukti"
-                                                    data-src="{{ Storage::disk('uploads')->url($item->link_bukti) }}" data-bs-toggle="modal"
+                                                    data-src="{{ Storage::disk('storage')->url($item->link_bukti) }}" data-bs-toggle="modal"
                                                     data-bs-target="#modalPB2">
                                                     <i class="bi bi-eye"></i> Lihat Disini
                                                 </button>

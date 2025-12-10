@@ -94,20 +94,6 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
-
-                                <tfoot>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Tanggal</th>
-                                        <th>Total</th>
-                                        <th>Porsi 10K</th>
-                                        <th>Porsi 8K</th>
-                                        <th>Total</th>
-                                        <th>Porsi 10K</th>
-                                        <th>Porsi 8K</th>
-                                        <th>Keterangan</th>
-                                    </tr>
-                                </tfoot>
                             </table>
                         </div>
                     </div>

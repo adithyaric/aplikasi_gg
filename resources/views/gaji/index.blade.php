@@ -56,11 +56,10 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>
-                                                {{ \Carbon\Carbon::parse($period['tanggal_mulai'])->format('d/m/Y') }} -
-                                                {{ \Carbon\Carbon::parse($period['tanggal_akhir'])->format('d/m/Y') }}
+                                                {{ \Carbon\Carbon::parse($period['tanggal_mulai'])->formatId('d/m/Y') }} -
+                                                {{ \Carbon\Carbon::parse($period['tanggal_akhir'])->formatId('d/m/Y') }}
                                             </td>
-                                            <td>{{ \Carbon\Carbon::create($period['periode_tahun'], $period['periode_bulan'])->format('F Y') }}
-                                            </td>
+                                            <td>{{ \Carbon\Carbon::create($period['periode_tahun'], $period['periode_bulan'])->formatId('F Y') }}</td>
                                             <td>{{ $period['total_karyawan'] }}</td>
                                             <td>Rp. {{ number_format($period['total_gaji'], 0, ',', '.') }}</td>
                                             {{-- <td> --}}
@@ -71,10 +70,6 @@
                                             {{-- @endif --}}
                                             {{-- </td> --}}
                                             <td>
-                                                <a href="{{ route('gaji.create', ['periode_bulan' => $period['periode_bulan'], 'periode_tahun' => $period['periode_tahun']]) }}"
-                                                    class="btn btn-sm btn-success">
-                                                    Edit
-                                                </a>
                                                 <button type="button" class="btn btn-sm btn-info btn-period-detail"
                                                     data-tahun="{{ $period['periode_tahun'] }}"
                                                     data-bulan="{{ $period['periode_bulan'] }}">
@@ -87,6 +82,11 @@
                                                         data-periode="{{ \Carbon\Carbon::create($period['periode_tahun'], $period['periode_bulan'])->format('F Y') }}">
                                                         Konfirmasi
                                                     </button>
+                                                @else
+                                                <a href="{{ route('gaji.create', ['periode_bulan' => $period['periode_bulan'], 'periode_tahun' => $period['periode_tahun']]) }}"
+                                                    class="btn btn-sm btn-success">
+                                                    Edit
+                                                </a>
                                                 @endif
 
                                             </td>

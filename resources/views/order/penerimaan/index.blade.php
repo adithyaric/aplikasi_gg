@@ -55,7 +55,7 @@
                                     @foreach ($orders as $order)
                                         <tr data-status="{{ $order->status_penerimaan }}">
                                             <td>{{ $order->order_number }}</td>
-                                            <td>{{ $order->tanggal_penerimaan->format('d/m/Y') }}</td>
+                                            <td>{{ $order->tanggal_penerimaan->formatId('d/m/Y') }}</td>
                                             <td>{{ $order->supplier->nama }}</td>
                                             <td>
                                                 <h5>
