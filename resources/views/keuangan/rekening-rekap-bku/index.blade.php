@@ -109,7 +109,7 @@
                                             <td>
                                                 @if ($item->link_bukti)
                                                 <button class="btn btn-sm btn-primary lihat-bukti"
-                                                    data-src="{{ Storage::disk('storage')->url($item->link_bukti) }}" data-bs-toggle="modal"
+                                                    data-src="{{ Storage::url($item->link_bukti) }}" data-bs-toggle="modal"
                                                     data-bs-target="#modalPB2">
                                                     <i class="bi bi-eye"></i> Lihat Disini
                                                 </button>
