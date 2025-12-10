@@ -188,11 +188,15 @@ class GajiController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Get all gaji records for this period with hold status
+            $startDate = Carbon::parse($tanggal_mulai);
+            $endDate = Carbon::parse($tanggal_akhir);
+
+            // Get all hold gaji records within the date range
             $gajiRecords = Gaji::with('karyawan')
-                ->whereDate('tanggal_mulai', $tanggal_mulai)
-                ->whereDate('tanggal_akhir', $tanggal_akhir)
+                ->whereDate('tanggal_mulai', $startDate)
+                ->whereDate('tanggal_akhir', $endDate)
                 ->where('status', 'hold')
+                ->lockForUpdate()
                 ->get();
 
             if ($gajiRecords->isEmpty()) {
@@ -203,66 +207,78 @@ class GajiController extends Controller
             }
 
             // Calculate totals
-            $totalGaji = $gajiRecords->sum('total_gaji');
-            $totalKaryawan = $gajiRecords->count();
-            $startDate = $gajiRecords->min('tanggal_mulai');
-            $endDate = $gajiRecords->max('tanggal_akhir');
+            $totalGaji       = $gajiRecords->sum('total_gaji');
+            $totalKaryawan   = $gajiRecords->count();
+            $periode_bulan   = $startDate->month;
+            $periode_tahun   = $startDate->year;
+            $mingguKe        = $startDate->weekOfMonth;
 
-            // Get previous entry for saldo calculation
+            // Previous saldo
             $prevEntry = RekeningRekapBKU::orderBy('tanggal_transaksi', 'desc')
                 ->orderBy('id', 'desc')
                 ->lockForUpdate()
                 ->first();
 
             $prevSaldo = $prevEntry ? $prevEntry->saldo : 0;
-            $newSaldo = $prevSaldo - $totalGaji;
+            $newSaldo  = $prevSaldo - $totalGaji;
 
-            // Create single BKU entry for entire period
-            $bku = RekeningRekapBKU::create([
-                'tanggal_transaksi' => now(),
-                'no_bukti' => null,
-                'link_bukti' => null,
-                'jenis_bahan' => 'Pembayaran Operasional',
-                'nama_bahan' => 'Gaji Karyawan',
-                'kuantitas' => $totalKaryawan,
-                'satuan' => 'orang',
-                'supplier' => null,
-                'uraian' => "Pembayaran Gaji {$totalKaryawan} Relawan periode " .
-                    \Carbon\Carbon::create($periode_tahun, $periode_bulan)->format('F Y') .
-                    " ({$startDate->format('d/m/Y')} - {$endDate->format('d/m/Y')})",
-                'debit' => 0,
-                'kredit' => $totalGaji,
-                'saldo' => $newSaldo,
-                'bulan' => Carbon::parse($tanggal_mulai)->month,
-                'minggu' => Carbon::parse($tanggal_mulai)->weekOfMonth,
-                'transaction_id' => null,
+            // Prepare description
+            $uraian = "Pembayaran Gaji {$totalKaryawan} Relawan periode "
+                . Carbon::create($periode_tahun, $periode_bulan)->formatId('F Y')
+                . " ({$startDate->format('d/m/Y')} - {$endDate->format('d/m/Y')})";
+
+            // Single BKU record for this period → update or create
+            $bku = RekeningRekapBKU::updateOrCreate(
+                [
+                    'bulan'  => $periode_bulan,
+                    'minggu' => $mingguKe,
+                    'jenis_bahan' => 'Pembayaran Operasional',
+                    'nama_bahan'  => 'Gaji Karyawan',
+                    'tanggal_transaksi' => now()->format('Y-m-d'),
+                ],
+                [
+                    'no_bukti'       => null,
+                    'link_bukti'     => null,
+                    'kuantitas'      => $totalKaryawan,
+                    'satuan'         => 'orang',
+                    'supplier'       => null,
+                    'uraian'         => $uraian,
+                    'debit'          => 0,
+                    'kredit'         => $totalGaji,
+                    'saldo'          => $newSaldo,
+                    'transaction_id' => null,
+                ]
+            );
+
+            // Update all gaji records to confirmed
+            $gajiIds = $gajiRecords->pluck('id')->toArray();
+
+            Gaji::whereIn('id', $gajiIds)->update([
+                'status' => 'confirm',
+                'rekening_rekap_bku_id' => $bku->id
             ]);
 
-            // Update all gaji records with status and bku reference
-            $gajiIds = $gajiRecords->pluck('id')->toArray();
-            Gaji::whereIn('id', $gajiIds)
-                ->update([
-                    'status' => 'confirm',
-                    'rekening_rekap_bku_id' => $bku->id
-                ]);
-
-            // Recalculate all entries after this one
-            $nextEntries = RekeningRekapBKU::where('tanggal_transaksi', '>', $bku->tanggal_transaksi)
-                ->orWhere(function ($q) use ($bku) {
-                    $q->where('tanggal_transaksi', '=', $bku->tanggal_transaksi)
-                        ->where('id', '>', $bku->id);
-                })
+            // Recalculate saldo for all next BKU entries
+            $nextEntries = RekeningRekapBKU::where(function ($q) use ($bku) {
+                $q->where('tanggal_transaksi', '>', $bku->tanggal_transaksi)
+                    ->orWhere(function ($q2) use ($bku) {
+                        $q2->where('tanggal_transaksi', '=', $bku->tanggal_transaksi)
+                            ->where('id', '>', $bku->id);
+                    });
+            })
                 ->orderBy('tanggal_transaksi', 'asc')
                 ->orderBy('id', 'asc')
                 ->get();
 
             $currentSaldo = $newSaldo;
+
             foreach ($nextEntries as $entry) {
                 $currentSaldo = $currentSaldo + $entry->debit - $entry->kredit;
                 $entry->update(['saldo' => $currentSaldo]);
             }
 
             DB::commit();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Semua gaji pada periode ini berhasil dikonfirmasi'
