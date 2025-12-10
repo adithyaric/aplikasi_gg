@@ -357,8 +357,10 @@
             if (!document.getElementById('map-sekolah') || $('#map-sekolah').is(':hidden')) {
                 return;
             }
+
             // Center of Indonesia
             mapSekolah = L.map('map-sekolah').setView([-2.5489, 118.0149], 4);
+
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
             }).addTo(mapSekolah);
@@ -401,23 +403,41 @@
                 let searchQuery = query;
                 const schoolKeywords = ['sekolah', 'school', 'sd', 'smp', 'sma', 'smk', 'madrasah', 'mi', 'mts', 'man'];
                 const hasSchoolKeyword = schoolKeywords.some(keyword => query.toLowerCase().includes(keyword));
+
+                // Check if we should add "sekolah" keyword
                 if (!hasSchoolKeyword) {
-                    searchQuery = `${query} sekolah Indonesia`;
-                } else {
-                    searchQuery = `${query} Indonesia`;
+                    searchQuery = `${query} sekolah`;
                 }
+
+                // Get current map bounds for localized search
+                let bounds = mapSekolah.getBounds();
+                let viewboxParam = '';
+                let boundedParam = '';
+
+                // Only use bounded search if zoomed in enough (zoom > 8)
+                if (mapSekolah.getZoom() > 8) {
+                    const ne = bounds.getNorthEast();
+                    const sw = bounds.getSouthWest();
+                    // Nominatim expects: min_lon, max_lat, max_lon, min_lat
+                    viewboxParam = `&viewbox=${sw.lng},${ne.lat},${ne.lng},${sw.lat}`;
+                    boundedParam = '&bounded=1';
+                }
+
                 const response = await fetch(
                     `https://nominatim.openstreetmap.org/search?` +
                     `format=json&` +
                     `q=${encodeURIComponent(searchQuery)}&` +
                     `countrycodes=id&` +
-                    `limit=10`
+                    `limit=10${viewboxParam}${boundedParam}`
                 );
+
                 const data = await response.json();
+
                 if (data.length > 0) {
                     clearSearchMarkers();
                     $('#search-results').show();
                     $('#results-list').empty();
+
                     var blueIcon = L.icon({
                         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
                         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
@@ -432,9 +452,11 @@
                         const lng = parseFloat(result.lon);
                         let displayName = result.display_name;
                         let schoolName = result.display_name.split(',')[0];
+
                         if (result.name && result.name !== '') {
                             schoolName = result.name;
                         }
+
                         const resultId = `result-${index}`;
                         const marker = L.marker([lat, lng], {
                                 icon: blueIcon
@@ -453,6 +475,7 @@
                     </div>
                 `);
                         searchMarkers.push(marker);
+
                         $('#results-list').append(`
                 <div class="p-3 border-bottom">
                     <div class="d-flex justify-content-between align-items-start">
@@ -471,12 +494,25 @@
                 </div>
             `);
                     });
+
                     const group = new L.featureGroup(searchMarkers);
                     mapSekolah.fitBounds(group.getBounds().pad(0.1));
+
                 } else {
                     $('#search-results').hide();
-                    Swal.fire('Peringatan', 'Tidak ditemukan sekolah dengan kata kunci tersebut di Indonesia',
-                        'warning');
+
+                    // If bounded search returned no results, show appropriate message
+                    if (boundedParam) {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Tidak ditemukan',
+                            text: 'Tidak ditemukan sekolah di area ini. Coba zoom out atau cari area yang berbeda.',
+                            confirmButtonText: 'OK'
+                        });
+                    } else {
+                        Swal.fire('Peringatan', 'Tidak ditemukan sekolah dengan kata kunci tersebut di Indonesia',
+                            'warning');
+                    }
                 }
             } catch (error) {
                 console.error('Search error:', error);
@@ -519,7 +555,7 @@
                 }).addTo(mapSekolah)
                 .bindPopup('<strong>Lokasi Sekolah Terpilih</strong><br>' + address)
                 .openPopup();
-            mapSekolah.setView([lat, lng], 5);
+            mapSekolah.setView([lat, lng], 13);
         }
 
         async function getAddressFromCoordinates(lat, lng) {

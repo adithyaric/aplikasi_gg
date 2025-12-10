@@ -13,6 +13,8 @@ class Gaji extends Model
     protected $fillable = [
         'karyawan_id',
         'rekening_rekap_bku_id',
+        'periode',
+        'periode_minggu',
         'periode_bulan',
         'periode_tahun',
         'tanggal_mulai',

@@ -18,7 +18,7 @@ class GajiController extends Controller
             ->latest()
             ->get()
             ->groupBy(function ($item) {
-                return Carbon::create($item->periode_tahun, $item->periode_bulan)->format('Y-m');
+                return $item->tanggal_mulai->format('Ymd') . '_' . $item->tanggal_akhir->format('Ymd');
             });
 
         $periods = collect();
@@ -51,19 +51,14 @@ class GajiController extends Controller
         $periode_tahun = $request->input('periode_tahun');
 
         $existingGajis = collect();
-        $tanggal_mulai = null;
-        $tanggal_akhir = null;
+        $tanggal_mulai = $request->input('tanggal_mulai');
+        $tanggal_akhir = $request->input('tanggal_akhir');
 
-        if ($periode_bulan && $periode_tahun) {
-            $existingGajis = Gaji::where('periode_bulan', $periode_bulan)
-                ->where('periode_tahun', $periode_tahun)
+        if ($tanggal_mulai && $tanggal_akhir) {
+            $existingGajis = Gaji::whereDate('tanggal_mulai', $tanggal_mulai)
+                ->whereDate('tanggal_akhir', $tanggal_akhir)
                 ->get()
                 ->keyBy('karyawan_id');
-
-            if ($existingGajis->isNotEmpty()) {
-                $tanggal_mulai = $existingGajis->first()->tanggal_mulai?->format('Y-m-d');
-                $tanggal_akhir = $existingGajis->first()->tanggal_akhir?->format('Y-m-d');
-            }
         }
 
         $title = $periode_bulan ? 'Edit Gaji' : 'Proses Gaji';
@@ -87,11 +82,11 @@ class GajiController extends Controller
         ]);
     }
 
-    public function periodDetail($periode_tahun, $periode_bulan)
+    public function periodDetail($tanggal_mulai, $tanggal_akhir)
     {
         $gajis = Gaji::with(['karyawan.kategori', 'rekeningRekapBKU'])
-            ->where('periode_bulan', $periode_bulan)
-            ->where('periode_tahun', $periode_tahun)
+            ->whereDate('tanggal_mulai', $tanggal_mulai)
+            ->whereDate('tanggal_akhir', $tanggal_akhir)
             ->get();
 
         $hadir = $gajis->sum('jumlah_hadir');
@@ -99,7 +94,7 @@ class GajiController extends Controller
 
         return response()->json([
             'success' => true,
-            'periode' => Carbon::create($periode_tahun, $periode_bulan)->format('F Y'),
+            'periode' => Carbon::parse($tanggal_mulai)->format('d M Y') . ' - ' . Carbon::parse($tanggal_akhir)->format('d M Y'),
             'tanggal_mulai' => $gajis->first()->tanggal_mulai->format('d/m/Y'),
             'tanggal_akhir' => $gajis->first()->tanggal_akhir->format('d/m/Y'),
             'total_karyawan' => $gajis->count(),
@@ -130,8 +125,8 @@ class GajiController extends Controller
             // If editing existing period
             if ($request->has('periode_bulan') && $request->has('periode_tahun')) {
                 // Delete gaji for this period that are not in the new selection
-                Gaji::where('periode_bulan', $request->periode_bulan)
-                    ->where('periode_tahun', $request->periode_tahun)
+                Gaji::whereDate('tanggal_mulai', $tanggalMulai)
+                    ->whereDate('tanggal_akhir', $tanggalAkhir)
                     ->whereNotIn('karyawan_id', $request->karyawan_ids)
                     ->delete();
             }
@@ -151,15 +146,22 @@ class GajiController extends Controller
                 $nominalPerHari = $karyawan->kategori->nominal_gaji;
                 $totalGaji = $jumlahHadir * $nominalPerHari;
 
+                $mingguKe = $tanggalMulai->weekOfMonth;
+                $periodeString = $tanggalMulai->format('Y-m-d') . ' s/d ' . $tanggalAkhir->format('Y-m-d');
+
                 Gaji::updateOrCreate(
                     [
                         'karyawan_id' => $karyawanId,
-                        'periode_bulan' => $periode_bulan,
-                        'periode_tahun' => $periode_tahun,
-                    ],
-                    [
+                        // 'periode_bulan' => $periode_bulan,
+                        // 'periode_tahun' => $periode_tahun,
                         'tanggal_mulai' => $tanggalMulai,
                         'tanggal_akhir' => $tanggalAkhir,
+                    ],
+                    [
+                        'periode' => $periodeString,
+                        'periode_minggu' => $mingguKe,
+                        'periode_bulan' => $tanggalMulai->month,
+                        'periode_tahun' => $tanggalMulai->year,
                         'jumlah_hadir' => $jumlahHadir,
                         'nominal_per_hari' => $nominalPerHari,
                         'total_gaji' => $totalGaji,
@@ -182,14 +184,14 @@ class GajiController extends Controller
         }
     }
 
-    public function bulkConfirm(Request $request, $periode_tahun, $periode_bulan)
+    public function bulkConfirm(Request $request, $tanggal_mulai, $tanggal_akhir)
     {
         DB::beginTransaction();
         try {
             // Get all gaji records for this period with hold status
             $gajiRecords = Gaji::with('karyawan')
-                ->where('periode_bulan', $periode_bulan)
-                ->where('periode_tahun', $periode_tahun)
+                ->whereDate('tanggal_mulai', $tanggal_mulai)
+                ->whereDate('tanggal_akhir', $tanggal_akhir)
                 ->where('status', 'hold')
                 ->get();
 
@@ -231,8 +233,8 @@ class GajiController extends Controller
                 'debit' => 0,
                 'kredit' => $totalGaji,
                 'saldo' => $newSaldo,
-                'bulan' => $periode_bulan,
-                'minggu' => null,
+                'bulan' => Carbon::parse($tanggal_mulai)->month,
+                'minggu' => Carbon::parse($tanggal_mulai)->weekOfMonth,
                 'transaction_id' => null,
             ]);
 
