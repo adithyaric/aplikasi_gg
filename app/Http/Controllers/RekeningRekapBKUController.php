@@ -132,7 +132,7 @@ class RekeningRekapBKUController extends Controller
         DB::beginTransaction();
         try {
             if ($request->hasFile('link_bukti')) {
-                $validated['link_bukti'] = $request->file('link_bukti')->store('bukti_bku', 'public');
+                $validated['link_bukti'] = $request->file('link_bukti')->store('bukti_bku', 'uploads');
             }
 
             $tanggalTransaksi = $validated['tanggal_transaksi'];
@@ -265,7 +265,7 @@ class RekeningRekapBKUController extends Controller
                 if ($rekeningBKU->link_bukti) {
                     Storage::disk('uploads')->delete($rekeningBKU->link_bukti);
                 }
-                $validated['link_bukti'] = $request->file('link_bukti')->store('bukti_bku', 'public');
+                $validated['link_bukti'] = $request->file('link_bukti')->store('bukti_bku', 'uploads');
             }
 
             $prevEntry = RekeningRekapBKU::where('tanggal_transaksi', '<', $rekeningBKU->tanggal_transaksi)
