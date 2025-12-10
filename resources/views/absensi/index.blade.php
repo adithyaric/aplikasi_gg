@@ -81,7 +81,15 @@
                                                     data-tanggal="{{ $tanggal }}">
                                                     <i class="fas fa-eye"></i> Detail
                                                 </button>
-                                                button:confirmed bulk!
+
+                                                @if ($confirmed < count($items))
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-primary btn-bulk-confirm-absensi"
+                                                        data-tanggal="{{ $tanggal }}"
+                                                        data-period="{{ \Carbon\Carbon::parse($tanggal)->format('d/m/Y') }}">
+                                                        <i class="fas fa-check"></i> Konfirmasi
+                                                    </button>
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty
@@ -213,6 +221,36 @@
                         Terjadi kesalahan saat mengambil data
                     </div>
                 `);
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('.btn-bulk-confirm-absensi').click(function() {
+                var tanggal = $(this).data('tanggal');
+                var period = $(this).data('period');
+
+                if (confirm('Apakah Anda yakin ingin mengonfirmasi semua absensi pada tanggal ' + period +
+                        '?')) {
+                    $.ajax({
+                        url: '{{ route('absensi.bulk-confirm', '') }}/' + tanggal,
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                alert(response.message);
+                                location.reload();
+                            } else {
+                                alert(response.message);
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Terjadi kesalahan. Silahkan coba lagi.');
+                        }
+                    });
                 }
             });
         });

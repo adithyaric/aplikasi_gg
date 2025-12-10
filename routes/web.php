@@ -91,6 +91,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
     Route::get('/absensi/create', [AbsensiController::class, 'create'])->name('absensi.create');
     Route::post('/absensi', [AbsensiController::class, 'store'])->name('absensi.store');
+    Route::post('/absensi/bulk-confirm/{tanggal}', [AbsensiController::class, 'bulkConfirm'])->name('absensi.bulk-confirm');
     Route::get('/absensi/{tanggal}', [AbsensiController::class, 'show'])->name('absensi.show');
 
     Route::get('/gaji', [GajiController::class, 'index'])->name('gaji.index');

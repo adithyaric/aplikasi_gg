@@ -186,33 +186,79 @@ class GajiController extends Controller
     {
         DB::beginTransaction();
         try {
-            $gajis = Gaji::where('periode_bulan', $periode_bulan)
+            // Get all gaji records for this period with hold status
+            $gajiRecords = Gaji::with('karyawan')
+                ->where('periode_bulan', $periode_bulan)
                 ->where('periode_tahun', $periode_tahun)
                 ->where('status', 'hold')
-                ->update(['status' => 'confirm']);
+                ->get();
 
-            //Rekening BKU group By periode
-            //Pembayaran Gaji xx Relawan periode (start_date - end_date)
-            //link_bukti
+            if ($gajiRecords->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak ada data gaji yang perlu dikonfirmasi'
+                ], 400);
+            }
 
-            // Create BKU entry
-            // $bku = RekeningRekapBKU::create([
-            //     'tanggal_transaksi' => now(),
-            //     'no_bukti' => null,
-            //     'link_bukti' => null,
-            //     'jenis_bahan' => 'Bahan Operasional',
-            //     'nama_bahan' => null,
-            //     'kuantitas' => 1,
-            //     'satuan' => null,
-            //     'supplier' => null,
-            //     'uraian' => ///,
-            //     'debit' => 0,
-            //     'kredit' => //,
-            //     'saldo' => //,
-            //     'bulan' => //,
-            //     'minggu' => null,
-            //     'transaction_id' => null,
-            // ]);
+            // Calculate totals
+            $totalGaji = $gajiRecords->sum('total_gaji');
+            $totalKaryawan = $gajiRecords->count();
+            $startDate = $gajiRecords->min('tanggal_mulai');
+            $endDate = $gajiRecords->max('tanggal_akhir');
+
+            // Get previous entry for saldo calculation
+            $prevEntry = RekeningRekapBKU::orderBy('tanggal_transaksi', 'desc')
+                ->orderBy('id', 'desc')
+                ->lockForUpdate()
+                ->first();
+
+            $prevSaldo = $prevEntry ? $prevEntry->saldo : 0;
+            $newSaldo = $prevSaldo - $totalGaji;
+
+            // Create single BKU entry for entire period
+            $bku = RekeningRekapBKU::create([
+                'tanggal_transaksi' => now(),
+                'no_bukti' => null,
+                'link_bukti' => null,
+                'jenis_bahan' => 'Pembayaran Operasional',
+                'nama_bahan' => 'Gaji Karyawan',
+                'kuantitas' => $totalKaryawan,
+                'satuan' => 'orang',
+                'supplier' => null,
+                'uraian' => "Pembayaran Gaji {$totalKaryawan} Relawan periode " .
+                    \Carbon\Carbon::create($periode_tahun, $periode_bulan)->format('F Y') .
+                    " ({$startDate->format('d/m/Y')} - {$endDate->format('d/m/Y')})",
+                'debit' => 0,
+                'kredit' => $totalGaji,
+                'saldo' => $newSaldo,
+                'bulan' => $periode_bulan,
+                'minggu' => null,
+                'transaction_id' => null,
+            ]);
+
+            // Update all gaji records with status and bku reference
+            $gajiIds = $gajiRecords->pluck('id')->toArray();
+            Gaji::whereIn('id', $gajiIds)
+                ->update([
+                    'status' => 'confirm',
+                    'rekening_rekap_bku_id' => $bku->id
+                ]);
+
+            // Recalculate all entries after this one
+            $nextEntries = RekeningRekapBKU::where('tanggal_transaksi', '>', $bku->tanggal_transaksi)
+                ->orWhere(function ($q) use ($bku) {
+                    $q->where('tanggal_transaksi', '=', $bku->tanggal_transaksi)
+                        ->where('id', '>', $bku->id);
+                })
+                ->orderBy('tanggal_transaksi', 'asc')
+                ->orderBy('id', 'asc')
+                ->get();
+
+            $currentSaldo = $newSaldo;
+            foreach ($nextEntries as $entry) {
+                $currentSaldo = $currentSaldo + $entry->debit - $entry->kredit;
+                $entry->update(['saldo' => $currentSaldo]);
+            }
 
             DB::commit();
             return response()->json([

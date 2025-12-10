@@ -86,7 +86,7 @@ class ReportController extends Controller
     public function lbbp()
     {
         //RekeningRekapBKU jenis_bahan = bahan pokok
-        //ada aksi (otomatis) menjabarkan orderitem'nya dr transaksi
+        //ada aksi (otomatis) menjabarkan orderitem'nya dr transaksi/order
         //survey = gov price dari activiry log
         $title = 'LBBP';
         return view('report.lbbp', ['title' => $title]);
@@ -95,6 +95,7 @@ class ReportController extends Controller
     public function lbo()
     {
         //RekeningRekapBKU jenis_bahan = bahan operasional
+        //Tidak perlu dijabarkan transaksi/order
         $title = 'LBO';
         return view('report.lbo', ['title' => $title]);
     }

@@ -427,7 +427,7 @@ class OrderController extends Controller
             ->latest()
             ->get();
         $title = 'Penggunaan Barang';
-        //TODO qty = qty item + StockAdjustment
+
         return view('order.penggunaan.index', compact('orders', 'title'));
     }
 
@@ -754,6 +754,30 @@ class OrderController extends Controller
             $paymentHistory = $transaction->payment_history ?? [];
             $latestPayment = end($paymentHistory);
 
+            // Determine jenis_bahan from order items
+            $jenisBahanMap = [];
+            $order->load('items.bahanBaku', 'items.bahanOperasional');
+
+            foreach ($order->items as $item) {
+                if ($item->bahan_baku_id) {
+                    $jenisBahanMap['Bahan Baku'] = true;
+                }
+                if ($item->bahan_operasional_id) {
+                    $jenisBahanMap['Bahan Operasional'] = true;
+                }
+            }
+
+            // Create comma-separated list of jenis bahan
+            if (count($jenisBahanMap) === 2) {
+                $jenis_bahan = 'Bahan Pokok, Bahan Operasional';
+            } elseif (isset($jenisBahanMap['Bahan Baku'])) {
+                $jenis_bahan = 'Bahan Pokok';
+            } elseif (isset($jenisBahanMap['Bahan Operasional'])) {
+                $jenis_bahan = 'Bahan Operasional';
+            } else {
+                $jenis_bahan = 'Tidak Diketahui';
+            }
+
             // Handle NON-PARTIAL payments
             if (!$isPartialPayment) {
                 $uraian = "Pembayaran PO {$order->order_number} - {$order->supplier->nama}";
@@ -784,7 +808,7 @@ class OrderController extends Controller
 
                     $existing->update([
                         'tanggal_transaksi' => $tanggal,
-                        'jenis_bahan' => $jenis_bahan, //TODO jenis bahan otomatis di BKU
+                        'jenis_bahan' => $jenis_bahan,
                         'no_bukti' => $transaction->payment_reference,
                         'link_bukti' => $transaction->bukti_transfer,
                         'supplier' => $order->supplier->nama,
@@ -812,7 +836,7 @@ class OrderController extends Controller
 
                     $created = \App\Models\RekeningRekapBKU::create([
                         'tanggal_transaksi' => $tanggal,
-                        'jenis_bahan' => $jenis_bahan, //TODO jenis bahan otomatis
+                        'jenis_bahan' => $jenis_bahan,
                         'no_bukti' => $transaction->payment_reference,
                         'link_bukti' => $transaction->bukti_transfer,
                         'supplier' => $order->supplier->nama,
@@ -854,6 +878,7 @@ class OrderController extends Controller
 
                 $created = \App\Models\RekeningRekapBKU::create([
                     'tanggal_transaksi' => $tanggal,
+                    'jenis_bahan' => $jenis_bahan,
                     'no_bukti' => $transaction->payment_reference . '-' . count($paymentHistory),
                     'link_bukti' => $latestPayment['bukti_transfer'] ?? null,
                     'supplier' => $order->supplier->nama,

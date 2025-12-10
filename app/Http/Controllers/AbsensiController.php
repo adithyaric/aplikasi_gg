@@ -98,4 +98,25 @@ class AbsensiController extends Controller
             ], 500);
         }
     }
+
+    public function bulkConfirm($tanggal)
+    {
+        DB::beginTransaction();
+        try {
+            Absensi::whereDate('tanggal', $tanggal)
+                ->update(['confirmed' => true]);
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Absensi tanggal ' . \Carbon\Carbon::parse($tanggal)->format('d/m/Y') . ' berhasil dikonfirmasi'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
