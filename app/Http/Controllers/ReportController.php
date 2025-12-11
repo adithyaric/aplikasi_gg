@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Anggaran;
+use App\Models\BahanBaku;
+use App\Models\BahanOperasional;
 use App\Models\RekeningKoranVa;
 use App\Models\RekeningRekapBKU;
 use Illuminate\Http\Request;
+use Spatie\Activitylog\Models\Activity;
 
 class ReportController extends Controller
 {
@@ -85,19 +88,73 @@ class ReportController extends Controller
 
     public function lbbp()
     {
-        //RekeningRekapBKU jenis_bahan = bahan pokok
-        //ada aksi (otomatis) menjabarkan orderitem'nya dr transaksi/order
-        //survey = gov price dari activiry log
         $title = 'LBBP';
-        return view('report.lbbp', ['title' => $title]);
+
+        $data = RekeningRekapBKU::whereHas('transaction')
+            ->with(['transaction.order.items.bahanBaku'])
+            ->where('jenis_bahan', 'bahan pokok')
+            ->orderBy('tanggal_transaksi', 'asc')
+            ->get()
+            ->flatMap(function ($rekening) {
+                $orderItems = $rekening->transaction->order->items ?? collect();
+
+                return $orderItems->map(function ($item) use ($rekening) {
+                    if ($item->bahanBaku) {
+                        // Get historical gov_price based on tanggal_transaksi
+                        $govPrice = Activity::where('subject_type', BahanBaku::class)
+                            ->where('subject_id', $item->bahan_baku_id)
+                            ->where('created_at', '<=', $rekening->tanggal_transaksi)
+                            ->orderBy('created_at', 'desc')
+                            ->first();
+
+                        $historicalGovPrice = $govPrice ?
+                            ($govPrice->properties['attributes']['gov_price'] ??
+                                $item->bahanBaku->gov_price) :
+                            $item->bahanBaku->gov_price;
+
+                        return [
+                            'tanggal' => $rekening->tanggal_transaksi,
+                            'nama_bahan' => $item->bahanBaku->nama,
+                            'kuantitas' => $item->quantity,
+                            'satuan' => $item->satuan,
+                            'harga_satuan' => $item->unit_cost,
+                            'total' => $item->subtotal,
+                            'supplier' => $rekening->supplier,
+                            'gov_price' => $historicalGovPrice,
+                            'rekening_id' => $rekening->id
+                        ];
+                    }
+                    return null;
+                })->filter();
+            });
+
+        return view('report.lbbp', [
+            'title' => $title,
+            'data' => $data
+        ]);
     }
 
     public function lbo()
     {
-        //RekeningRekapBKU jenis_bahan = bahan operasional
-        //Tidak perlu dijabarkan transaksi/order
         $title = 'LBO';
-        return view('report.lbo', ['title' => $title]);
+
+        $data = RekeningRekapBKU::where('jenis_bahan', 'bahan operasional')
+            ->orderBy('tanggal_transaksi', 'asc')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'tanggal' => $item->tanggal_transaksi,
+                    'uraian' => $item->uraian,
+                    'nominal' => $item->kredit, // LBO uses kredit (outflow)
+                    // 'keterangan' => '', // Empty as per dummy
+                    'rekening_id' => $item->id
+                ];
+            });
+
+        return view('report.lbo', [
+            'title' => $title,
+            'data' => $data
+        ]);
     }
 
     public function lbs()
@@ -110,12 +167,78 @@ class ReportController extends Controller
         return view('report.lbs', ['title' => $title]);
     }
 
-    public function lra()
+    public function lra(Request $request)
     {
-        //1. Penerimaan
-        //2. Belanja RekeningBKU jenis_bahan sesuai belanja...
-        //   Belanja Sewa :
         $title = 'LRA';
-        return view('report.lra', ['title' => $title]);
+
+        // Get date range from request
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        // Query RekeningRekapBKU with optional date filter
+        $query = RekeningRekapBKU::query();
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('tanggal_transaksi', [$startDate, $endDate]);
+        }
+
+        $rekeningData = $query->get();
+
+        // Calculate totals for each jenis_bahan
+        $totalPenerimaanBGN = $rekeningData->where('jenis_bahan', 'Penerimaan BGN')->sum('debit');
+        $totalBahanPokok = $rekeningData->where('jenis_bahan', 'Bahan Pokok')->sum('kredit');
+        $totalBahanOperasional = $rekeningData->where('jenis_bahan', 'Bahan Operasional')->sum('kredit');
+        $totalPembayaranSewa = $rekeningData->where('jenis_bahan', 'Pembayaran Sewa')->sum('kredit');
+
+        // Penerimaan items (static structure with dynamic values)
+        $penerimaanItems = [
+            [
+                'uraian' => 'Penerimaan dari BGN (Sisa dana Periode Sebelumnya)',
+                'anggaran' => 0, // Static for now
+                'realisasi' => 0, // Static for now
+            ],
+            [
+                'uraian' => 'Penerimaan dari BGN',
+                'anggaran' => $totalPenerimaanBGN,
+                'realisasi' => 0, // Static for now
+            ],
+            [
+                'uraian' => 'Penerimaan dari Yayasan',
+                'anggaran' => 0, // Static for now
+                'realisasi' => 0, // Static for now
+            ],
+            [
+                'uraian' => 'Penerimaan dari Pihak Lainnya',
+                'anggaran' => 0, // Static for now
+                'realisasi' => 0, // Static for now
+            ],
+        ];
+
+        // Belanja items (dynamic from RekeningRekapBKU)
+        $belanjaItems = [
+            [
+                'uraian' => 'Belanja Bahan Pangan',
+                'anggaran' => $totalBahanPokok,
+                'realisasi' => 0, // Static for now
+            ],
+            [
+                'uraian' => 'Belanja Operasional',
+                'anggaran' => $totalBahanOperasional,
+                'realisasi' => 0, // Static for now
+            ],
+            [
+                'uraian' => 'Belanja Sewa',
+                'anggaran' => $totalPembayaranSewa,
+                'realisasi' => 0, // Static for now
+            ],
+        ];
+
+        return view('report.lra', [
+            'title' => $title,
+            'penerimaanItems' => $penerimaanItems,
+            'belanjaItems' => $belanjaItems,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+        ]);
     }
 }
