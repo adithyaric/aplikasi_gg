@@ -157,14 +157,44 @@ class ReportController extends Controller
         ]);
     }
 
-    public function lbs()
+    public function lbs(Request $request)
     {
-        //Anggaran looping start_date - end_date data"nya (misal dari tgl 1 - 30 : looping data sebanyak 30x)
-        //Biaya Sewa tanggal xxxx sebanyak xxxx Porsi Penerima Manfaat
-        //Nominal : Budget Sewa (2k)
-        //col ket hapus
         $title = 'LBS';
-        return view('report.lbs', ['title' => $title]);
+
+        // Get all anggaran data
+        $anggarans = Anggaran::all();
+
+        $data = [];
+
+        foreach ($anggarans as $anggaran) {
+            $currentDate = $anggaran->start_date->copy();
+            $endDate = $anggaran->end_date->copy();
+
+            while ($currentDate <= $endDate) {
+                $data[] = [
+                    'tanggal' => $currentDate->format('d F Y'),
+                    'date_sort' => $currentDate->format('Y-m-d'),
+                    'jumlah_porsi' => $anggaran->total_porsi,
+                    'uraian' => "Biaya Sewa tanggal " . $currentDate->format('d F Y') .
+                        " sebanyak " . $anggaran->total_porsi . " Porsi Penerima Manfaat",
+                    'nominal' => $anggaran->budget_sewa,
+                    'keterangan' => $anggaran->aturan_sewa,
+                    'rekening_id' => $anggaran->id
+                ];
+
+                $currentDate->addDay();
+            }
+        }
+
+        // Sort by date
+        usort($data, function ($a, $b) {
+            return strcmp($a['date_sort'], $b['date_sort']);
+        });
+
+        return view('report.lbs', [
+            'title' => $title,
+            'data' => $data
+        ]);
     }
 
     public function lra(Request $request)
