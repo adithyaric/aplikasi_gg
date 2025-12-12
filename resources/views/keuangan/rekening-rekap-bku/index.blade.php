@@ -130,6 +130,7 @@
                                                 @if ($item->transaction)
                                                     <span class="badge bg-info">
                                                         {{ $item->transaction?->order?->order_number }}
+                                                        Modal Detail PO
                                                     </span>
                                                 @else
                                                     -

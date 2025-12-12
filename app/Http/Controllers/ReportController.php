@@ -32,10 +32,12 @@ class ReportController extends Controller
                     'rencana_total' => $anggaran->total_porsi,
                     'rencana_10k' => $anggaran->porsi_10k,
                     'rencana_8k' => $anggaran->porsi_8k,
-                    'realisasi_total' => 0, // Placeholder - you'll need actual realization data
-                    'realisasi_10k' => 0,  // Placeholder
-                    'realisasi_8k' => 0,   // Placeholder
-                    'keterangan' => $anggaran->aturan_sewa,
+                    //kolom" realisasi diganti jadi anggaran
+                    'realisasi_total' => 0,
+                    'budget_8k' => $anggaran->budget_porsi_8k,
+                    'budget_10k' => $anggaran->budget_porsi_10k,
+                    'budget_operasional' => $anggaran->budget_operasional,
+                    'budget_sewa' => $anggaran->budget_sewa,
                     'date_sort' => $currentDate->format('Y-m-d'),
                 ];
                 // }
@@ -147,7 +149,8 @@ class ReportController extends Controller
                     'uraian' => $item->uraian,
                     'nominal' => $item->kredit, // LBO uses kredit (outflow)
                     // 'keterangan' => '', // Empty as per dummy
-                    'rekening_id' => $item->id
+                    'rekening_id' => $item->id,
+                    'link_po' => $item->transaction?->order?->order_number,
                 ];
             });
 

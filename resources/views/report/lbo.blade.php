@@ -67,6 +67,7 @@
                                         <th>Tanggal</th>
                                         <th>Uraian</th>
                                         <th>Nominal</th>
+                                        <th>Link PO</th>
                                         {{-- <th>Keterangan</th> --}}
                                     </tr>
                                 </thead>
@@ -79,6 +80,12 @@
                                             <td>{{ $item['uraian'] }}</td>
                                             <td>{{ number_format($item['nominal'], 0, ',', '.') }}</td>
                                             {{-- <td>{{ $item['keterangan'] }}</td> --}}
+                                            <td>
+                                                <span class="badge bg-info">
+                                                    {{ $item['link_po'] }}
+                                                    Modal Detail PO
+                                                </span>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>

@@ -66,16 +66,18 @@
                                         <th rowspan="2">No</th>
                                         <th rowspan="2">Tanggal</th>
                                         <th colspan="3">Rencana Porsi</th>
-                                        <th colspan="3">Realisasi Porsi</th>
-                                        <th rowspan="2">Keterangan</th>
+                                        <th colspan="4">Rencana Anggaran</th>
+                                        {{-- <th rowspan="2">Keterangan</th> --}}
                                     </tr>
                                     <tr>
                                         <th>Total</th>
-                                        <th>Porsi 10K</th>
                                         <th>Porsi 8K</th>
-                                        <th>Total</th>
                                         <th>Porsi 10K</th>
-                                        <th>Porsi 8K</th>
+                                        {{-- <th>Total</th> --}}
+                                        <th>Budget 8K</th>
+                                        <th>Budget 10K</th>
+                                        <th>Budget Operasional</th>
+                                        <th>Budget Sewa</th>
                                     </tr>
                                 </thead>
 
@@ -85,12 +87,14 @@
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $row['tanggal'] }}</td>
                                             <td>{{ $row['rencana_total'] }}</td>
-                                            <td>{{ $row['rencana_10k'] }}</td>
                                             <td>{{ $row['rencana_8k'] }}</td>
-                                            <td>{{ $row['realisasi_total'] }}</td>
-                                            <td>{{ $row['realisasi_10k'] }}</td>
-                                            <td>{{ $row['realisasi_8k'] }}</td>
-                                            <td>{{ ucfirst(str_replace('_', ' ', $row['keterangan'])) }}</td>
+                                            <td>{{ $row['rencana_10k'] }}</td>
+                                            {{-- <td>{{ $row['realisasi_total'] }}</td> --}}
+                                            <td>{{ number_format($row['budget_8k'], 0, ',', '.') }}</td>
+                                            <td>{{ number_format($row['budget_10k'], 0, ',', '.') }}</td>
+                                            <td>{{ number_format($row['budget_operasional'], 0, ',', '.') }}</td>
+                                            <td>{{ number_format($row['budget_sewa'], 0, ',', '.') }}</td>
+                                            {{-- <td>{{ ucfirst(str_replace('_', ' ', $row['keterangan'])) }}</td> --}}
                                         </tr>
                                     @endforeach
                                 </tbody>
