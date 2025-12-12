@@ -54,7 +54,75 @@
                 </div>
             </div>
         </div>
-
+        <!-- Modal Detail PO -->
+        <div class="modal fade" id="modalOrderDetailBKU" tabindex="-1" aria-labelledby="modalOrderDetailBKULabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content"
+                    style="border-radius:15px; border:1px solid #ddd; box-shadow:0 8px 20px rgba(0,0,0,0.2);">
+                    <div class="modal-header bg-primary">
+                        <h5 class="modal-title text-white" id="modalOrderDetailBKULabel">Detail Purchase Order</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row mb-1">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">No PO</label>
+                                        <p id="detail_order_number_bku" class="form-control-plaintext"></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Supplier</label>
+                                        <p id="detail_supplier_bku" class="form-control-plaintext"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-1">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Tanggal PO</label>
+                                        <p id="detail_tanggal_po_bku" class="form-control-plaintext"></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Tanggal Penerimaan</label>
+                                        <p id="detail_tanggal_penerimaan_bku" class="form-control-plaintext"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-1">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Grand Total</label>
+                                        <p id="detail_grand_total_bku" class="form-control-plaintext"></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Status</label>
+                                        <p id="detail_status_bku" class="form-control-plaintext"></p>
+                                    </div>
+                                </div>
+                                <div class="mb-1">
+                                    <label class="form-label fw-bold">Items</label>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Bahan Baku</th>
+                                                    <th>Quantity</th>
+                                                    <th>Harga</th>
+                                                    <th>Subtotal</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="detail_items_bku"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 @section('container')
@@ -108,13 +176,13 @@
                                             <td>{{ $item->no_bukti ?? '-' }}</td>
                                             <td>
                                                 @if ($item->link_bukti)
-                                                <button class="btn btn-sm btn-primary lihat-bukti"
-                                                    data-src="{{ Storage::disk('uploads')->url($item->link_bukti) }}" data-bs-toggle="modal"
-                                                    data-bs-target="#modalPB2">
-                                                    <i class="bi bi-eye"></i> Lihat Disini
-                                                </button>
+                                                    <button class="btn btn-sm btn-primary lihat-bukti"
+                                                        data-src="{{ Storage::disk('uploads')->url($item->link_bukti) }}"
+                                                        data-bs-toggle="modal" data-bs-target="#modalPB2">
+                                                        <i class="bi bi-eye"></i> Lihat Disini
+                                                    </button>
                                                 @else
-                                                -
+                                                    -
                                                 @endif
                                             </td>
                                             <td>{{ $item->supplier ?? '-' }}</td>
@@ -127,11 +195,11 @@
                                             {{-- <td>{{ $item->bulan ? date('F', mktime(0, 0, 0, $item->bulan, 1)) : '-' }}</td> --}}
                                             {{-- <td>{{ $item->minggu ? 'Minggu ' . $item->minggu : '-' }}</td> --}}
                                             <td>
-                                                @if ($item->transaction)
-                                                    <span class="badge bg-info">
-                                                        {{ $item->transaction?->order?->order_number }}
-                                                        Modal Detail PO
-                                                    </span>
+                                                @if ($item->transaction && $item->transaction->order)
+                                                    <button type="button" class="btn btn-sm btn-info"
+                                                        onclick="showOrderDetailBKU({{ $item->transaction->order->id }})">
+                                                        {{ $item->transaction->order->order_number }}
+                                                    </button>
                                                 @else
                                                     -
                                                 @endif
@@ -158,6 +226,57 @@
     </div>
 @endsection
 @push('js')
+<script>
+    function showOrderDetailBKU(id) {
+    $.ajax({
+        url: "{{ route('orders.index') }}/" + id,
+        method: 'GET',
+        success: function(response) {
+            $('#detail_order_number_bku').text(response.order_number);
+            $('#detail_supplier_bku').text(response.supplier?.nama || '-');
+            $('#detail_tanggal_po_bku').text(response.tanggal_po ? new Date(response.tanggal_po)
+                .toLocaleDateString('id-ID') : '-');
+            $('#detail_tanggal_penerimaan_bku').text(response.tanggal_penerimaan ? new Date(response
+                .tanggal_penerimaan).toLocaleDateString('id-ID') : '-');
+            $('#detail_grand_total_bku').text('Rp ' + new Intl.NumberFormat('id-ID').format(response
+                .grand_total || 0));
+            $('#detail_status_bku').text(response.status || '-');
+
+            // Clear items table
+            $('#detail_items_bku').empty();
+
+            // Populate items
+            if (response.items && response.items.length > 0) {
+                response.items.forEach(function(item) {
+                    $('#detail_items_bku').append(
+                        '<tr>' +
+                        '<td>' + (item.bahan_baku?.nama || item.bahan_operasional?.nama) +
+                        '</td>' +
+                        '<td>' + (item.quantity || 0) + '</td>' +
+                        '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.unit_cost ||
+                            0) + '</td>' +
+                        '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.subtotal ||
+                            0) + '</td>' +
+                        '</tr>'
+                    );
+                });
+            } else {
+                $('#detail_items_bku').append(
+                    '<tr><td colspan="4" class="text-center">Tidak ada items</td></tr>');
+            }
+
+            $('#modalOrderDetailBKU').modal('show');
+        },
+        error: function(xhr) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Terjadi kesalahan saat mengambil data detail'
+            });
+        }
+    });
+}
+</script>
     <script>
         // Handle Delete Button Click
         $(document).on('click', '.btn-delete', function() {

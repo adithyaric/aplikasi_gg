@@ -50,9 +50,9 @@
                                         <button id="filterDate" class="btn btn-sm btn-primary">
                                             <i class="bi bi-funnel"></i> Filter
                                         </button>
-                                        <button id="resetDate" class="btn btn-sm btn-secondary">
+                                        <a href="{{ route('report.lra') }}" id="resetDate" class="btn btn-sm btn-secondary">
                                             <i class="bi bi-arrow-counterclockwise"></i> Reset
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
 
@@ -65,7 +65,7 @@
                                 </div>
                             </div>
 
-                            <table id="datatable" class="table table-striped" data-toggle="data-table">
+                            <table id="" class="table table-striped">
                                 <thead class="align-middle">
                                     <tr>
                                         <th>Uraian</th>

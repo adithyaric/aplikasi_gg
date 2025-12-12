@@ -17,6 +17,75 @@
             <img src="{{ asset('assets/images/dashboard/top-header.png') }}" alt="header"
                 class="theme-color-default-img img-fluid w-100 h-100 animated-scaleX">
         </div>
+        <!-- Modal Detail PO -->
+        <div class="modal fade" id="modalOrderDetailBKU" tabindex="-1" aria-labelledby="modalOrderDetailBKULabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content"
+                    style="border-radius:15px; border:1px solid #ddd; box-shadow:0 8px 20px rgba(0,0,0,0.2);">
+                    <div class="modal-header bg-primary">
+                        <h5 class="modal-title text-white" id="modalOrderDetailBKULabel">Detail Purchase Order</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row mb-1">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">No PO</label>
+                                        <p id="detail_order_number_bku" class="form-control-plaintext"></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Supplier</label>
+                                        <p id="detail_supplier_bku" class="form-control-plaintext"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-1">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Tanggal PO</label>
+                                        <p id="detail_tanggal_po_bku" class="form-control-plaintext"></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Tanggal Penerimaan</label>
+                                        <p id="detail_tanggal_penerimaan_bku" class="form-control-plaintext"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-1">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Grand Total</label>
+                                        <p id="detail_grand_total_bku" class="form-control-plaintext"></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Status</label>
+                                        <p id="detail_status_bku" class="form-control-plaintext"></p>
+                                    </div>
+                                </div>
+                                <div class="mb-1">
+                                    <label class="form-label fw-bold">Items</label>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Bahan Baku</th>
+                                                    <th>Quantity</th>
+                                                    <th>Harga</th>
+                                                    <th>Subtotal</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="detail_items_bku"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 @section('container')
@@ -81,10 +150,11 @@
                                             <td>{{ number_format($item['nominal'], 0, ',', '.') }}</td>
                                             {{-- <td>{{ $item['keterangan'] }}</td> --}}
                                             <td>
-                                                <span class="badge bg-info">
+                                                {{-- <span class="badge bg-info">{{ $item['link_po'] }}</span> --}}
+                                                <button type="button" class="btn btn-sm btn-info"
+                                                    onclick="showOrderDetailBKU({{ $item['link_po_id'] }})">
                                                     {{ $item['link_po'] }}
-                                                    Modal Detail PO
-                                                </span>
+                                                </button>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -98,8 +168,59 @@
     </div>
 @endsection
 @push('js')
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    function showOrderDetailBKU(id) {
+    $.ajax({
+        url: "{{ route('orders.index') }}/" + id,
+        method: 'GET',
+        success: function(response) {
+            $('#detail_order_number_bku').text(response.order_number);
+            $('#detail_supplier_bku').text(response.supplier?.nama || '-');
+            $('#detail_tanggal_po_bku').text(response.tanggal_po ? new Date(response.tanggal_po)
+                .toLocaleDateString('id-ID') : '-');
+            $('#detail_tanggal_penerimaan_bku').text(response.tanggal_penerimaan ? new Date(response
+                .tanggal_penerimaan).toLocaleDateString('id-ID') : '-');
+            $('#detail_grand_total_bku').text('Rp ' + new Intl.NumberFormat('id-ID').format(response
+                .grand_total || 0));
+            $('#detail_status_bku').text(response.status || '-');
 
+            // Clear items table
+            $('#detail_items_bku').empty();
+
+            // Populate items
+            if (response.items && response.items.length > 0) {
+                response.items.forEach(function(item) {
+                    $('#detail_items_bku').append(
+                        '<tr>' +
+                        '<td>' + (item.bahan_baku?.nama || item.bahan_operasional?.nama) +
+                        '</td>' +
+                        '<td>' + (item.quantity || 0) + '</td>' +
+                        '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.unit_cost ||
+                            0) + '</td>' +
+                        '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.subtotal ||
+                            0) + '</td>' +
+                        '</tr>'
+                    );
+                });
+            } else {
+                $('#detail_items_bku').append(
+                    '<tr><td colspan="4" class="text-center">Tidak ada items</td></tr>');
+            }
+
+            $('#modalOrderDetailBKU').modal('show');
+        },
+        error: function(xhr) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Terjadi kesalahan saat mengambil data detail'
+            });
+        }
+    });
+}
+</script>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         flatpickr("#dateRange", {
             mode: "range",
@@ -177,7 +298,8 @@
         });
     </script>
 
-    <div class="modal fade" id="modalCetakKartu" tabindex="-1" aria-labelledby="modalCetakKartuLabel" aria-hidden="true">
+    <div class="modal fade" id="modalCetakKartu" tabindex="-1" aria-labelledby="modalCetakKartuLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content p-4">
                 <div class="modal-header border-bottom-0">

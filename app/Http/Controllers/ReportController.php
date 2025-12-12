@@ -84,6 +84,10 @@ class ReportController extends Controller
 
     public function lpdb()
     {
+        // RekeningBKU, filter range bulan"
+        // Saldo awal : pemasukan/debit
+        // penerimaan dana : pengeluaran/kredit
+        // sewa ambil dari Anggaran by tanggal (jika ada yg lempat bulan contoh nov 28 - 3 des dan di lpdb tampil yg nov maka tgl 28-30 saja)
         $title = 'LPDB';
         return view('report.lpdb', ['title' => $title]);
     }
@@ -151,6 +155,7 @@ class ReportController extends Controller
                     // 'keterangan' => '', // Empty as per dummy
                     'rekening_id' => $item->id,
                     'link_po' => $item->transaction?->order?->order_number,
+                    'link_po_id' => $item->transaction?->order?->id,
                 ];
             });
 

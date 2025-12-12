@@ -236,16 +236,18 @@
                                         <th rowspan="2">No</th>
                                         <th rowspan="2">Tanggal</th>
                                         <th colspan="3">Rencana Porsi</th>
-                                        <th colspan="3">Realisasi Porsi</th>
-                                        <th rowspan="2">Keterangan</th>
+                                        <th colspan="4">Rencana Anggaran</th>
+                                        {{-- <th rowspan="2">Keterangan</th> --}}
                                     </tr>
                                     <tr>
                                         <th>Total</th>
-                                        <th>Porsi 10K</th>
                                         <th>Porsi 8K</th>
-                                        <th>Total</th>
                                         <th>Porsi 10K</th>
-                                        <th>Porsi 8K</th>
+                                        {{-- <th>Total</th> --}}
+                                        <th>Budget 8K</th>
+                                        <th>Budget 10K</th>
+                                        <th>Budget Operasional</th>
+                                        <th>Budget Sewa</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
