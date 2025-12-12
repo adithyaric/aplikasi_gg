@@ -84,6 +84,8 @@ class RekeningRekapBKUController extends Controller
             'Pembayaran Sewa',
             // 'Pembayaran Operasional',
             'Penerimaan BGN',
+            'Penerimaan Yayasan',
+            'Penerimaan Pihak Lainnya',
         ];
 
         $title = 'Formulir Rekap BKU';
@@ -223,6 +225,8 @@ class RekeningRekapBKUController extends Controller
             'Pembayaran Sewa',
             // 'Pembayaran Operasional',
             'Penerimaan BGN',
+            'Penerimaan Yayasan',
+            'Penerimaan Pihak Lainnya',
         ];
 
         $title = 'Edit Rekap BKU';

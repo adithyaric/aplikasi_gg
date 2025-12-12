@@ -19,6 +19,7 @@ use App\Http\Controllers\RekeningRekapBKUController;
 use App\Http\Controllers\RencanaMenuController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SekolahController;
+use App\Http\Controllers\SettingPageController;
 use App\Http\Controllers\StokController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
@@ -34,6 +35,9 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/setting', [SettingPageController::class, 'index'])->name('settingpage.index');
+    Route::post('/setting', [SettingPageController::class, 'store'])->name('settingpage.store');
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/titik-distribusi', [DashboardController::class, 'titikDistribusi'])->name('titik-distribusi');

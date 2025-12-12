@@ -209,74 +209,124 @@ class ReportController extends Controller
     {
         $title = 'LRA';
 
-        // Get date range from request
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        // Query RekeningRekapBKU with optional date filter
-        $query = RekeningRekapBKU::query();
+        // Calculate totals based on date range
+        $data = $this->calculateLraData($startDate, $endDate);
 
+        // Get admin inputs from request
+        $adminInputs = $request->only([
+            'anggaran_sisa_dana',
+            'realisasi_sisa_dana',
+            'realisasi_bgn',
+            'realisasi_yayasan',
+            'realisasi_pihak_lain',
+            'realisasi_bahan_pangan',
+            'realisasi_operasional',
+            'realisasi_sewa'
+        ]);
+
+        // Prepare data for JSON response or view
+        $responseData = [
+            'title' => $title,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'penerimaanItems' => [
+                [
+                    'uraian' => 'Penerimaan dari BGN (Sisa dana Periode Sebelumnya)',
+                    'anggaran' => $adminInputs['anggaran_sisa_dana'] ?? 0,
+                    'realisasi' => $adminInputs['realisasi_sisa_dana'] ?? 0,
+                    'input_anggaran_name' => 'anggaran_sisa_dana',
+                    'input_realisasi_name' => 'realisasi_sisa_dana'
+                ],
+                [
+                    'uraian' => 'Penerimaan dari BGN',
+                    'anggaran' => $data['totalPenerimaanBGN'],
+                    'realisasi' => $adminInputs['realisasi_bgn'] ?? 0,
+                    'input_realisasi_name' => 'realisasi_bgn'
+                ],
+                [
+                    'uraian' => 'Penerimaan dari Yayasan',
+                    'anggaran' => $data['totalPenerimaanYayasan'],
+                    'realisasi' => $adminInputs['realisasi_yayasan'] ?? 0,
+                    'input_realisasi_name' => 'realisasi_yayasan'
+                ],
+                [
+                    'uraian' => 'Penerimaan dari Pihak Lainnya',
+                    'anggaran' => $data['totalPenerimaanPihakLain'],
+                    'realisasi' => $adminInputs['realisasi_pihak_lain'] ?? 0,
+                    'input_realisasi_name' => 'realisasi_pihak_lain'
+                ],
+            ],
+            'belanjaItems' => [
+                [
+                    'uraian' => 'Belanja Bahan Pangan',
+                    'anggaran' => $data['totalBudgetBahanPangan'],
+                    'realisasi' => $adminInputs['realisasi_bahan_pangan'] ?? $data['totalBahanPokok'],
+                    'input_realisasi_name' => 'realisasi_bahan_pangan'
+                ],
+                [
+                    'uraian' => 'Belanja Operasional',
+                    'anggaran' => $data['totalBudgetOperasional'],
+                    'realisasi' => $adminInputs['realisasi_operasional'] ?? $data['totalBahanOperasional'],
+                    'input_realisasi_name' => 'realisasi_operasional'
+                ],
+                [
+                    'uraian' => 'Belanja Sewa',
+                    'anggaran' => $data['totalBudgetSewa'],
+                    'realisasi' => $adminInputs['realisasi_sewa'] ?? 0,
+                    'input_realisasi_name' => 'realisasi_sewa'
+                ],
+            ]
+        ];
+
+        // If AJAX request, return JSON
+        if ($request->ajax()) {
+            return response()->json($responseData);
+        }
+
+        // For regular request, return view
+        return view('report.lra', $responseData);
+    }
+
+    private function calculateLraData($startDate, $endDate)
+    {
+        // Query for rekening data
+        $query = RekeningRekapBKU::query();
         if ($startDate && $endDate) {
             $query->whereBetween('tanggal_transaksi', [$startDate, $endDate]);
         }
-
         $rekeningData = $query->get();
 
-        // Calculate totals for each jenis_bahan
-        $totalPenerimaanBGN = $rekeningData->where('jenis_bahan', 'Penerimaan BGN')->sum('debit');
-        $totalBahanPokok = $rekeningData->where('jenis_bahan', 'Bahan Pokok')->sum('kredit');
-        $totalBahanOperasional = $rekeningData->where('jenis_bahan', 'Bahan Operasional')->sum('kredit');
-        $totalPembayaranSewa = $rekeningData->where('jenis_bahan', 'Pembayaran Sewa')->sum('kredit');
-
-        // Penerimaan items (static structure with dynamic values)
-        $penerimaanItems = [
-            [
-                'uraian' => 'Penerimaan dari BGN (Sisa dana Periode Sebelumnya)',
-                'anggaran' => 0, // Static for now
-                'realisasi' => 0, // Static for now
-            ],
-            [
-                'uraian' => 'Penerimaan dari BGN',
-                'anggaran' => $totalPenerimaanBGN,
-                'realisasi' => 0, // Static for now
-            ],
-            [
-                'uraian' => 'Penerimaan dari Yayasan',
-                'anggaran' => 0, // Static for now
-                'realisasi' => 0, // Static for now
-            ],
-            [
-                'uraian' => 'Penerimaan dari Pihak Lainnya',
-                'anggaran' => 0, // Static for now
-                'realisasi' => 0, // Static for now
-            ],
+        // Calculate totals
+        $data = [
+            'totalPenerimaanBGN' => $rekeningData->where('jenis_bahan', 'Penerimaan BGN')->sum('debit'),
+            'totalPenerimaanYayasan' => $rekeningData->where('jenis_bahan', 'Penerimaan Yayasan')->sum('debit'),
+            'totalPenerimaanPihakLain' => $rekeningData->where('jenis_bahan', 'Penerimaan Pihak Lainnya')->sum('debit'),
+            'totalBahanPokok' => $rekeningData->where('jenis_bahan', 'Bahan Pokok')->sum('kredit'),
+            'totalBahanOperasional' => $rekeningData->where('jenis_bahan', 'Bahan Operasional')->sum('kredit'),
         ];
 
-        // Belanja items (dynamic from RekeningRekapBKU)
-        $belanjaItems = [
-            [
-                'uraian' => 'Belanja Bahan Pangan',
-                'anggaran' => $totalBahanPokok,
-                'realisasi' => 0, // Static for now
-            ],
-            [
-                'uraian' => 'Belanja Operasional',
-                'anggaran' => $totalBahanOperasional,
-                'realisasi' => 0, // Static for now
-            ],
-            [
-                'uraian' => 'Belanja Sewa',
-                'anggaran' => $totalPembayaranSewa,
-                'realisasi' => 0, // Static for now
-            ],
-        ];
+        // Query for anggaran data
+        $queryAnggaran = Anggaran::query();
+        if ($startDate && $endDate) {
+            $queryAnggaran->where(function ($q) use ($startDate, $endDate) {
+                $q->whereBetween('start_date', [$startDate, $endDate])
+                    ->orWhereBetween('end_date', [$startDate, $endDate])
+                    ->orWhere(function ($sub) use ($startDate, $endDate) {
+                        $sub->where('start_date', '<=', $startDate)
+                            ->where('end_date', '>=', $endDate);
+                    });
+            });
+        }
 
-        return view('report.lra', [
-            'title' => $title,
-            'penerimaanItems' => $penerimaanItems,
-            'belanjaItems' => $belanjaItems,
-            'startDate' => $startDate,
-            'endDate' => $endDate,
-        ]);
+        $anggarans = $queryAnggaran->get();
+
+        $data['totalBudgetBahanPangan'] = $anggarans->sum('budget_porsi_8k') + $anggarans->sum('budget_porsi_10k');
+        $data['totalBudgetOperasional'] = $anggarans->sum('budget_operasional');
+        $data['totalBudgetSewa'] = $anggarans->sum('budget_sewa');
+
+        return $data;
     }
 }

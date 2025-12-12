@@ -1,5 +1,21 @@
 @extends('layouts.master')
 @section('header')
+    <style>
+        .tampil-anggaran-value {
+            display: inline-block;
+            padding: 6px 12px;
+        }
+
+        .persen-cell {
+            min-width: 80px;
+        }
+
+        .form-control-sm {
+            height: calc(1.5em + 0.5rem + 2px);
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+    </style>
     <div class="iq-navbar-header" style="height: 215px;">
         <div class="container-fluid iq-container">
             <div class="row">
@@ -29,6 +45,11 @@
                         <div class="header-title">
                             <h4 class="card-title fw-bold">LRA</h4>
                         </div>
+                        <div class="col-auto text-end">
+                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCetakKartu">
+                                <i class="bi bi-printer"></i> Cetak LRA
+                            </button>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="custom-datatable-entries">
@@ -36,16 +57,15 @@
                                 <!-- 🔹 Bagian Kiri: Filter Tanggal -->
                                 <div class="col d-flex flex-wrap align-items-end gap-2">
                                     <div class="col-auto">
-                                        <label class="form-label mb-1">Rentang Periode</label>
-                                        <input type="text" id="dateRange" class="form-control form-control-sm"
-                                            placeholder="Pilih rentang tanggal"
-                                            value="@if ($startDate && $endDate) {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($endDate)->format('d/m/Y') }} @endif" />
-                                        <form id="dateFilterForm" method="GET" style="display: none;">
-                                            <input type="hidden" name="start_date" id="hiddenStartDate">
-                                            <input type="hidden" name="end_date" id="hiddenEndDate">
-                                        </form>
+                                        <label class="form-label mb-1">Dari Tanggal</label>
+                                        <input type="date" id="startDate" class="form-control form-control-sm"
+                                            value="{{ $startDate }}" />
                                     </div>
-
+                                    <div class="col-auto">
+                                        <label class="form-label mb-1">Sampai Tanggal</label>
+                                        <input type="date" id="endDate" class="form-control form-control-sm"
+                                            value="{{ $endDate }}" />
+                                    </div>
                                     <div class="col-auto mt-4">
                                         <button id="filterDate" class="btn btn-sm btn-primary">
                                             <i class="bi bi-funnel"></i> Filter
@@ -54,14 +74,6 @@
                                             <i class="bi bi-arrow-counterclockwise"></i> Reset
                                         </a>
                                     </div>
-                                </div>
-
-                                <!-- 🔹 Bagian Kanan: Tombol Cetak -->
-                                <div class="col-auto text-end">
-                                    <button class="btn btn-success" data-bs-toggle="modal"
-                                        data-bs-target="#modalCetakKartu">
-                                        <i class="bi bi-printer"></i> Cetak LRA
-                                    </button>
                                 </div>
                             </div>
 
@@ -83,14 +95,34 @@
                                         <td style="color: transparent">2</td>
                                         <td style="color: transparent">3</td>
                                     </tr>
-                                    @foreach ($penerimaanItems as $item)
+                                    @foreach ($penerimaanItems as $index => $item)
                                         <tr>
                                             <td class="text-start">{{ $item['uraian'] }}</td>
-                                            <td>{{ number_format($item['anggaran'], 0, ',', '.') }}</td>
-                                            <td>{{ number_format($item['realisasi'], 0, ',', '.') }}</td>
-                                            <td>{{ $item['anggaran'] > 0
-                                                ? number_format(($item['realisasi'] / $item['anggaran']) * 100, 2, ',', '.') . '%'
-                                                : '0,00%' }}
+                                            <td>
+                                                @if ($index === 0)
+                                                    <input type="number" min="0"
+                                                        name="{{ $item['input_anggaran_name'] }}"
+                                                        class="form-control form-control-sm anggaran-input"
+                                                        value="{{ $item['anggaran'] }}"
+                                                        style="width: 120px; display: inline;">
+                                                @else
+                                                    <span
+                                                        class="tampil-anggaran-value">{{ number_format($item['anggaran'], 0, ',', '.') }}</span>
+                                                    <input type="hidden" class="anggaran-value"
+                                                        value="{{ $item['anggaran'] }}">
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <input type="number" min="0"
+                                                    name="{{ $item['input_realisasi_name'] }}"
+                                                    class="form-control form-control-sm realisasi-input"
+                                                    value="{{ $item['realisasi'] }}"
+                                                    style="width: 120px; display: inline;">
+                                            </td>
+                                            <td class="persen-cell">
+                                                {{ $item['anggaran'] > 0
+                                                    ? number_format(($item['realisasi'] / $item['anggaran']) * 100, 2, ',', '.') . '%'
+                                                    : '0,00%' }}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -105,11 +137,23 @@
                                     @foreach ($belanjaItems as $item)
                                         <tr>
                                             <td class="text-start">{{ $item['uraian'] }}</td>
-                                            <td>{{ number_format($item['anggaran'], 0, ',', '.') }}</td>
-                                            <td>{{ number_format($item['realisasi'], 0, ',', '.') }}</td>
-                                            <td>{{ $item['anggaran'] > 0
-                                                ? number_format(($item['realisasi'] / $item['anggaran']) * 100, 2, ',', '.') . '%'
-                                                : '0,00%' }}
+                                            <td>
+                                                <span
+                                                    class="tampil-anggaran-value">{{ number_format($item['anggaran'], 0, ',', '.') }}</span>
+                                                <input type="hidden" class="anggaran-value"
+                                                    value="{{ $item['anggaran'] }}">
+                                            </td>
+                                            <td>
+                                                <input type="number" min="0"
+                                                    name="{{ $item['input_realisasi_name'] }}"
+                                                    class="form-control form-control-sm realisasi-input"
+                                                    value="{{ $item['realisasi'] }}"
+                                                    style="width: 120px; display: inline;">
+                                            </td>
+                                            <td class="persen-cell">
+                                                {{ $item['anggaran'] > 0
+                                                    ? number_format(($item['realisasi'] / $item['anggaran']) * 100, 2, ',', '.') . '%'
+                                                    : '0,00%' }}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -121,79 +165,6 @@
             </div>
         </div>
     </div>
-@endsection
-@push('js')
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
-    <script>
-        flatpickr("#dateRange", {
-            mode: "range",
-            dateFormat: "d/m/Y",
-            locale: "id", // biar pakai bahasa Indonesia
-            altInput: true,
-            altFormat: "j F Y", // contoh: 24 April 2025
-            allowInput: true,
-        });
-    </script>
-    <script>
-        flatpickr("#startDate", {
-            inline: true,
-            dateFormat: "d/m/Y",
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            // 🔹 Cek apakah DataTable sudah ada
-            let table;
-            if ($.fn.DataTable.isDataTable("#datatable")) {
-                table = $("#datatable").DataTable(); // gunakan instance yang sudah ada
-            } else {
-                table = $("#datatable").DataTable({
-                    scrollX: true,
-                    pageLength: 10,
-                    autoWidth: false,
-                });
-            }
-
-            // 🔹 Inisialisasi Flatpickr (Range)
-            const fp = flatpickr("#dateRange", {
-                mode: "range",
-                dateFormat: "d/m/Y",
-                locale: "id",
-                altInput: true,
-                altFormat: "j F Y",
-                allowInput: true,
-            });
-
-            // 🔹 Fungsi bantu parse tanggal
-            function parseDate(str) {
-                if (!str) return null;
-                const [day, month, year] = str.split("/");
-                return new Date(`${year}-${month}-${day}`);
-            }
-
-            // 🔹 Tombol Filter ditekan
-            $("#filterDate").on("click", function() {
-                const range = fp.selectedDates;
-                if (range.length === 2) {
-                    const startDate = range[0].toISOString().split('T')[0];
-                    const endDate = range[1].toISOString().split('T')[0];
-
-                    $("#hiddenStartDate").val(startDate);
-                    $("#hiddenEndDate").val(endDate);
-                    $("#dateFilterForm").submit();
-                } else {
-                    alert("Silakan pilih rentang tanggal terlebih dahulu.");
-                }
-            });
-
-            // 🔹 Tombol Reset ditekan
-            $("#resetDate").on("click", function() {
-                fp.clear();
-                table.search("").draw();
-            });
-        });
-    </script>
 
     <div class="modal fade" id="modalCetakKartu" tabindex="-1" aria-labelledby="modalCetakKartuLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
@@ -208,24 +179,24 @@
 
                 <div class="modal-body">
                     <!-- Filter Periode -->
-                    <div class="row mb-3 align-items-end">
-                        <div class="col-md-3">
-                            <label class="form-label">Dari Tanggal</label>
-                            <input type="date" id="cetakStart" class="form-control" />
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Sampai Tanggal</label>
-                            <input type="date" id="cetakEnd" class="form-control" />
-                        </div>
-                        <div class="col-md-3 d-flex gap-2">
-                            <button class="btn btn-primary" id="btnFilterCetak">
-                                <i class="bi bi-funnel"></i> Filter
-                            </button>
-                            <button class="btn btn-secondary" id="btnResetCetak">
-                                <i class="bi bi-arrow-counterclockwise"></i> Reset
-                            </button>
-                        </div>
-                    </div>
+                    {{-- <div class="row mb-3 align-items-end"> --}}
+                    {{-- <div class="col-md-3"> --}}
+                    {{-- <label class="form-label">Dari Tanggal</label> --}}
+                    {{-- <input type="date" id="cetakStart" class="form-control" /> --}}
+                    {{-- </div> --}}
+                    {{-- <div class="col-md-3"> --}}
+                    {{-- <label class="form-label">Sampai Tanggal</label> --}}
+                    {{-- <input type="date" id="cetakEnd" class="form-control" /> --}}
+                    {{-- </div> --}}
+                    {{-- <div class="col-md-3 d-flex gap-2"> --}}
+                    {{-- <button class="btn btn-primary" id="btnFilterCetak"> --}}
+                    {{-- <i class="bi bi-funnel"></i> Filter --}}
+                    {{-- </button> --}}
+                    {{-- <button class="btn btn-secondary" id="btnResetCetak"> --}}
+                    {{-- <i class="bi bi-arrow-counterclockwise"></i> Reset --}}
+                    {{-- </button> --}}
+                    {{-- </div> --}}
+                    {{-- </div> --}}
 
                     <hr />
 
@@ -281,216 +252,281 @@
             </div>
         </div>
     </div>
-
+@endsection
+@push('js')
     <script>
         $(document).ready(function() {
-            // 🔹 Ambil data dari tabel utama (Uraian, Anggaran, Realisasi, Persentase)
-            function getTabelUtamaData() {
-                const rows = [];
-                $("#datatable tbody tr").each(function() {
-                    const row = {
-                        uraian: $(this).find("td:eq(0)").text().trim(),
-                        anggaran: parseFloat(
-                            $(this)
-                            .find("td:eq(1)")
-                            .text()
-                            .replace(/[^\d.-]/g, "")
-                        ) || 0,
-                        realisasi: parseFloat(
-                            $(this)
-                            .find("td:eq(2)")
-                            .text()
-                            .replace(/[^\d.-]/g, "")
-                        ) || 0,
-                        persen: $(this).find("td:eq(3)").text().trim(),
-                    };
-
-                    // Hanya tambahkan baris jika ada uraian
-                    if (row.uraian) rows.push(row);
-                });
-                return rows;
+            // Function to calculate percentage
+            function calculatePercentage(anggaran, realisasi) {
+                if (parseFloat(anggaran) > 0) {
+                    const percentage = (parseFloat(realisasi) / parseFloat(anggaran)) * 100;
+                    return percentage.toFixed(2).replace('.', ',') + '%';
+                }
+                return '0,00%';
             }
 
-            // 🔹 Render data ke tabel cetak
-            function renderCetakTable(data) {
-                const tbody = $("#tabelCetak tbody");
-                tbody.empty();
-
-                let totalAnggaran = 0;
-                let totalRealisasi = 0;
-
-                data.forEach((item) => {
-                    const isHeader =
-                        item.uraian.toLowerCase() === "penerimaan" ||
-                        item.uraian.toLowerCase() === "belanja";
-
-                    // Jika baris header (penerimaan/belanja), kosongkan nilai angka tapi tetap buat kolom
-                    const anggaranText = isHeader ?
-                        `<span style="color: transparent">1</span>` :
-                        item.anggaran.toLocaleString("id-ID");
-                    const realisasiText = isHeader ?
-                        `<span style="color: transparent">2</span>` :
-                        item.realisasi.toLocaleString("id-ID");
-                    const persenText = isHeader ?
-                        `<span style="color: transparent">3</span>` :
-                        item.persen;
-
-                    // Hitung total hanya untuk baris non-header
-                    if (!isHeader) {
-                        totalAnggaran += item.anggaran;
-                        totalRealisasi += item.realisasi;
-                    }
-
-                    // Tambahkan baris ke tabel cetak
-                    tbody.append(`
-          <tr ${isHeader ? 'class="fw-bold"' : ""}>
-            <td class="text-start">${item.uraian}</td>
-            <td class="text-end">${anggaranText}</td>
-            <td class="text-end">${realisasiText}</td>
-            <td>${persenText}</td>
-          </tr>
-        `);
-                });
-
-                // 🔹 Hitung persentase total (hindari pembagian 0)
-                const persenTotal =
-                    totalAnggaran > 0 ?
-                    ((totalRealisasi / totalAnggaran) * 100).toFixed(2) + "%" :
-                    "0%";
-
-                // Jika mau, tambahkan total di akhir:
-                // tbody.append(`
-            //   <tr class="fw-bold table-secondary">
-            //     <td class="text-end">Total</td>
-            //     <td class="text-end">${totalAnggaran.toLocaleString("id-ID")}</td>
-            //     <td class="text-end">${totalRealisasi.toLocaleString("id-ID")}</td>
-            //     <td>${persenTotal}</td>
-            //   </tr>
-            // `);
+            // Function to format number
+            function formatNumber(num) {
+                return parseFloat(num).toLocaleString('id-ID');
             }
 
-            // 🔹 Saat modal dibuka
-            $("#modalCetakKartu").on("shown.bs.modal", function() {
-                renderCetakTable(getTabelUtamaData());
+            // Function to parse number from formatted string
+            function parseFormattedNumber(str) {
+                return parseFloat(str.replace(/\./g, '').replace(',', '.')) || 0;
+            }
 
-                // Set tanggal cetak otomatis
-                const today = new Date();
-                $("#tanggalCetak").text(
-                    `Tegal, ${today.toLocaleDateString("id-ID", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}`
-                );
+            // Real-time calculation for inputs
+            $(document).on('input', '.anggaran-input, .realisasi-input', function() {
+                updateRowPercentage($(this).closest('tr'));
             });
 
-            // 🔹 Filter tanggal (karena tabel LRA tidak ada tanggal, tombol ini hanya simbolik)
-            $("#btnFilterCetak").on("click", function() {
-                const start = $("#cetakStart").val();
-                const end = $("#cetakEnd").val();
+            // Function to update percentage for a row
+            function updateRowPercentage(row) {
+                // Get anggaran value
+                let anggaran;
+                const anggaranInput = row.find('.anggaran-input');
+                const hiddenAnggaranInput = row.find('.anggaran-value[type="hidden"]');
 
-                if (!start || !end) {
-                    alert("Silakan pilih rentang tanggal terlebih dahulu.");
+                if (anggaranInput.length > 0) {
+                    anggaran = parseFloat(anggaranInput.val()) || 0;
+                } else if (hiddenAnggaranInput.length > 0) {
+                    anggaran = parseFloat(hiddenAnggaranInput.val()) || 0;
+                } else {
+                    const displayedValue = row.find('.tampil-anggaran-value').text();
+                    anggaran = parseFormattedNumber(displayedValue);
+                }
+
+                // Get realisasi value
+                const realisasiInput = row.find('.realisasi-input');
+                const realisasi = parseFloat(realisasiInput.val()) || 0;
+
+                // Update percentage
+                const persen = calculatePercentage(anggaran, realisasi);
+                row.find('.persen-cell').text(persen);
+            }
+
+            // Initialize percentages on page load
+            $('tbody tr').each(function() {
+                if ($(this).find('.persen-cell').length) {
+                    updateRowPercentage($(this));
+                }
+            });
+
+            // Handle filter date button
+            $('#filterDate').on('click', function(e) {
+                e.preventDefault();
+
+                const startDate = $('#startDate').val();
+                const endDate = $('#endDate').val();
+
+                if (!startDate || !endDate) {
+                    alert("Silakan pilih tanggal mulai dan tanggal akhir.");
                     return;
                 }
 
-                // Data tidak difilter karena tabel tidak memiliki kolom tanggal
-                $("#periodeCetakText").text(`${start} s.d. ${end}`);
+                if (new Date(startDate) > new Date(endDate)) {
+                    alert("Tanggal mulai tidak boleh lebih besar dari tanggal akhir.");
+                    return;
+                }
+
+                // Collect all input values
+                const formData = new URLSearchParams();
+                formData.append('start_date', startDate);
+                formData.append('end_date', endDate);
+
+                // Collect admin inputs
+                $('.anggaran-input, .realisasi-input').each(function() {
+                    const name = $(this).attr('name');
+                    const value = $(this).val();
+                    if (name) {
+                        formData.append(name, value);
+                    }
+                });
+
+                // Submit form
+                window.location.href = `{{ route('report.lra') }}?${formData.toString()}`;
             });
 
-            // 🔹 Reset filter
-            $("#btnResetCetak").on("click", function() {
-                $("#cetakStart").val("");
-                $("#cetakEnd").val("");
-                $("#periodeCetakText").text("Semua Periode");
-                renderCetakTable(getTabelUtamaData());
+            // Handle reset button
+            $('#resetDate').on('click', function(e) {
+                e.preventDefault();
+                $('#startDate').val('');
+                $('#endDate').val('');
+                window.location.href = "{{ route('report.lra') }}";
             });
 
-            // 🔹 Cetak
-            $("#btnCetakNow").on("click", function() {
-                const printContents = document.getElementById("printArea").innerHTML;
-                const printWindow = window.open("", "", "height=800,width=1000");
-                printWindow.document.write("<html><head><title>Cetak</title>");
-                printWindow.document.write(
-                    '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">'
+            // Print modal functionality
+            $("#modalCetakKartu").on("shown.bs.modal", function() {
+                updatePrintModal();
+
+                // Set tanggal cetak
+                const today = new Date();
+                $("#tanggalCetak").text(
+                    `Tegal, ${today.toLocaleDateString("id-ID", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+            })}`
                 );
-                printWindow.document.write("</head><body>");
-                printWindow.document.write(printContents);
-                printWindow.document.write("</body></html>");
-                printWindow.document.close();
-                printWindow.print();
             });
-        });
-    </script>
 
-    <script>
-        document
-            .getElementById("btnCetakNow")
-            .addEventListener("click", function() {
+            // Function to update print modal
+            function updatePrintModal() {
+                const tbody = $("#tabelCetak tbody");
+                tbody.empty();
+
+                // Add Penerimaan header
+                tbody.append(`
+            <tr>
+                <td class="text-start fw-bold">Penerimaan</td>
+                <td class="text-end"><span style="color: transparent">1</span></td>
+                <td class="text-end"><span style="color: transparent">2</span></td>
+                <td><span style="color: transparent">3</span></td>
+            </tr>
+        `);
+
+                // Add Penerimaan items
+                $('tbody tr').each(function(index) {
+                    const uraian = $(this).find('td:eq(0)').text().trim();
+                    if (uraian === 'Penerimaan' || uraian === 'Belanja') {
+                        return; // Skip headers
+                    }
+
+                    // Stop after 4 penerimaan items
+                    if (index > 5) return;
+
+                    const anggaranText = $(this).find('.anggaran-input').length > 0 ?
+                        parseFloat($(this).find('.anggaran-input').val()) || 0 :
+                        parseFormattedNumber($(this).find('.tampil-anggaran-value').text());
+
+                    const realisasi = parseFloat($(this).find('.realisasi-input').val()) || 0;
+                    const persen = $(this).find('.persen-cell').text();
+
+                    tbody.append(`
+                <tr>
+                    <td class="text-start">${uraian}</td>
+                    <td class="text-end">${formatNumber(anggaranText)}</td>
+                    <td class="text-end">${formatNumber(realisasi)}</td>
+                    <td>${persen}</td>
+                </tr>
+            `);
+
+                    // Break after 4 items for Penerimaan
+                    if (index === 4) {
+                        // Add Belanja header
+                        tbody.append(`
+                    <tr>
+                        <td class="text-start fw-bold">Belanja</td>
+                        <td class="text-end"><span style="color: transparent">1</span></td>
+                        <td class="text-end"><span style="color: transparent">2</span></td>
+                        <td><span style="color: transparent">3</span></td>
+                    </tr>
+                `);
+                    }
+                });
+
+                // Add Belanja items (skip first 5 rows which are Penerimaan + headers)
+                $('tbody tr').slice(5).each(function() {
+                    const uraian = $(this).find('td:eq(0)').text().trim();
+                    if (uraian === 'Penerimaan' || uraian === 'Belanja') {
+                        return;
+                    }
+
+                    const anggaran = parseFormattedNumber($(this).find('.tampil-anggaran-value').text());
+                    const realisasi = parseFloat($(this).find('.realisasi-input').val()) || 0;
+                    const persen = $(this).find('.persen-cell').text();
+
+                    tbody.append(`
+                <tr>
+                    <td class="text-start">${uraian}</td>
+                    <td class="text-end">${formatNumber(anggaran)}</td>
+                    <td class="text-end">${formatNumber(realisasi)}</td>
+                    <td>${persen}</td>
+                </tr>
+            `);
+                });
+
+                // Update periode text
+                const startDate = $('#startDate').val();
+                const endDate = $('#endDate').val();
+
+                if (startDate && endDate) {
+                    const start = new Date(startDate).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                    const end = new Date(endDate).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                    $('#periodeCetakText').text(`${start} s.d. ${end}`);
+                } else {
+                    $('#periodeCetakText').text('Semua Periode');
+                }
+            }
+
+            // Handle print button
+            $("#btnCetakNow").on("click", function() {
                 const printContent = document.getElementById("printArea").outerHTML;
 
-                // buka jendela baru (tanpa scroll)
-                const printWindow = window.open(
-                    "",
-                    "_blank",
-                    "width=1000,height=800"
-                );
+                const printWindow = window.open("", "_blank", "width=1000,height=800");
 
-                // isi halaman cetak
                 printWindow.document.write(`
-        <html>
-          <head>
-            <title>Cetak Rekap BKU</title>
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-            <style>
-              body {
-                font-family: 'Segoe UI', sans-serif;
-                font-size: 13px;
-                margin: 20px;
-              }
-              table {
-                width: 100%;
-                border-collapse: collapse;
-                page-break-inside: auto;
-              }
-              th, td {
-                padding: 6px;
-                vertical-align: middle;
-                font-size: 12px;
-              }
-              thead {
-                display: table-header-group; /* header ikut di setiap halaman */
-              }
-              tr {
-                page-break-inside: avoid;
-                page-break-after: auto;
-              }
-              h5 {
-                margin-bottom: 15px;
-              }
-              @page {
-                size: A4 landscape; /* agar tabel lebar muat semua */
-                margin: 12mm;
-              }
-              @media print {
-                body { -webkit-print-color-adjust: exact; }
-              }
-            </style>
-          </head>
-          <body>
-            ${printContent}
-          </body>
-        </html>
-      `);
+            <html>
+                <head>
+                    <title>Cetak Laporan Realisasi Anggaran (LRA)</title>
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+                    <style>
+                        body {
+                            font-family: 'Segoe UI', sans-serif;
+                            font-size: 13px;
+                            margin: 20px;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            page-break-inside: auto;
+                        }
+                        th, td {
+                            padding: 6px;
+                            vertical-align: middle;
+                            font-size: 12px;
+                        }
+                        thead {
+                            display: table-header-group;
+                        }
+                        tr {
+                            page-break-inside: avoid;
+                            page-break-after: auto;
+                        }
+                        h5 {
+                            margin-bottom: 15px;
+                        }
+                        @page {
+                            size: A4 landscape;
+                            margin: 12mm;
+                        }
+                        @media print {
+                            body { -webkit-print-color-adjust: exact; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${printContent}
+                </body>
+            </html>
+        `);
 
                 printWindow.document.close();
                 printWindow.focus();
 
-                // jeda supaya render selesai baru print
                 setTimeout(() => {
                     printWindow.print();
                     printWindow.close();
                 }, 800);
             });
+        });
     </script>
 @endpush
