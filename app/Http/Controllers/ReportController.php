@@ -222,9 +222,9 @@ class ReportController extends Controller
             'realisasi_bgn',
             'realisasi_yayasan',
             'realisasi_pihak_lain',
-            'realisasi_bahan_pangan',
-            'realisasi_operasional',
-            'realisasi_sewa'
+            // 'realisasi_bahan_pangan',
+            // 'realisasi_operasional',
+            // 'realisasi_sewa'
         ]);
 
         // Prepare data for JSON response or view
@@ -243,19 +243,19 @@ class ReportController extends Controller
                 [
                     'uraian' => 'Penerimaan dari BGN',
                     'anggaran' => $data['totalPenerimaanBGN'],
-                    'realisasi' => $adminInputs['realisasi_bgn'] ?? 0,
+                    'realisasi' => $adminInputs['realisasi_bgn'] ?? $data['totalPenerimaanBGN'],
                     'input_realisasi_name' => 'realisasi_bgn'
                 ],
                 [
                     'uraian' => 'Penerimaan dari Yayasan',
                     'anggaran' => $data['totalPenerimaanYayasan'],
-                    'realisasi' => $adminInputs['realisasi_yayasan'] ?? 0,
+                    'realisasi' => $adminInputs['realisasi_yayasan'] ?? $data['totalPenerimaanYayasan'],
                     'input_realisasi_name' => 'realisasi_yayasan'
                 ],
                 [
                     'uraian' => 'Penerimaan dari Pihak Lainnya',
                     'anggaran' => $data['totalPenerimaanPihakLain'],
-                    'realisasi' => $adminInputs['realisasi_pihak_lain'] ?? 0,
+                    'realisasi' => $adminInputs['realisasi_pihak_lain'] ?? $data['totalPenerimaanPihakLain'],
                     'input_realisasi_name' => 'realisasi_pihak_lain'
                 ],
             ],
@@ -263,19 +263,19 @@ class ReportController extends Controller
                 [
                     'uraian' => 'Belanja Bahan Pangan',
                     'anggaran' => $data['totalBudgetBahanPangan'],
-                    'realisasi' => $adminInputs['realisasi_bahan_pangan'] ?? $data['totalBahanPokok'],
+                    'realisasi' => $data['totalBahanPokok'] ?? 0,
                     'input_realisasi_name' => 'realisasi_bahan_pangan'
                 ],
                 [
                     'uraian' => 'Belanja Operasional',
                     'anggaran' => $data['totalBudgetOperasional'],
-                    'realisasi' => $adminInputs['realisasi_operasional'] ?? $data['totalBahanOperasional'],
+                    'realisasi' => $data['totalBahanOperasional'] ?? 0,
                     'input_realisasi_name' => 'realisasi_operasional'
                 ],
                 [
                     'uraian' => 'Belanja Sewa',
                     'anggaran' => $data['totalBudgetSewa'],
-                    'realisasi' => $adminInputs['realisasi_sewa'] ?? 0,
+                    'realisasi' => $data['totalBudgetSewa'] ?? 0,
                     'input_realisasi_name' => 'realisasi_sewa'
                 ],
             ]
@@ -323,9 +323,31 @@ class ReportController extends Controller
 
         $anggarans = $queryAnggaran->get();
 
-        $data['totalBudgetBahanPangan'] = $anggarans->sum('budget_porsi_8k') + $anggarans->sum('budget_porsi_10k');
-        $data['totalBudgetOperasional'] = $anggarans->sum('budget_operasional');
-        $data['totalBudgetSewa'] = $anggarans->sum('budget_sewa');
+        // Calculate budget totals
+        $totalBudgetBahanPangan = 0;
+        $totalBudgetOperasional = 0;
+        $totalBudgetSewa = 0;
+
+        foreach ($anggarans as $anggaran) {
+            $anggaranStart = $anggaran->start_date;
+            $anggaranEnd = $anggaran->end_date;
+
+            // Determine the overlap period
+            $overlapStart = $startDate ? max($anggaranStart, \Carbon\Carbon::parse($startDate)) : $anggaranStart;
+            $overlapEnd = $endDate ? min($anggaranEnd, \Carbon\Carbon::parse($endDate)) : $anggaranEnd;
+
+            // Count days in overlap
+            $daysInOverlap = $overlapStart->diffInDays($overlapEnd) + 1;
+
+            // Calculate proportional budgets
+            $totalBudgetBahanPangan += ($anggaran->budget_porsi_8k + $anggaran->budget_porsi_10k) * $daysInOverlap;
+            $totalBudgetOperasional += $anggaran->budget_operasional * $daysInOverlap;
+            $totalBudgetSewa += $anggaran->budget_sewa * $daysInOverlap;
+        }
+
+        $data['totalBudgetBahanPangan'] = $totalBudgetBahanPangan;
+        $data['totalBudgetOperasional'] = $totalBudgetOperasional;
+        $data['totalBudgetSewa'] = $totalBudgetSewa;
 
         return $data;
     }

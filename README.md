@@ -79,7 +79,7 @@
 <!-- `32. Kartu Stock Dibuat Sekalian` -->
 <!-- `33. Stock Opname Dibuat Sekalian` -->
 lpdb
-lra
+<!-- lra -->
 import
 <!-- tabel setting (informasi utama) -->
 dashboard
