@@ -78,8 +78,15 @@
 
 <!-- `32. Kartu Stock Dibuat Sekalian` -->
 <!-- `33. Stock Opname Dibuat Sekalian` -->
-lpdb
+<!-- lpdb -->
 <!-- lra -->
 import
+- bahan baku
+- bahan operasional
+- database gizi
+- sekolah
+- supplier
+- relawan/karyawan
+
 <!-- tabel setting (informasi utama) -->
 dashboard

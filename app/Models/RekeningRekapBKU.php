@@ -21,8 +21,8 @@ class RekeningRekapBKU extends Model
         'satuan',
         'supplier',
         'uraian',
-        'debit',
-        'kredit',
+        'debit', //Pemasukan
+        'kredit', //Pengeluaran
         'saldo',
         'bulan',
         'minggu',

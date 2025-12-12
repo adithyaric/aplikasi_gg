@@ -82,14 +82,83 @@ class ReportController extends Controller
         return view('report.bku', compact('rekeningBKU', 'title'));
     }
 
-    public function lpdb()
+    public function lpdb(Request $request)
     {
-        // RekeningBKU, filter range bulan"
-        // Saldo awal : pemasukan/debit
-        // penerimaan dana : pengeluaran/kredit
-        // sewa ambil dari Anggaran by tanggal (jika ada yg lempat bulan contoh nov 28 - 3 des dan di lpdb tampil yg nov maka tgl 28-30 saja)
         $title = 'LPDB';
-        return view('report.lpdb', ['title' => $title]);
+        $startMonth = $request->input('start_month');
+        $endMonth = $request->input('end_month');
+
+        $data = [];
+
+        if ($startMonth && $endMonth) {
+            $start = \Carbon\Carbon::parse($startMonth . '-01');
+            $end = \Carbon\Carbon::parse($endMonth . '-01')->endOfMonth();
+
+            $current = $start->copy();
+            $monthCounter = 1;
+
+            while ($current <= $end) {
+                $monthStart = $current->copy()->startOfMonth();
+                $monthEnd = $current->copy()->endOfMonth();
+
+                // Get saldo awal
+                $saldoAwal = 0;
+                if ($monthCounter == 1) {
+                    // First month: get last saldo before start date
+                    $lastEntry = RekeningRekapBKU::where('tanggal_transaksi', '<', $monthStart)
+                        ->orderBy('tanggal_transaksi', 'desc')
+                        ->orderBy('id', 'desc')
+                        ->first();
+                    $saldoAwal = $lastEntry ? $lastEntry->saldo : 0;
+                } else {
+                    // Use previous month's saldo akhir
+                    $saldoAwal = $data[$monthCounter - 2]['saldo_akhir'] ?? 0;
+                }
+
+                // Get penerimaan dana (sum of debit from penerimaan types)
+                $penerimaanDana = RekeningRekapBKU::whereBetween('tanggal_transaksi', [$monthStart, $monthEnd])
+                    ->whereIn('jenis_bahan', ['Penerimaan BGN', 'Penerimaan Yayasan', 'Penerimaan Pihak Lainnya'])
+                    ->sum('debit');
+
+                // Get pengeluaran dana
+                $bahanPangan = RekeningRekapBKU::whereBetween('tanggal_transaksi', [$monthStart, $monthEnd])
+                    ->where('jenis_bahan', 'Bahan Pokok')
+                    ->sum('kredit');
+
+                $operasional = RekeningRekapBKU::whereBetween('tanggal_transaksi', [$monthStart, $monthEnd])
+                    ->where('jenis_bahan', 'Bahan Operasional')
+                    ->sum('kredit');
+
+                $sewa = RekeningRekapBKU::whereBetween('tanggal_transaksi', [$monthStart, $monthEnd])
+                    ->where('jenis_bahan', 'Pembayaran Sewa')
+                    ->sum('kredit');
+
+                $totalPengeluaran = $bahanPangan + $operasional + $sewa;
+                $saldoAkhir = $saldoAwal + $penerimaanDana - $totalPengeluaran;
+
+                $data[] = [
+                    'no' => $monthCounter,
+                    'bulan' => $current->locale('id')->format('F'),
+                    'saldo_awal' => $saldoAwal,
+                    'penerimaan_dana' => $penerimaanDana,
+                    'bahan_pangan' => $bahanPangan,
+                    'operasional' => $operasional,
+                    'sewa' => $sewa,
+                    'total' => $totalPengeluaran,
+                    'saldo_akhir' => $saldoAkhir
+                ];
+
+                $current->addMonth();
+                $monthCounter++;
+            }
+        }
+
+        return view('report.lpdb', [
+            'title' => $title,
+            'data' => $data,
+            'startMonth' => $startMonth,
+            'endMonth' => $endMonth
+        ]);
     }
 
     public function lbbp()
@@ -98,7 +167,7 @@ class ReportController extends Controller
 
         $data = RekeningRekapBKU::whereHas('transaction')
             ->with(['transaction.order.items.bahanBaku'])
-            ->where('jenis_bahan', 'bahan pokok')
+            ->where('jenis_bahan', 'Bahan Pokok')
             ->orderBy('tanggal_transaksi', 'asc')
             ->get()
             ->flatMap(function ($rekening) {
@@ -144,7 +213,7 @@ class ReportController extends Controller
     {
         $title = 'LBO';
 
-        $data = RekeningRekapBKU::where('jenis_bahan', 'bahan operasional')
+        $data = RekeningRekapBKU::where('jenis_bahan', 'Bahan Operasional')
             ->orderBy('tanggal_transaksi', 'asc')
             ->get()
             ->map(function ($item) {

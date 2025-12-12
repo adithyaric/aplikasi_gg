@@ -232,7 +232,7 @@ class GajiController extends Controller
                 [
                     'bulan'  => $periode_bulan,
                     'minggu' => $mingguKe,
-                    'jenis_bahan' => 'Pembayaran Operasional',
+                    'jenis_bahan' => 'Bahan Operasional',
                     'nama_bahan'  => 'Gaji Karyawan',
                     'tanggal_transaksi' => now()->format('Y-m-d'),
                 ],
