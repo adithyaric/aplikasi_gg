@@ -47,18 +47,17 @@
                             @csrf
                             <div class="col-md-3">
                                 <input type="file" name="file" class="form-control" accept=".xlsx,.xls,.csv" required>
-                                <div class="form-text">
-                                    Format: Excel/CSV dengan header: nama, kelompok, jenis, kategori, satuan, merek,
-                                    gov_price, ukuran
-                                </div>
+                                {{-- <div class="form-text"> --}}
+                                    {{-- Format: Excel/CSV dengan header: nama, kelompok, jenis, kategori, satuan, merek, gov_price, ukuran --}}
+                                {{-- </div> --}}
                             </div>
                             <div class="col-md-4">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-file-import me-2"></i> Import
                                 </button>
-                                {{-- <a href="{{ asset('templates/bahan_baku_template.xlsx') }}" class="btn btn-success ms-2"> --}}
-                                    {{-- <i class="fas fa-download me-2"></i> Template --}}
-                                {{-- </a> --}}
+                                <a href="{{ asset('templates/template-bahan_baku.csv') }}" class="btn btn-success ms-2">
+                                    <i class="fas fa-download me-2"></i> Template
+                                </a>
                             </div>
                         </form>
                     </div>

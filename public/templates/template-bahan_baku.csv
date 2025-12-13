@@ -1,0 +1,6 @@
+﻿nama,kelompok,jenis,kategori,satuan,merek,gov_price,ukuran
+Beras Merah,Serealia,Beras,"[""cat1"",""cat2""]",kg,Beras Sehat,25000,1.0kg
+Daging Ayam,Protein Hewani,Daging Unggas,"[""cat2""]",kg,Ayam Segar,35000,1.0kg
+Wortel,Sayuran,Umbi,"[""cat3""]",kg,Sayur Organik,18000,1.0kg
+Ikan Lele,Protein Hewani,Ikan Air Tawar,"[""cat1"",""cat3""]",kg,Segar Jaya,28000,1.0kg
+Kentang,Sayuran,Ubi,"[""cat1""]",kg,Sayur Lestari,12000,1.0kg
