@@ -52,7 +52,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h5 class="font-weight-bold">SPPG</h5>
-                                <p class="mb-0">03 Mandai</p>
+                                <p class="mb-0">{{ $setting->nama_sppg ?? '03 Mandai' }}</p>
                             </div>
                             <div class="master-card-content">
                                 <img src="/assets/images/logo-bgn.png" alt="Logo BKU" class="icon-60"
@@ -61,32 +61,32 @@
                         </div>
                         <div class="my-4">
                             <div class="card-number">
-                                <span class="fs-5 me-2">Sulawesi Selatan</span>
+                                <span class="fs-5 me-2">{{ $setting->provinsi ?? 'Sulawesi Selatan' }}</span>
                             </div>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
                             <p class="mb-0">Yayasan</p>
                         </div>
                         <div class="mb-3 d-flex align-items-center justify-content-between">
-                            <h6>Yayasan Mandai</h6>
+                            <h6>{{ $setting->yayasan ?? 'Yayasan Mandai' }}</h6>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
                             <p class="mb-0">SPPI</p>
                         </div>
                         <div class="mb-3 d-flex align-items-center justify-content-between">
-                            <h6>Rina Fatma Sari, S.TR.Sos</h6>
+                            <h6>{{ $setting->nama_sppi ?? 'Rina Fatma Sari, S.TR.Sos' }}</h6>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
                             <p class="mb-0">Akuntan SPPG</p>
                         </div>
                         <div class="mb-3 d-flex align-items-center justify-content-between">
-                            <h6>Nurul Anniza, S.Ak</h6>
+                            <h6>{{ $setting->akuntan_sppg ?? 'Nurul Anniza, S.Ak' }}</h6>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
                             <p class="mb-0">Ahli Gizi</p>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
-                            <h6>Nur Hasmi Halik, S.Gz</h6>
+                            <h6>{{ $setting->ahli_gizi ?? 'Nur Hasmi Halik, S.Gz' }}</h6>
                         </div>
                     </div>
                 </div>

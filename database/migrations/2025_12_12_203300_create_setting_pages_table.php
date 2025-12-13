@@ -11,6 +11,7 @@ class CreateSettingPagesTable extends Migration
         Schema::create('setting_pages', function (Blueprint $table) {
             $table->id();
             $table->string('nama_sppg')->nullable();
+            $table->string('yayasan')->nullable();
             $table->string('kelurahan')->nullable();
             $table->string('kecamatan')->nullable();
             $table->string('kabupaten_kota')->nullable();

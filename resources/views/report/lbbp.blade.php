@@ -83,7 +83,7 @@
                                     @foreach ($data as $index => $item)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item['tanggal']->format('d/m/Y') }}</td>
+                                            <td>{{ $item['tanggal']->format('d M Y') }}</td>
                                             <td>{{ $item['nama_bahan'] }}</td>
                                             <td>{{ number_format($item['kuantitas'], 0, ',', '.') }}</td>
                                             <td>{{ $item['satuan'] }}</td>

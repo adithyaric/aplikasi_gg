@@ -45,7 +45,7 @@
                         <form action="{{ route('import.bahan-baku') }}" method="POST" enctype="multipart/form-data"
                             class="row g-3">
                             @csrf
-                            <div class="col-md-8">
+                            <div class="col-md-3">
                                 <input type="file" name="file" class="form-control" accept=".xlsx,.xls,.csv" required>
                                 <div class="form-text">
                                     Format: Excel/CSV dengan header: nama, kelompok, jenis, kategori, satuan, merek,

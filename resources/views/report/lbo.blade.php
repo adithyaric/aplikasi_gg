@@ -145,7 +145,7 @@
                                     @foreach ($data as $index => $item)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item['tanggal']->format('d/m/Y') }}</td>
+                                            <td>{{ $item['tanggal']->format('d M Y') }}</td>
                                             <td>{{ $item['uraian'] }}</td>
                                             <td>{{ number_format($item['nominal'], 0, ',', '.') }}</td>
                                             {{-- <td>{{ $item['keterangan'] }}</td> --}}

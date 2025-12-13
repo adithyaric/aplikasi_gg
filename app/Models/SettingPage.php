@@ -8,6 +8,7 @@ class SettingPage extends Model
 {
     protected $fillable = [
         'nama_sppg',
+        'yayasan',
         'kelurahan',
         'kecamatan',
         'kabupaten_kota',

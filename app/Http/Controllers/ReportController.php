@@ -28,7 +28,7 @@ class ReportController extends Controller
                 // Skip weekends if needed (optional)
                 // if (!$currentDate->isWeekend()) {
                 $rekapData[] = [
-                    'tanggal' => $currentDate->format('d/m/Y'),
+                    'tanggal' => $currentDate->format('d M Y'),
                     'rencana_total' => $anggaran->total_porsi,
                     'rencana_10k' => $anggaran->porsi_10k,
                     'rencana_8k' => $anggaran->porsi_8k,
@@ -90,9 +90,9 @@ class ReportController extends Controller
 
         $data = [];
 
-        if ($startMonth && $endMonth) {
+        if ($startMonth) {
             $start = \Carbon\Carbon::parse($startMonth . '-01');
-            $end = \Carbon\Carbon::parse($endMonth . '-01')->endOfMonth();
+            $end = \Carbon\Carbon::parse($startMonth . '-01')->endOfMonth();
 
             $current = $start->copy();
             $monthCounter = 1;
@@ -155,9 +155,9 @@ class ReportController extends Controller
 
         return view('report.lpdb', [
             'title' => $title,
-            'data' => $data,
+            'data' => $data, //Looping per-tanggal bukan bulan
             'startMonth' => $startMonth,
-            'endMonth' => $endMonth
+            // 'endMonth' => $endMonth
         ]);
     }
 

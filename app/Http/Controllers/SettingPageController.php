@@ -19,6 +19,7 @@ class SettingPageController extends Controller
     {
         $data = $request->validate([
             'nama_sppg' => 'nullable|string',
+            'yayasan' => 'nullable|string',
             'kelurahan' => 'nullable|string',
             'kecamatan' => 'nullable|string',
             'kabupaten_kota' => 'nullable|string',

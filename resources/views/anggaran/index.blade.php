@@ -84,8 +84,8 @@
                                     @foreach ($anggarans as $anggaran)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $anggaran->start_date->formatId('d/m/Y') }}</td>
-                                            <td>{{ $anggaran->end_date->formatId('d/m/Y') }}</td>
+                                            <td>{{ $anggaran->start_date->formatId('d M Y') }}</td>
+                                            <td>{{ $anggaran->end_date->formatId('d M Y') }}</td>
                                             {{-- <td>{{ $anggaran->sekolah?->nama }}</td> --}}
                                             <td>{{ number_format($anggaran->porsi_8k, 0, ',', '.') }}</td>
                                             <td>{{ number_format($anggaran->porsi_10k, 0, ',', '.') }}</td>
@@ -162,8 +162,31 @@
             // 🔹 Fungsi bantu parse tanggal
             function parseDate(str) {
                 if (!str) return null;
-                const [day, month, year] = str.split("/");
-                return new Date(`${year}-${month}-${day}`);
+
+                // Mapping bulan Indonesia ke nomor bulan
+                const monthMap = {
+                    'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
+                    'Mei': '05', 'Jun': '06', 'Jul': '07', 'Agt': '08',
+                    'Sep': '09', 'Okt': '10', 'Nov': '11', 'Des': '12'
+                };
+
+                // Check if format is "d M Y" (e.g., "10 Des 2025")
+                const parts = str.trim().split(/\s+/);
+                if (parts.length === 3) {
+                    const [day, monthName, year] = parts;
+                    const month = monthMap[monthName];
+                    if (month) {
+                        return new Date(`${year}-${month}-${day.padStart(2, '0')}`);
+                    }
+                }
+
+                // Fallback: format "d/m/Y" (e.g., "10/12/2025")
+                if (str.includes('/')) {
+                    const [day, month, year] = str.split("/");
+                    return new Date(`${year}-${month}-${day}`);
+                }
+
+                return null;
             }
 
             // 🔹 Tombol Filter ditekan

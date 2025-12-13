@@ -37,8 +37,13 @@
                             @csrf
 
                             <div class="row g-3">
+                                <div class="col-6">
+                                    <label class="form-label">Yayasan</label>
+                                    <input type="text" name="yayasan" class="form-control"
+                                        value="{{ $setting->yayasan ?? '' }}">
+                                </div>
 
-                                <div class="col-12">
+                                <div class="col-6">
                                     <label class="form-label">Nama SPPG</label>
                                     <input type="text" name="nama_sppg" class="form-control"
                                         value="{{ $setting->nama_sppg ?? '' }}">

@@ -43,11 +43,11 @@
                                         <input type="month" id="startMonth" class="form-control form-control-sm"
                                             value="{{ $startMonth }}" />
                                     </div>
-                                    <div class="col-auto">
-                                        <label class="form-label mb-1">Sampai Bulan</label>
-                                        <input type="month" id="endMonth" class="form-control form-control-sm"
-                                            value="{{ $endMonth }}" />
-                                    </div>
+                                    {{-- <div class="col-auto"> --}}
+                                        {{-- <label class="form-label mb-1">Sampai Bulan</label> --}}
+                                        {{-- <input type="month" id="endMonth" class="form-control form-control-sm" --}}
+                                            {{-- value="{{ $endMonth }}" /> --}}
+                                    {{-- </div> --}}
                                     <div class="col-auto mt-4">
                                         <button id="filterMonth" class="btn btn-sm btn-primary">
                                             <i class="bi bi-funnel"></i> Filter
@@ -85,7 +85,7 @@
                                             <th>(5)</th>
                                             <th>(6)</th>
                                             <th>(7)=(4)+(5)+(6)</th>
-                                            <th>(8)=(3)-(7)</th>
+                                            <th>(8)=(2)+(3)-(7)</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -160,6 +160,17 @@
                                         <th>Operasional</th>
                                         <th>Sewa</th>
                                     </tr>
+                                    <tr>
+                                        <th>(1)</th>
+                                        <th></th>
+                                        <th>(2)</th>
+                                        <th>(3)</th>
+                                        <th>(4)</th>
+                                        <th>(5)</th>
+                                        <th>(6)</th>
+                                        <th>(7)=(4)+(5)+(6)</th>
+                                        <th>(8)=(2)+(3)-(7)</th>
+                                    </tr>
                                 </thead>
                                 <tbody></tbody>
                             </table>
@@ -199,18 +210,18 @@
                 const startMonth = $('#startMonth').val();
                 const endMonth = $('#endMonth').val();
 
-                if (!startMonth || !endMonth) {
+                if (!startMonth) {
                     alert("Silakan pilih bulan mulai dan bulan akhir.");
                     return;
                 }
 
-                if (startMonth > endMonth) {
-                    alert("Bulan mulai tidak boleh lebih besar dari bulan akhir.");
-                    return;
-                }
+                // if (startMonth > endMonth) {
+                //     alert("Bulan mulai tidak boleh lebih besar dari bulan akhir.");
+                //     return;
+                // }
 
                 window.location.href =
-                    `{{ route('report.lpdb') }}?start_month=${startMonth}&end_month=${endMonth}`;
+                    `{{ route('report.lpdb') }}?start_month=${startMonth}`;
             });
 
             $('#resetMonth').on('click', function(e) {

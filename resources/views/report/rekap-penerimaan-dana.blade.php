@@ -75,7 +75,7 @@
                                     @foreach ($rekeningKoranVa as $item)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->tanggal_transaksi->format('d/m/Y') }}</td>
+                                            <td>{{ $item->tanggal_transaksi->format('d M Y') }}</td>
                                             <td>{{ $item->uraian }}</td>
                                             <td>{{ $item->minggu ?? '' }}</td>
                                             <td>{{ number_format($item->kredit, 0, ',', '.') }}</td>
