@@ -45,6 +45,52 @@
     <!-- SIDEBAR MENU-->
     <div class="sidebar-body pt-0 data-scrollbar">
         <div class="sidebar-list">
+            <!-- Header Info -->
+            <div class="card credit-card-widget" data-aos="fade-up" data-aos-delay="900">
+                <div class="pb-4 border-0 card-header">
+                    <div class="p-4 rounded primary-gradient-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="font-weight-bold">SPPG</h5>
+                                <p class="mb-0">03 Mandai</p>
+                            </div>
+                            <div class="master-card-content">
+                                <img src="/assets/images/logo-bgn.png" alt="Logo BKU" class="icon-60"
+                                    style="width: 60px; height: 60px; object-fit: contain" />
+                            </div>
+                        </div>
+                        <div class="my-4">
+                            <div class="card-number">
+                                <span class="fs-5 me-2">Sulawesi Selatan</span>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <p class="mb-0">Yayasan</p>
+                        </div>
+                        <div class="mb-3 d-flex align-items-center justify-content-between">
+                            <h6>Yayasan Mandai</h6>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <p class="mb-0">SPPI</p>
+                        </div>
+                        <div class="mb-3 d-flex align-items-center justify-content-between">
+                            <h6>Rina Fatma Sari, S.TR.Sos</h6>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <p class="mb-0">Akuntan SPPG</p>
+                        </div>
+                        <div class="mb-3 d-flex align-items-center justify-content-between">
+                            <h6>Nurul Anniza, S.Ak</h6>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <p class="mb-0">Ahli Gizi</p>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h6>Nur Hasmi Halik, S.Gz</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- Sidebar Menu Start -->
             <ul class="navbar-nav iq-main-menu" id="sidebar-menu">
                 <li class="nav-item static-item">
@@ -750,6 +796,11 @@
                         </i>
                         <span class="item-name">LRA</span>
                     </a>
+                </li>
+                <li class="nav-item mb-5">
+                    <div style="color: white !important; height:300px !important;">
+                        ---
+                    </div>
                 </li>
             </ul>
             <!-- Sidebar Menu End -->

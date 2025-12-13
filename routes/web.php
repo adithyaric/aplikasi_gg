@@ -9,6 +9,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GajiController;
 use App\Http\Controllers\GiziController;
+use App\Http\Controllers\ImportController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\KategoriKaryawanController;
 use App\Http\Controllers\MenuController;
@@ -116,4 +117,11 @@ Route::middleware('auth')->group(function () {
         Route::get('lbs', 'lbs')->name('report.lbs');
         Route::get('lra', 'lra')->name('report.lra');
     });
+
+    Route::post('/import/bahan-baku', [ImportController::class, 'importBahanBaku'])->name('import.bahan-baku');
+    Route::post('/import/bahan-operasional', [ImportController::class, 'importBahanOperasional'])->name('import.bahan-operasional');
+    Route::post('/import/gizi', [ImportController::class, 'importGizi'])->name('import.gizi');
+    Route::post('/import/sekolah', [ImportController::class, 'importSekolah'])->name('import.sekolah');
+    Route::post('/import/supplier', [ImportController::class, 'importSupplier'])->name('import.supplier');
+    Route::post('/import/karyawan', [ImportController::class, 'importKaryawan'])->name('import.karyawan');
 });

@@ -81,8 +81,8 @@
 <!-- lpdb -->
 <!-- lra -->
 import
-- bahan baku
-- bahan operasional
+<!-- - bahan baku -->
+<!-- - bahan operasional -->
 - database gizi
 - sekolah
 - supplier
