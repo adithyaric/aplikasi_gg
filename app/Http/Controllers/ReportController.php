@@ -86,78 +86,64 @@ class ReportController extends Controller
     {
         $title = 'LPDB';
         $startMonth = $request->input('start_month');
-        $endMonth = $request->input('end_month');
 
-        $data = [];
+        $query = RekeningRekapBKU::query();
 
         if ($startMonth) {
-            $start = \Carbon\Carbon::parse($startMonth . '-01');
+            $start = \Carbon\Carbon::parse($startMonth . '-01')->startOfMonth();
             $end = \Carbon\Carbon::parse($startMonth . '-01')->endOfMonth();
+            $query->whereBetween('tanggal_transaksi', [$start, $end]);
 
-            $current = $start->copy();
-            $monthCounter = 1;
+            // Get initial saldo only when filter is applied
+            $lastEntry = RekeningRekapBKU::where('tanggal_transaksi', '<', $start)
+                ->orderBy('tanggal_transaksi', 'desc')
+                ->orderBy('id', 'desc')
+                ->first();
 
-            while ($current <= $end) {
-                $monthStart = $current->copy()->startOfMonth();
-                $monthEnd = $current->copy()->endOfMonth();
+            $saldoAwal = $lastEntry ? $lastEntry->saldo : 0;
+        } else {
+            $saldoAwal = 0; // No initial saldo when showing all data
+        }
 
-                // Get saldo awal
-                $saldoAwal = 0;
-                if ($monthCounter == 1) {
-                    // First month: get last saldo before start date
-                    $lastEntry = RekeningRekapBKU::where('tanggal_transaksi', '<', $monthStart)
-                        ->orderBy('tanggal_transaksi', 'desc')
-                        ->orderBy('id', 'desc')
-                        ->first();
-                    $saldoAwal = $lastEntry ? $lastEntry->saldo : 0;
-                } else {
-                    // Use previous month's saldo akhir
-                    $saldoAwal = $data[$monthCounter - 2]['saldo_akhir'] ?? 0;
-                }
+        $rekeningData = $query->orderBy('tanggal_transaksi', 'asc')
+            ->orderBy('id', 'asc')
+            ->get();
 
-                // Get penerimaan dana (sum of debit from penerimaan types)
-                $penerimaanDana = RekeningRekapBKU::whereBetween('tanggal_transaksi', [$monthStart, $monthEnd])
-                    ->whereIn('jenis_bahan', ['Penerimaan BGN', 'Penerimaan Yayasan', 'Penerimaan Pihak Lainnya'])
-                    ->sum('debit');
+        $data = [];
+        $counter = 1;
 
-                // Get pengeluaran dana
-                $bahanPangan = RekeningRekapBKU::whereBetween('tanggal_transaksi', [$monthStart, $monthEnd])
-                    ->where('jenis_bahan', 'Bahan Pokok')
-                    ->sum('kredit');
+        foreach ($rekeningData as $rekening) {
+            $penerimaanDana = in_array($rekening->jenis_bahan, ['Penerimaan BGN', 'Penerimaan Yayasan', 'Penerimaan Pihak Lainnya'])
+                ? $rekening->debit : 0;
 
-                $operasional = RekeningRekapBKU::whereBetween('tanggal_transaksi', [$monthStart, $monthEnd])
-                    ->where('jenis_bahan', 'Bahan Operasional')
-                    ->sum('kredit');
+            $bahanPangan = $rekening->jenis_bahan == 'Bahan Pokok' ? $rekening->kredit : 0;
+            $operasional = $rekening->jenis_bahan == 'Bahan Operasional' ? $rekening->kredit : 0;
+            $sewa = $rekening->jenis_bahan == 'Pembayaran Sewa' ? $rekening->kredit : 0;
 
-                $sewa = RekeningRekapBKU::whereBetween('tanggal_transaksi', [$monthStart, $monthEnd])
-                    ->where('jenis_bahan', 'Pembayaran Sewa')
-                    ->sum('kredit');
+            $totalPengeluaran = $bahanPangan + $operasional + $sewa;
+            $saldoAkhir = $saldoAwal + $penerimaanDana - $totalPengeluaran;
 
-                $totalPengeluaran = $bahanPangan + $operasional + $sewa;
-                $saldoAkhir = $saldoAwal + $penerimaanDana - $totalPengeluaran;
+            $data[] = [
+                'no' => $counter,
+                'tanggal' => $rekening->tanggal_transaksi->format('d F Y'),
+                'saldo_awal' => $saldoAwal,
+                'penerimaan_dana' => $penerimaanDana,
+                'bahan_pangan' => $bahanPangan,
+                'operasional' => $operasional,
+                'sewa' => $sewa,
+                'total' => $totalPengeluaran,
+                'saldo_akhir' => $saldoAkhir,
+                'rekening_id' => $rekening->id
+            ];
 
-                $data[] = [
-                    'no' => $monthCounter,
-                    'bulan' => $current->locale('id')->format('F'),
-                    'saldo_awal' => $saldoAwal,
-                    'penerimaan_dana' => $penerimaanDana,
-                    'bahan_pangan' => $bahanPangan,
-                    'operasional' => $operasional,
-                    'sewa' => $sewa,
-                    'total' => $totalPengeluaran,
-                    'saldo_akhir' => $saldoAkhir
-                ];
-
-                $current->addMonth();
-                $monthCounter++;
-            }
+            $saldoAwal = $saldoAkhir;
+            $counter++;
         }
 
         return view('report.lpdb', [
             'title' => $title,
-            'data' => $data, //Looping per-tanggal bukan bulan
+            'data' => $data,
             'startMonth' => $startMonth,
-            // 'endMonth' => $endMonth
         ]);
     }
 

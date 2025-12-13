@@ -44,9 +44,9 @@
                                             value="{{ $startMonth }}" />
                                     </div>
                                     {{-- <div class="col-auto"> --}}
-                                        {{-- <label class="form-label mb-1">Sampai Bulan</label> --}}
-                                        {{-- <input type="month" id="endMonth" class="form-control form-control-sm" --}}
-                                            {{-- value="{{ $endMonth }}" /> --}}
+                                    {{-- <label class="form-label mb-1">Sampai Bulan</label> --}}
+                                    {{-- <input type="month" id="endMonth" class="form-control form-control-sm" --}}
+                                    {{-- value="{{ $endMonth }}" /> --}}
                                     {{-- </div> --}}
                                     <div class="col-auto mt-4">
                                         <button id="filterMonth" class="btn btn-sm btn-primary">
@@ -64,7 +64,7 @@
                                     <thead class="align-middle text-center">
                                         <tr>
                                             <th rowspan="2">No</th>
-                                            <th rowspan="2">Bulan</th>
+                                            <th rowspan="2">Tanggal</th>
                                             <th rowspan="2">Saldo Awal</th>
                                             <th rowspan="2">Penerimaan Dana</th>
                                             <th colspan="3">Pengeluaran Dana</th>
@@ -92,25 +92,21 @@
                                         @forelse($data as $item)
                                             <tr>
                                                 <td class="text-center">{{ $item['no'] }}</td>
-                                                <td>{{ $item['bulan'] }}</td>
+                                                <td>{{ $item['tanggal'] }}</td>
                                                 <td class="text-end">Rp
-                                                    {{ number_format($item['saldo_awal'], 0, ',', '.') }}
-                                                </td>
+                                                    {{ number_format($item['saldo_awal'], 0, ',', '.') }}</td>
                                                 <td class="text-end">Rp
                                                     {{ number_format($item['penerimaan_dana'], 0, ',', '.') }}</td>
                                                 <td class="text-end">Rp
-                                                    {{ number_format($item['bahan_pangan'], 0, ',', '.') }}
-                                                </td>
+                                                    {{ number_format($item['bahan_pangan'], 0, ',', '.') }}</td>
                                                 <td class="text-end">Rp
-                                                    {{ number_format($item['operasional'], 0, ',', '.') }}
-                                                </td>
+                                                    {{ number_format($item['operasional'], 0, ',', '.') }}</td>
                                                 <td class="text-end">Rp {{ number_format($item['sewa'], 0, ',', '.') }}
                                                 </td>
                                                 <td class="text-end">Rp {{ number_format($item['total'], 0, ',', '.') }}
                                                 </td>
                                                 <td class="text-end">Rp
-                                                    {{ number_format($item['saldo_akhir'], 0, ',', '.') }}
-                                                </td>
+                                                    {{ number_format($item['saldo_akhir'], 0, ',', '.') }}</td>
                                             </tr>
                                         @empty
                                             <tr>
@@ -148,7 +144,7 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th rowspan="2">No</th>
-                                        <th rowspan="2">Bulan</th>
+                                        <th rowspan="2">Tanggal</th>
                                         <th rowspan="2">Saldo Awal</th>
                                         <th rowspan="2">Penerimaan Dana</th>
                                         <th colspan="3">Pengeluaran Dana</th>
@@ -211,8 +207,18 @@
                 const endMonth = $('#endMonth').val();
 
                 if (!startMonth) {
-                    alert("Silakan pilih bulan mulai dan bulan akhir.");
+                    alert("Silakan pilih bulan.");
                     return;
+                }
+
+                if (startMonth) {
+                    const start = new Date(startMonth + '-01').toLocaleDateString('id-ID', {
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                    $('#periodeLPDB').text(`${start}`);
+                } else {
+                    $('#periodeLPDB').text('Semua Periode');
                 }
 
                 // if (startMonth > endMonth) {

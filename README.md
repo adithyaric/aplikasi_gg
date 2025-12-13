@@ -78,7 +78,7 @@
 
 <!-- `32. Kartu Stock Dibuat Sekalian` -->
 <!-- `33. Stock Opname Dibuat Sekalian` -->
-revisi lpdb
+<!-- lpdb -->
 <!-- lra -->
 <!-- import -->
 <!-- - bahan baku -->
