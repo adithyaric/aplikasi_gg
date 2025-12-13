@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\SettingPage;
+// use App\Models\SettingPage;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -30,6 +30,6 @@ class AppServiceProvider extends ServiceProvider
             return $this->locale('id')->translatedFormat($format);
         });
 
-        view()->share('setting', SettingPage::first());
+        // view()->share('setting', SettingPage::first());
     }
 }
