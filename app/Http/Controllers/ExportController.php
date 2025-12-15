@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Absensi;
 use Carbon\Carbon;
 use App\Models\Anggaran;
+use App\Models\Gaji;
 use App\Models\Karyawan;
 use App\Models\Sekolah;
 use App\Models\Supplier;
@@ -208,5 +210,104 @@ class ExportController extends Controller
                 ];
             }
         }, 'RELAWAN_' . date('Y-m-d_H-i-T') . '.xlsx');
+    }
+
+    public function exportAbsensi(Request $request, $tanggal)
+    {
+        $absensis = Absensi::with('karyawan.kategori')
+            ->whereDate('tanggal', $tanggal)
+            ->get();
+
+        $hadir = $absensis->where('status', 'hadir')->count();
+        $tidakHadir = $absensis->where('status', 'tidak_hadir')->count();
+
+        return Excel::download(new class($absensis, $tanggal, $hadir, $tidakHadir) implements \Maatwebsite\Excel\Concerns\FromView, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            private $absensis;
+            private $tanggal;
+            private $hadir;
+            private $tidakHadir;
+
+            public function __construct($absensis, $tanggal, $hadir, $tidakHadir)
+            {
+                $this->absensis = $absensis;
+                $this->tanggal = $tanggal;
+                $this->hadir = $hadir;
+                $this->tidakHadir = $tidakHadir;
+            }
+
+            public function view(): \Illuminate\Contracts\View\View
+            {
+                return view('exports.absensi', [
+                    'absensis' => $this->absensis,
+                    'tanggal' => $this->tanggal,
+                    'hadir' => $this->hadir,
+                    'tidakHadir' => $this->tidakHadir,
+                ]);
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 15,
+                    'B' => 25,
+                    'C' => 15,
+                    'D' => 15,
+                ];
+            }
+        }, 'ABSENSI_' . Carbon::parse($tanggal)->format('Y-m-d') . '.xlsx');
+    }
+
+    public function exportGaji(Request $request, $tanggal_mulai, $tanggal_akhir)
+    {
+        $gajis = Gaji::with(['karyawan.kategori'])
+            ->whereDate('tanggal_mulai', $tanggal_mulai)
+            ->whereDate('tanggal_akhir', $tanggal_akhir)
+            ->get();
+
+        $totalKaryawan = $gajis->count();
+        $totalGaji = $gajis->sum('total_gaji');
+        $totalHadir = $gajis->sum('jumlah_hadir');
+
+        return Excel::download(new class($gajis, $tanggal_mulai, $tanggal_akhir, $totalKaryawan, $totalGaji, $totalHadir) implements \Maatwebsite\Excel\Concerns\FromView, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            private $gajis;
+            private $tanggal_mulai;
+            private $tanggal_akhir;
+            private $totalKaryawan;
+            private $totalGaji;
+            private $totalHadir;
+
+            public function __construct($gajis, $tanggal_mulai, $tanggal_akhir, $totalKaryawan, $totalGaji, $totalHadir)
+            {
+                $this->gajis = $gajis;
+                $this->tanggal_mulai = $tanggal_mulai;
+                $this->tanggal_akhir = $tanggal_akhir;
+                $this->totalKaryawan = $totalKaryawan;
+                $this->totalGaji = $totalGaji;
+                $this->totalHadir = $totalHadir;
+            }
+
+            public function view(): \Illuminate\Contracts\View\View
+            {
+                return view('exports.gaji', [
+                    'gajis' => $this->gajis,
+                    'tanggal_mulai' => $this->tanggal_mulai,
+                    'tanggal_akhir' => $this->tanggal_akhir,
+                    'totalKaryawan' => $this->totalKaryawan,
+                    'totalGaji' => $this->totalGaji,
+                    'totalHadir' => $this->totalHadir,
+                ]);
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 15,
+                    'B' => 25,
+                    'C' => 15,
+                    'D' => 15,
+                    'E' => 15,
+                ];
+            }
+        }, 'GAJI_' . Carbon::parse($tanggal_mulai)->format('Y-m-d') . '_' . Carbon::parse($tanggal_akhir)->format('Y-m-d') . '.xlsx');
     }
 }

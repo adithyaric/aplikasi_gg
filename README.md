@@ -104,8 +104,8 @@ export :
 <!-- - sekolah -->
 <!-- - supplier -->
 <!-- - relawan -->
-- absensi
-- gaji
+<!-- - absensi -->
+<!-- - gaji -->
 - rekap menu
 - lembar po
 - bast

@@ -100,6 +100,12 @@
                                                     data-akhir="{{ $period['tanggal_akhir']->format('Y-m-d') }}">
                                                     Detail
                                                 </button>
+                                                <a href="{{ route('export.gaji', [
+                                                        'tanggal_mulai' => $period['tanggal_mulai']->format('Y-m-d'),
+                                                        'tanggal_akhir' => $period['tanggal_akhir']->format('Y-m-d'),
+                                                    ]) }}" class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-file-export"></i> Export
+                                                </a>
                                             </td>
                                         </tr>
                                     @empty

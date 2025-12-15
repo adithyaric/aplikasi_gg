@@ -81,7 +81,9 @@
                                                     data-tanggal="{{ $tanggal }}">
                                                     <i class="fas fa-eye"></i> Detail
                                                 </button>
-
+                                                <a href="{{ route('export.absensi', ['tanggal' => $tanggal]) }}" class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-file-export"></i> Export
+                                                </a>
                                                 @if ($confirmed < count($items))
                                                     <button type="button"
                                                         class="btn btn-sm btn-primary btn-bulk-confirm-absensi"
