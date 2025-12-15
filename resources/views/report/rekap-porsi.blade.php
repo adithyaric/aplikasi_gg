@@ -57,6 +57,10 @@
                                         data-bs-target="#modalCetakKartu">
                                         <i class="bi bi-printer"></i> Cetak Rekap Porsi
                                     </button>
+                                    <a href="{{ route('export.rekap-porsi') }}" class="btn btn-warning ms-2">
+                                        // Filter by date!!!
+                                        <i class="fas fa-file-export me-2"></i> Export
+                                    </a>
                                 </div>
                             </div>
 

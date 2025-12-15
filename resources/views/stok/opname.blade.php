@@ -76,9 +76,14 @@
                             <button class="btn btn-success" id="btnSaveOpname">
                                 <i class="bi bi-save"></i> Save Stok Opname
                             </button>
+                            <div class="d-flex gap-2">
                             <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalCetakKartu">
                                 <i class="bi bi-printer"></i> Cetak Stok Opname
                             </button>
+                                <button class="btn btn-info" id="btnExportOpname">
+                                    <i class="bi bi-file-earmark-excel"></i> Export
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -479,6 +484,19 @@
                     printWindow.close();
                 }, 800);
             });
+        });
+    </script>
+    <script>
+        // Export button functionality
+        document.getElementById("btnExportOpname").addEventListener("click", function() {
+            const tglStockOpname = document.getElementById("tglStockOpname").value;
+
+            if (!tglStockOpname) {
+                alert('Pilih tanggal stok opname terlebih dahulu!');
+                return;
+            }
+
+            window.location.href = '{{ route('export.opname-stok') }}?adjustment_date=' + tglStockOpname;
         });
     </script>
 @endpush

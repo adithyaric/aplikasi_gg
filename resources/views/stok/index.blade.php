@@ -11,6 +11,11 @@
                             <h3>DAPUR BERGIZI</h3>
                             <p>Makan Sehat Bergizi</p>
                         </div>
+                        <div>
+                            <a href="{{ route('export.stok') }}" class="btn btn-warning ms-2">
+                                <i class="fas fa-file-export me-2"></i> Export
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

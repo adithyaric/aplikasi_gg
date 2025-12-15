@@ -157,6 +157,9 @@
                             <button class="btn btn-secondary" id="btnResetCetak">
                                 <i class="bi bi-arrow-counterclockwise"></i> Reset
                             </button>
+                            <button class="btn btn-warning" id="btnExportKartu">
+                                <i class="bi bi-file-earmark-excel"></i> Export
+                            </button>
                         </div>
                     </div>
 
@@ -576,6 +579,29 @@
             $("#datatable").on("input", ".stok-awal, .masuk, .keluar, .harga", function() {
                 hitungPersediaan();
             });
+        });
+    </script>
+    <script>
+        // Export button functionality
+        $('#btnExportKartu').on('click', function() {
+            const selected = $('#selectBahan option:selected');
+            const bahanId = selected.val();
+            const type = selected.data('type');
+            const startDate = $('#cetakStart').val();
+            const endDate = $('#cetakEnd').val();
+
+            if (!bahanId) {
+                alert('Pilih bahan terlebih dahulu!');
+                return;
+            }
+
+            let url = '{{ route('export.kartu-stok') }}?bahan_id=' + bahanId + '&type=' + type;
+
+            if (startDate && endDate) {
+                url += '&start_date=' + startDate + '&end_date=' + endDate;
+            }
+
+            window.location.href = url;
         });
     </script>
 @endpush

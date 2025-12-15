@@ -135,4 +135,7 @@ Route::middleware('auth')->group(function () {
     Route::get('export-excel/relawan', [ExportController::class, 'exportRelawan'])->name('export.relawan');
     Route::get('export-excel/absensi/{tanggal}', [ExportController::class, 'exportAbsensi'])->name('export.absensi');
     Route::get('export-excel/gaji/{tanggal_mulai}/{tanggal_akhir}', [ExportController::class, 'exportGaji'])->name('export.gaji');
+    Route::get('export-excel/stok', [ExportController::class, 'exportStok'])->name('export.stok');
+    Route::get('export-excel/kartu-stok', [ExportController::class, 'exportKartuStok'])->name('export.kartu-stok');
+    Route::get('export-excel/opname-stok', [ExportController::class, 'exportOpnameStok'])->name('export.opname-stok');
 });

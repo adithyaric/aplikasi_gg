@@ -109,6 +109,6 @@ export :
 - rekap menu
 - lembar po
 - bast
-- stock
-- kartu stock
-- stock opname
+<!-- - stock -->
+<!-- - kartu stock -->
+<!-- - stock opname -->
