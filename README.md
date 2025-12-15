@@ -103,7 +103,7 @@ export :
 - lra
 <!-- - sekolah -->
 <!-- - supplier -->
-- relawan
+<!-- - relawan -->
 - absensi
 - gaji
 - rekap menu

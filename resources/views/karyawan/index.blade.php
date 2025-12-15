@@ -56,6 +56,9 @@
                                 <a href="{{ asset('templates/template-karyawan.csv') }}" class="btn btn-success ms-2">
                                     <i class="fas fa-download me-2"></i> Template
                                 </a>
+                                <a href="{{ route('export.relawan') }}" class="btn btn-warning ms-2">
+                                    <i class="fas fa-file-export me-2"></i> Export
+                                </a>
                             </div>
                         </form>
                     </div>

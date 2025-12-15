@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Anggaran;
+use App\Models\Karyawan;
 use App\Models\Sekolah;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
@@ -139,7 +140,7 @@ class ExportController extends Controller
                     'G' => 15,
                 ];
             }
-        }, 'SEKOLAH_' . date('Y-m-d_H-i') . '.xlsx');
+        }, 'SEKOLAH_' . date('Y-m-d_H-i-T') . '.xlsx');
     }
 
     public function exportSupplier()
@@ -172,6 +173,40 @@ class ExportController extends Controller
                     'F' => 30,
                 ];
             }
-        }, 'SUPPLIER_' . date('Y-m-d_H-i') . '.xlsx');
+        }, 'SUPPLIER_' . date('Y-m-d_H-i-T') . '.xlsx');
+    }
+
+    public function exportRelawan()
+    {
+        $karyawans = Karyawan::with('kategori')->get();
+
+        return Excel::download(new class($karyawans) implements \Maatwebsite\Excel\Concerns\FromView, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            private $karyawans;
+
+            public function __construct($karyawans)
+            {
+                $this->karyawans = $karyawans;
+            }
+
+            public function view(): \Illuminate\Contracts\View\View
+            {
+                return view('exports.relawan', [
+                    'karyawans' => $this->karyawans,
+                ]);
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 15,
+                    'B' => 15,
+                    'C' => 25,
+                    'D' => 15,
+                    'E' => 30,
+                    'F' => 15,
+                    'G' => 40,
+                ];
+            }
+        }, 'RELAWAN_' . date('Y-m-d_H-i-T') . '.xlsx');
     }
 }
