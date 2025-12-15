@@ -1,25 +1,25 @@
 @extends('layouts.master')
 @section('header')
-<!-- Nav Header Component Start -->
-<div class="iq-navbar-header" style="height: 215px;">
-    <div class="container-fluid iq-container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="flex-wrap d-flex justify-content-between align-items-center">
-                    <div>
-                        <h3>DAPUR BERGIZI</h3>
-                        <p>Makan Sehat Bergizi</p>
+    <!-- Nav Header Component Start -->
+    <div class="iq-navbar-header" style="height: 215px;">
+        <div class="container-fluid iq-container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="flex-wrap d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3>DAPUR BERGIZI</h3>
+                            <p>Makan Sehat Bergizi</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="iq-header-img">
-        <img src="{{ asset('assets/images/dashboard/top-header.png') }}" alt="header"
-            class="theme-color-default-img img-fluid w-100 h-100 animated-scaleX">
+        <div class="iq-header-img">
+            <img src="{{ asset('assets/images/dashboard/top-header.png') }}" alt="header"
+                class="theme-color-default-img img-fluid w-100 h-100 animated-scaleX">
+        </div>
     </div>
-</div>
 @endsection
 @section('container')
     <!-- CONTAIN DASHBOARD -->
@@ -34,15 +34,15 @@
                         <div class="card h-100" data-aos="fade-up" data-aos-delay="700">
                             <div class="card-body d-flex align-items-center">
                                 <div class="bg-success-subtle rounded p-3 me-3">
-                                    <svg class="icon-24" xmlns="http://www.w3.org/2000/svg" width="24"
-                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg class="icon-24" xmlns="http://www.w3.org/2000/svg" width="24" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
                                 <div>
                                     <p class="mb-2 fw-semibold">Total Pemasukan</p>
-                                    <h5 class="counter mb-0">Rp 560.000.000</h5>
+                                    <h5 class="counter mb-0">Rp {{ number_format($totalPemasukan, 0, ',', '.') }}</h5>
                                 </div>
                             </div>
                         </div>
@@ -60,7 +60,7 @@
                                 </div>
                                 <div>
                                     <p class="mb-2 fw-semibold">Total Pengeluaran</p>
-                                    <h5 class="counter mb-0">Rp 12.500.000</h5>
+                                    <h5 class="counter mb-0">Rp {{ number_format($totalPengeluaran, 0, ',', '.') }}</h5>
                                 </div>
                             </div>
                         </div>
@@ -78,7 +78,7 @@
                                 </div>
                                 <div>
                                     <p class="mb-2 fw-semibold">Total Seluruh Porsi</p>
-                                    <h5 class="counter mb-0">122.400</h5>
+                                    <h5 class="counter mb-0">{{ number_format($totalPorsi, 0, ',', '.') }}</h5>
                                 </div>
                             </div>
                         </div>
@@ -99,7 +99,7 @@
                                 </div>
                                 <div>
                                     <p class="mb-2 fw-semibold">Pemasukan 2 Mingguan</p>
-                                    <h5 class="counter mb-0">Rp 280.000.000</h5>
+                                    <h5 class="counter mb-0">Rp {{ number_format($pemasukan2Mingguan, 0, ',', '.') }}</h5>
                                 </div>
                             </div>
                         </div>
@@ -117,7 +117,7 @@
                                 </div>
                                 <div>
                                     <p class="mb-2 fw-semibold">Pengeluaran 2 Mingguan</p>
-                                    <h5 class="counter mb-0">Rp 92.500.000</h5>
+                                    <h5 class="counter mb-0">Rp {{ number_format($pengeluaran2Mingguan, 0, ',', '.') }}</h5>
                                 </div>
                             </div>
                         </div>
@@ -128,8 +128,8 @@
                         <div class="card h-100" data-aos="fade-up" data-aos-delay="1200">
                             <div class="card-body d-flex align-items-center">
                                 <div class="rounded p-3 bg-warning-subtle me-3">
-                                    <svg class="icon-24" xmlns="http://www.w3.org/2000/svg" width="24px"
-                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg class="icon-24" xmlns="http://www.w3.org/2000/svg" width="24px" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -138,7 +138,7 @@
                                 </div>
                                 <div>
                                     <p class="mb-2 fw-semibold">Total Porsi 2 Mingguan</p>
-                                    <h5 class="counter mb-0">11.200</h5>
+                                    <h5 class="counter mb-0">{{ number_format($porsi2Mingguan, 0, ',', '.') }}</h5>
                                 </div>
                             </div>
                         </div>
@@ -175,7 +175,7 @@
                         <div class="card" data-aos="fade-up" data-aos-delay="800">
                             <div class="flex-wrap card-header d-flex justify-content-between align-items-center">
                                 <div class="header-title">
-                                    <h4 class="fw-bold mb-0">Rp 560.000.000</h4>
+                                    <h4 class="fw-bold mb-0">Rp {{ number_format($totalPemasukan, 0, ',', '.') }}</h4>
                                     <p class="mb-0">Pemasukan dan Pengeluaran</p>
                                 </div>
                                 <div class="d-flex align-items-center align-self-center">
@@ -206,6 +206,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
+                                {{-- data masih dummy:id="d-main" --}}
                                 <div id="d-main" class="d-main"></div>
                             </div>
                         </div>
@@ -245,6 +246,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
+                                {{-- data masih dummy:id="d-activity" --}}
                                 <div id="d-activity" class="d-activity"></div>
                             </div>
                         </div>
@@ -273,6 +275,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
+                                {{-- data masih dummy:id="d-main2" --}}
                                 <div id="d-main2" class="d-main"></div>
                             </div>
                         </div>
@@ -295,8 +298,7 @@
 
                             <div class="p-0 card-body">
                                 <div class="mt-4 table-responsive">
-                                    <table id="basic-table" class="table mb-0 table-striped text-center"
-                                        role="grid">
+                                    <table id="basic-table" class="table mb-0 table-striped text-center" role="grid">
                                         <thead>
                                             <tr>
                                                 <th>Tanggal</th>
@@ -306,43 +308,19 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <!-- Contoh data (bisa nanti diambil dari DB) -->
-                                            <tr>
-                                                <td>24 April 2025</td>
-                                                <td>2</td>
-                                                <td>Rp 0</td>
-                                                <td><span class="badge bg-success">Match</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>8 Mei 2025</td>
-                                                <td>1</td>
-                                                <td>Rp 0</td>
-                                                <td><span class="badge bg-success">Match</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>19 Mei 2025</td>
-                                                <td>77</td>
-                                                <td>Rp -141.808.000</td>
-                                                <td>
-                                                    <span class="badge bg-danger">No Match</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>22 Mei 2025</td>
-                                                <td>28</td>
-                                                <td>Rp 315.099.500</td>
-                                                <td>
-                                                    <span class="badge bg-danger">No Match</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>5 Juni 2025</td>
-                                                <td>8</td>
-                                                <td>Rp 401.955.000</td>
-                                                <td>
-                                                    <span class="badge bg-danger">No Match</span>
-                                                </td>
-                                            </tr>
+                                            @foreach ($rekonsiliasiData as $item)
+                                                <tr>
+                                                    <td>{{ $item['tanggal'] }}</td>
+                                                    <td>{{ $item['jml_transaksi'] }}</td>
+                                                    <td>Rp {{ number_format($item['selisih'], 0, ',', '.') }}</td>
+                                                    <td>
+                                                        <span
+                                                            class="badge bg-{{ $item['status'] == 'Match' ? 'success' : 'danger' }}">
+                                                            {{ $item['status'] }}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -361,17 +339,18 @@
                             <div class="card-body">
                                 <div class="mb-2">
                                     <div class="flex-wrap d-flex justify-content-between">
-                                        <h3 class="mb-2 fw-bold mb-0">Rp 1.685.000.000,00</h3>
+                                        <h3 class="mb-2 fw-bold mb-0">Rp {{ number_format($saldoSaatIni, 2, ',', '.') }}
+                                        </h3>
                                     </div>
                                     <p class="text-info">Saldo Saat Ini</p>
                                 </div>
                                 <div class="grid-cols-2 d-grid gap-card">
                                     <button class="p-2 btn btn-primary text-uppercase"
-                                        onclick="window.location.href='./finance/rekap.bku.html'">
+                                        onclick="window.location.href='./rekening-rekap-bku'">
                                         Rekap BKU
                                     </button>
                                     <button class="p-2 btn btn-secondary text-uppercase"
-                                        onclick="window.location.href='./finance/rekonsiliasi.html'">
+                                        onclick="window.location.href='./rekonsiliasi'">
                                         Rekonsiliasi
                                     </button>
                                 </div>
@@ -394,9 +373,10 @@
                                 <!-- Nominal utama -->
                                 <div class="d-flex justify-content-between align-items-end mb-2">
                                     <h4 class="fw-bold text-primary mb-0">
-                                        Rp 28.745.650.000
+                                        Rp {{ number_format($totalRealisasi, 0, ',', '.') }}
                                     </h4>
-                                    <span class="text-muted small">dari Rp 312.480.000.000</span>
+                                    <span class="text-muted small">dari Rp
+                                        {{ number_format($totalAnggaran, 0, ',', '.') }}</span>
                                 </div>
 
                                 <!-- Progress bar -->
@@ -406,14 +386,18 @@
                 border-radius: 5px;
                 background-color: #f0f0f0;
               ">
-                                    <div class="progress-bar bg-success" role="progressbar" style="width: 0.22%"
-                                        aria-valuenow="0.22" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="progress-bar bg-success" role="progressbar"
+                                        style="width: {{ min($terpakaiPersen, 100) }}%"
+                                        aria-valuenow="{{ $terpakaiPersen }}" aria-valuemin="0" aria-valuemax="100">
+                                    </div>
                                 </div>
 
                                 <!-- Info bawah -->
                                 <div class="d-flex justify-content-between">
-                                    <span class="text-muted small">Terpakai: 9.19%</span>
-                                    <span class="text-success small fw-semibold">Sisa: Rp 283.734.350.000</span>
+                                    <span class="text-muted small">Terpakai:
+                                        {{ number_format($terpakaiPersen, 2) }}%</span>
+                                    <span class="text-success small fw-semibold">Sisa: Rp
+                                        {{ number_format($sisaAnggaran, 0, ',', '.') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -428,11 +412,12 @@
                             </div>
                             <div class="card-body">
                                 <div class="flex-wrap d-flex align-items-center justify-content-between">
+                                    {{-- data masih dummy:id="myChart" --}}
                                     <div id="myChart" class="col-md-8 col-lg-8 myChart"></div>
                                     <div class="d-grid gap col-md-4 col-lg-4">
                                         <div class="d-flex align-items-start">
-                                            <svg class="mt-2 icon-14" xmlns="http://www.w3.org/2000/svg"
-                                                width="14" viewBox="0 0 24 24" fill="#3a57e8">
+                                            <svg class="mt-2 icon-14" xmlns="http://www.w3.org/2000/svg" width="14"
+                                                viewBox="0 0 24 24" fill="#3a57e8">
                                                 <g>
                                                     <circle cx="12" cy="12" r="8" fill="#3a57e8">
                                                     </circle>
@@ -440,12 +425,12 @@
                                             </svg>
                                             <div class="ms-3">
                                                 <span class="text-gray">Porsi 10K</span>
-                                                <h6>16.836</h6>
+                                                <h6>{{ number_format($porsi10k, 0, ',', '.') }}</h6>
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-start">
-                                            <svg class="mt-2 icon-14" xmlns="http://www.w3.org/2000/svg"
-                                                width="14" viewBox="0 0 24 24" fill="#4bc7d2">
+                                            <svg class="mt-2 icon-14" xmlns="http://www.w3.org/2000/svg" width="14"
+                                                viewBox="0 0 24 24" fill="#4bc7d2">
                                                 <g>
                                                     <circle cx="12" cy="12" r="8" fill="#4bc7d2">
                                                     </circle>
@@ -453,7 +438,7 @@
                                             </svg>
                                             <div class="ms-3">
                                                 <span class="text-gray">Porsi 8K</span>
-                                                <h6>9.899</h6>
+                                                <h6>{{ number_format($porsi8k, 0, ',', '.') }}</h6>
                                             </div>
                                         </div>
                                     </div>
@@ -478,63 +463,30 @@
                             </div>
 
                             <div class="card-body">
-                                <div class="mb-2 d-flex profile-media align-items-top">
-                                    <div class="mt-1 profile-dots-pills border-primary"></div>
-                                    <div class="ms-4">
-                                        <h6 class="mb-1">
-                                            Pengeluaran Rp 250.000 untuk Kacang Mede
-                                        </h6>
-                                        <span class="mb-0">31 Mei 2025 - 08:10 WIB</span>
+                                @foreach ($riwayatTransaksi as $transaksi)
+                                    <div class="mb-2 d-flex profile-media align-items-top">
+                                        <div class="mt-1 profile-dots-pills border-primary"></div>
+                                        <div class="ms-4">
+                                            <h6 class="mb-1">
+                                                {{ $transaksi->jenis_bahan }}
+                                                @if ($transaksi->kredit > 0)
+                                                    Pengeluaran Rp {{ number_format($transaksi->kredit, 0, ',', '.') }}
+                                                @elseif($transaksi->debit > 0)
+                                                    Pemasukan Rp {{ number_format($transaksi->debit, 0, ',', '.') }}
+                                                @endif
+                                                @if ($transaksi->nama_bahan)
+                                                    untuk {{ $transaksi->nama_bahan }}
+                                                @endif
+                                            </h6>
+                                            <span class="mb-0">
+                                                {{ $transaksi->tanggal_transaksi->format('d M Y - H:i') }} WIB
+                                                @if ($transaksi->supplier)
+                                                    - {{ $transaksi->supplier }}
+                                                @endif
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div class="mb-2 d-flex profile-media align-items-top">
-                                    <div class="mt-1 profile-dots-pills border-primary"></div>
-                                    <div class="ms-4">
-                                        <h6 class="mb-1">Tambah Rekap BKU Mingguan</h6>
-                                        <span class="mb-0">1 Juni 2025 - 09:45 WIB</span>
-                                    </div>
-                                </div>
-
-                                <div class="mb-2 d-flex profile-media align-items-top">
-                                    <div class="mt-1 profile-dots-pills border-primary"></div>
-                                    <div class="ms-4">
-                                        <h6 class="mb-1">Revisi Data Transaksi (Rp 180.000)</h6>
-                                        <span class="mb-0">2 Juni 2025 - 14:30 WIB</span>
-                                    </div>
-                                </div>
-
-                                <div class="mb-2 d-flex profile-media align-items-top">
-                                    <div class="mt-1 profile-dots-pills border-primary"></div>
-                                    <div class="ms-4">
-                                        <h6 class="mb-1">Update Saldo Akhir Mingguan</h6>
-                                        <span class="mb-0">3 Juni 2025 - 10:10 WIB</span>
-                                    </div>
-                                </div>
-
-                                <div class="mb-1 d-flex profile-media align-items-top">
-                                    <div class="mt-1 profile-dots-pills border-primary"></div>
-                                    <div class="ms-4">
-                                        <h6 class="mb-1">Rekap Baru Ditambahkan</h6>
-                                        <span class="mb-0">5 Juni 2025 - 07:50 WIB</span>
-                                    </div>
-                                </div>
-
-                                <div class="mb-1 d-flex profile-media align-items-top">
-                                    <div class="mt-1 profile-dots-pills border-primary"></div>
-                                    <div class="ms-4">
-                                        <h6 class="mb-1">Rekap Baru Ditambahkan</h6>
-                                        <span class="mb-0">5 Juni 2025 - 07:50 WIB</span>
-                                    </div>
-                                </div>
-
-                                <div class="mb-1 d-flex profile-media align-items-top">
-                                    <div class="mt-1 profile-dots-pills border-primary"></div>
-                                    <div class="ms-4">
-                                        <h6 class="mb-1">Rekap Baru Ditambahkan</h6>
-                                        <span class="mb-0">5 Juni 2025 - 07:50 WIB</span>
-                                    </div>
-                                </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>
@@ -545,27 +497,276 @@
 @endsection
 
 @push('js')
-    <!-- New Script Filter TAB -->
     <script>
+        let chartMain, chartActivity, chartDistribusi, chartPorsi;
+
+        // Initialize charts on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCharts('week');
+            initPorsiChart();
+        });
+
+        // Filter button handlers
         document.querySelectorAll(".global-filter").forEach((btn) => {
             btn.addEventListener("click", function() {
-                // Hilangkan active di semua tab
-                document
-                    .querySelectorAll(".global-filter")
-                    .forEach((x) => x.classList.remove("active"));
-
-                // Tambah active ke tab yang dipilih
+                document.querySelectorAll(".global-filter").forEach((x) => x.classList.remove("active"));
                 this.classList.add("active");
-
                 const selected = this.getAttribute("data-value");
-
-                // Panggil fungsi refresh chart (sesuaikan dengan chart kamu)
-                loadChartMain(selected);
-                loadChartActivity(selected);
-                loadChartDistribusi(selected);
-
-                console.log("Filter global:", selected);
+                loadCharts(selected);
             });
         });
+
+        function loadCharts(filter) {
+            fetch(`{{ route('dashboard.chart-data') }}?filter=${filter}`)
+                .then(response => response.json())
+                .then(data => {
+                    loadChartMain(data.pemasukan, data.pengeluaran);
+                    loadChartActivity(data.anggaran);
+                    loadChartDistribusi(data.distribusi);
+                })
+                .catch(error => console.error('Error loading charts:', error));
+        }
+
+        function loadChartMain(pemasukanData, pengeluaranData) {
+            const options = {
+                series: [{
+                    name: 'Pemasukan',
+                    data: pemasukanData.series
+                }, {
+                    name: 'Pengeluaran',
+                    data: pengeluaranData.series
+                }],
+                chart: {
+                    fontFamily: '"Inter", sans-serif',
+                    height: 245,
+                    type: 'area',
+                    toolbar: {
+                        show: false
+                    },
+                    sparkline: {
+                        enabled: false
+                    }
+                },
+                colors: ['#3a57e8', '#4bc7d2'],
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'smooth',
+                    width: 3
+                },
+                yaxis: {
+                    labels: {
+                        style: {
+                            colors: '#8A92A6'
+                        },
+                        formatter: (val) => 'Rp ' + (val / 1000000).toFixed(1) + 'jt'
+                    }
+                },
+                xaxis: {
+                    categories: pemasukanData.categories,
+                    labels: {
+                        style: {
+                            colors: '#8A92A6'
+                        }
+                    },
+                    axisTicks: {
+                        show: false
+                    },
+                    axisBorder: {
+                        show: false
+                    }
+                },
+                grid: {
+                    show: true,
+                    borderColor: '#f1f1f1'
+                },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shade: 'dark',
+                        type: 'vertical',
+                        opacityFrom: 0.4,
+                        opacityTo: 0.1
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: (val) => 'Rp ' + val.toLocaleString('id-ID')
+                    }
+                }
+            };
+
+            if (chartMain) {
+                chartMain.destroy();
+            }
+            chartMain = new ApexCharts(document.querySelector('#d-main'), options);
+            chartMain.render();
+        }
+
+        function loadChartActivity(anggaranData) {
+            const options = {
+                series: [{
+                    name: 'Anggaran',
+                    data: anggaranData.anggaranSeries
+                }, {
+                    name: 'Realisasi',
+                    data: anggaranData.realisasiSeries
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 230,
+                    stacked: false,
+                    toolbar: {
+                        show: false
+                    }
+                },
+                colors: ['#3a57e8', '#4bc7d2'],
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        borderRadius: 5
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: anggaranData.categories,
+                    labels: {
+                        style: {
+                            colors: '#8A92A6'
+                        }
+                    }
+                },
+                yaxis: {
+                    labels: {
+                        style: {
+                            colors: '#8A92A6'
+                        },
+                        formatter: (val) => 'Rp ' + (val / 1000000).toFixed(1) + 'jt'
+                    }
+                },
+                fill: {
+                    opacity: 1
+                },
+                tooltip: {
+                    y: {
+                        formatter: (val) => 'Rp ' + val.toLocaleString('id-ID')
+                    }
+                }
+            };
+
+            if (chartActivity) {
+                chartActivity.destroy();
+            }
+            chartActivity = new ApexCharts(document.querySelector('#d-activity'), options);
+            chartActivity.render();
+        }
+
+        function loadChartDistribusi(distribusiData) {
+            const options = {
+                series: [{
+                    name: 'Porsi',
+                    data: distribusiData.series
+                }],
+                chart: {
+                    fontFamily: '"Inter", sans-serif',
+                    height: 245,
+                    type: 'line',
+                    toolbar: {
+                        show: false
+                    }
+                },
+                colors: ['#ff4d4f'],
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'smooth',
+                    width: 3
+                },
+                yaxis: {
+                    labels: {
+                        style: {
+                            colors: '#8A92A6'
+                        },
+                        formatter: (val) => val + ' porsi'
+                    }
+                },
+                xaxis: {
+                    categories: distribusiData.categories,
+                    labels: {
+                        style: {
+                            colors: '#8A92A6'
+                        }
+                    },
+                    axisTicks: {
+                        show: false
+                    },
+                    axisBorder: {
+                        show: false
+                    }
+                },
+                grid: {
+                    show: true,
+                    borderColor: '#f1f1f1'
+                },
+                tooltip: {
+                    y: {
+                        formatter: (val) => val + ' porsi'
+                    }
+                }
+            };
+
+            if (chartDistribusi) {
+                chartDistribusi.destroy();
+            }
+            chartDistribusi = new ApexCharts(document.querySelector('#d-main2'), options);
+            chartDistribusi.render();
+        }
+
+        function initPorsiChart() {
+            let porsi10k = {{ $porsi10k }};
+            let porsi8k = {{ $porsi8k }};
+            const total = porsi10k + porsi8k;
+
+            const options = {
+                series: [(porsi10k/total)*100, (porsi8k/total)*100],
+                chart: {
+                    height: 230,
+                    type: 'radialBar',
+                },
+                colors: ["#3a57e8", "#4bc7d2"],
+                plotOptions: {
+                    radialBar: {
+                        hollow: {
+                            margin: 10,
+                            size: "50%",
+                        },
+                        track: {
+                            margin: 10,
+                            strokeWidth: '50%',
+                        },
+                        dataLabels: {
+                            show: false,
+                        }
+                    }
+                },
+                labels: ['Porsi 10K', 'Porsi 8K'],
+            };
+
+            if (chartPorsi) {
+                chartPorsi.destroy();
+            }
+            chartPorsi = new ApexCharts(document.querySelector("#myChart"), options);
+            chartPorsi.render();
+        }
     </script>
 @endpush

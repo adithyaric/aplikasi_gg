@@ -31,191 +31,313 @@ if (document.querySelectorAll('#myChart').length) {
     document.addEventListener('ColorChange', (e) => {
         const newOpt = {colors: [e.detail.detail2, e.detail.detail1],}
         chart.updateOptions(newOpt)
-       
+
     })
   }
 }
 if (document.querySelectorAll('#d-activity').length) {
-    const options = {
-      series: [{
-        name: 'Successful deals',
-        data: [30, 50, 35, 60, 40, 60, 60, 30, 50, 35,]
-      }, {
-        name: 'Failed deals',
-        data: [40, 50, 55, 50, 30, 80, 30, 40, 50, 55]
-      }],
-      chart: {
-        type: 'bar',
-        height: 230,
-        stacked: true,
-        toolbar: {
-            show:false
-          }
+  const options = {
+    series: [
+      {
+        name: 'Anggaran',
+        data: [30, 50, 35, 60, 40, 60, 60, 30, 50, 35] // dalam juta rupiah
       },
-      colors: ["#3a57e8", "#4bc7d2"],
-      plotOptions: {
-        bar: {
-          horizontal: false,
-          columnWidth: '28%',
-          endingShape: 'rounded',
-          borderRadius: 5,
-        },
-      },
-      legend: {
-        show: false
-      },
-      dataLabels: {
-        enabled: false
-      },
-      stroke: {
-        show: true,
-        width: 2,
-        colors: ['transparent']
-      },
-      xaxis: {
-        categories: ['S', 'M', 'T', 'W', 'T', 'F', 'S', 'M', 'T', 'W'],
-        labels: {
-          minHeight:20,
-          maxHeight:20,
-          style: {
-            colors: "#8A92A6",
-          },
-        }
-      },
-      yaxis: {
-        title: {
-          text: ''
-        },
-        labels: {
-            minWidth: 19,
-            maxWidth: 19,
-            style: {
-              colors: "#8A92A6",
-            },
-        }
-      },
-      fill: {
-        opacity: 1
-      },
-      tooltip: {
-        y: {
-          formatter: function (val) {
-            return "$ " + val + " thousands"
-          }
+      {
+        name: 'Realisasi',
+        data: [40, 50, 55, 50, 30, 80, 30, 40, 50, 55] // dalam juta rupiah
+      }
+    ],
+    chart: {
+      type: 'bar',
+      height: 230,
+      stacked: true,
+      toolbar: { show: false }
+    },
+    colors: ['#3a57e8', '#4bc7d2'],
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: '28%',
+        endingShape: 'rounded',
+        borderRadius: 5
+      }
+    },
+    legend: { show: false },
+    dataLabels: { enabled: false },
+    stroke: {
+      show: true,
+      width: 2,
+      colors: ['transparent']
+    },
+    xaxis: {
+      categories: ['S', 'M', 'T', 'W', 'T', 'F', 'S', 'M', 'T', 'W'],
+      labels: {
+        minHeight: 20,
+        maxHeight: 20,
+        style: {
+          colors: '#8A92A6'
         }
       }
-    };
-  
-    const chart = new ApexCharts(document.querySelector("#d-activity"), options);
-    chart.render();
-    document.addEventListener('ColorChange', (e) => {
-    const newOpt = {colors: [e.detail.detail1, e.detail.detail2],}
-    chart.updateOptions(newOpt)
-    })
-  }
-if (document.querySelectorAll('#d-main').length) {
-  const options = {
-      series: [{
-          name: 'total',
-          data: [94, 80, 94, 80, 94, 80, 94]
-      }, {
-          name: 'pipline',
-          data: [72, 60, 84, 60, 74, 60, 78]
-      }],
-      chart: {
-          fontFamily: '"Inter", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-          height: 245,
-          type: 'area',
-          toolbar: {
-              show: false
-          },
-          sparkline: {
-              enabled: false,
-          },
-      },
-      colors: ["#3a57e8", "#4bc7d2"],
-      dataLabels: {
-          enabled: false
-      },
-      stroke: {
-          curve: 'smooth',
-          width: 3,
-      },
-      yaxis: {
-        show: true,
-        labels: {
-          show: true,
-          minWidth: 19,
-          maxWidth: 19,
-          style: {
-            colors: "#8A92A6",
-          },
-          offsetX: -5,
+    },
+    yaxis: {
+      title: { text: 'Rupiah (Juta)' },
+      labels: {
+        minWidth: 19,
+        maxWidth: 19,
+        style: {
+          colors: '#8A92A6'
         },
-      },
-      legend: {
-          show: false,
-      },
-      xaxis: {
-          labels: {
-              minHeight:22,
-              maxHeight:22,
-              show: true,
-              style: {
-                colors: "#8A92A6",
-              },
-          },
-          lines: {
-              show: false  //or just here to disable only x axis grids
-          },
-          categories: ["Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Aug"]
-      },
-      grid: {
-          show: false,
-      },
-      fill: {
-          type: 'gradient',
-          gradient: {
-              shade: 'dark',
-              type: "vertical",
-              shadeIntensity: 0,
-              gradientToColors: undefined, // optional, if not defined - uses the shades of same color in series
-              inverseColors: true,
-              opacityFrom: .4,
-              opacityTo: .1,
-              stops: [0, 50, 80],
-              colors: ["#3a57e8", "#4bc7d2"]
-          }
-      },
-      tooltip: {
-        enabled: true,
-      },
+        formatter: function (val) {
+          return val + ' jt';
+        }
+      }
+    },
+    fill: {
+      opacity: 1
+    },
+    tooltip: {
+      y: {
+        formatter: function (val) {
+          return 'Rp ' + val.toLocaleString('id-ID') + '.000.000';
+        }
+      }
+    }
   };
 
-  const chart = new ApexCharts(document.querySelector("#d-main"), options);
+  const chart = new ApexCharts(document.querySelector('#d-activity'), options);
   chart.render();
+
+  // 🔄 Update warna jika tema berubah
   document.addEventListener('ColorChange', (e) => {
-    console.log(e)
+    const newOpt = { colors: [e.detail.detail1, e.detail.detail2] };
+    chart.updateOptions(newOpt);
+  });
+}
+
+if (document.querySelectorAll('#d-main').length) {
+  const options = {
+    series: [
+      {
+        name: 'Pemasukan',
+        data: [400, 420, 460, 470, 490, 500, 560] // dalam juta
+      },
+      {
+        name: 'Pengeluaran',
+        data: [100, 110, 120, 120, 140, 160, 185] // dalam juta
+      }
+    ],
+    chart: {
+      fontFamily:
+        '"Inter", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+      height: 245,
+      type: 'area',
+      toolbar: {
+        show: false
+      },
+      sparkline: {
+        enabled: false
+      }
+    },
+    colors: ['#3a57e8', '#4bc7d2'], // Biru untuk pemasukan, hijau muda untuk pengeluaran
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      curve: 'smooth',
+      width: 3
+    },
+    yaxis: {
+      title: {
+        text: 'Rupiah (Juta)'
+      },
+      min: 0,
+      max: 600,
+      labels: {
+        show: true,
+        style: {
+          colors: '#8A92A6'
+        },
+        formatter: function (val) {
+          return val + ' jt';
+        }
+      }
+    },
+    legend: {
+      show: true,
+      position: 'top',
+      horizontalAlign: 'left',
+      markers: {
+        radius: 12
+      }
+    },
+    xaxis: {
+      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul'],
+      labels: {
+        show: true,
+        style: {
+          colors: '#8A92A6'
+        }
+      },
+      axisTicks: {
+        show: false
+      },
+      axisBorder: {
+        show: false
+      }
+    },
+    grid: {
+      show: true,
+      borderColor: '#f1f1f1'
+    },
+    fill: {
+      type: 'gradient',
+      gradient: {
+        shade: 'dark',
+        type: 'vertical',
+        opacityFrom: 0.4,
+        opacityTo: 0.1,
+        stops: [0, 50, 80]
+      }
+    },
+    tooltip: {
+      y: {
+        formatter: function (val) {
+          return 'Rp ' + val.toLocaleString('id-ID') + '.000';
+        }
+      }
+    }
+  };
+
+  const chart = new ApexCharts(document.querySelector('#d-main'), options);
+  chart.render();
+
+  // 🔄 Auto-update warna jika ada event tema
+  document.addEventListener('ColorChange', (e) => {
     const newOpt = {
       colors: [e.detail.detail1, e.detail.detail2],
       fill: {
         type: 'gradient',
         gradient: {
-            shade: 'dark',
-            type: "vertical",
-            shadeIntensity: 0,
-            gradientToColors: [e.detail.detail1, e.detail.detail2], // optional, if not defined - uses the shades of same color in series
-            inverseColors: true,
-            opacityFrom: .4,
-            opacityTo: .1,
-            stops: [0, 50, 60],
-            colors: [e.detail.detail1, e.detail.detail2],
+          shade: 'dark',
+          type: 'vertical',
+          gradientToColors: [e.detail.detail1, e.detail.detail2],
+          opacityFrom: 0.4,
+          opacityTo: 0.1,
+          stops: [0, 50, 60]
         }
-    },
-   }
-    chart.updateOptions(newOpt)
-  })
+      }
+    };
+    chart.updateOptions(newOpt);
+  });
 }
+
+if (document.querySelectorAll('#d-main2').length) {
+  const options = {
+    series: [
+      {
+        name: 'Distribusi',
+        data: [552, 552, 552, 552, 3134, 3134, 3134, 3134, 3134, 3134, 3134, 3134, 3134, 3134]
+      }
+    ],
+    chart: {
+      fontFamily:
+        '"Inter", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+      height: 245,
+      type: 'line',
+      toolbar: {
+        show: false
+      },
+      sparkline: {
+        enabled: false
+      }
+    },
+    colors: ['#ff4d4f'], // merah
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      curve: 'smooth',
+      width: 3
+    },
+    yaxis: {
+      title: {
+        text: 'Porsi'
+      },
+      min: 0,
+      labels: {
+        show: true,
+        style: {
+          colors: '#8A92A6'
+        },
+        formatter: function (val) {
+          return val + ' porsi';
+        }
+      }
+    },
+    legend: {
+      show: true,
+      position: 'top',
+      horizontalAlign: 'left',
+      markers: {
+        radius: 12
+      }
+    },
+    xaxis: {
+      categories: [
+        '17 Mar', '18 Mar', '19 Mar', '20 Mar',
+        '14 Apr', '15 Apr', '16 Apr', '17 Apr', '18 Apr',
+        '21 Apr', '22 Apr', '23 Apr', '24 Apr', '25 Apr'
+      ],
+      labels: {
+        show: true,
+        style: {
+          colors: '#8A92A6'
+        }
+      },
+      axisTicks: {
+        show: false
+      },
+      axisBorder: {
+        show: false
+      }
+    },
+    grid: {
+      show: true,
+      borderColor: '#f1f1f1'
+    },
+    tooltip: {
+      y: {
+        formatter: function (val) {
+          return val + ' porsi';
+        }
+      }
+    }
+  };
+
+  const chart = new ApexCharts(document.querySelector('#d-main2'), options);
+  chart.render();
+
+  // 🔄 Auto-update warna jika tema berubah
+  document.addEventListener('ColorChange', (e) => {
+    const newOpt = {
+      colors: [e.detail.detail1],
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shade: 'dark',
+          type: 'vertical',
+          gradientToColors: [e.detail.detail1],
+          opacityFrom: 0.4,
+          opacityTo: 0.1,
+          stops: [0, 50, 60]
+        }
+      }
+    };
+    chart.updateOptions(newOpt);
+  });
+}
+
+
 if ($('.d-slider1').length > 0) {
     const options = {
         centeredSlides: false,
@@ -239,13 +361,13 @@ if ($('.d-slider1').length > 0) {
         navigation: {
             nextEl: '.swiper-button-next',
             prevEl: '.swiper-button-prev'
-        },  
+        },
 
         // And if we need scrollbar
         scrollbar: {
-            el: '.swiper-scrollbar'  
+            el: '.swiper-scrollbar'
         }
-    } 
+    }
     let swiper = new Swiper('.d-slider1',options);
 
     document.addEventListener('ChangeMode', (e) => {

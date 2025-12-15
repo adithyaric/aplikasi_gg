@@ -131,30 +131,12 @@
                         <!--Logo start-->
                         <div class="logo-main">
                             <div class="logo-normal">
-                                <svg class="text-primary icon-30" viewBox="0 0 30 30" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="-0.757324" y="19.2427" width="28" height="4" rx="2"
-                                        transform="rotate(-45 -0.757324 19.2427)" fill="currentColor" />
-                                    <rect x="7.72803" y="27.728" width="28" height="4" rx="2"
-                                        transform="rotate(-45 7.72803 27.728)" fill="currentColor" />
-                                    <rect x="10.5366" y="16.3945" width="16" height="4" rx="2"
-                                        transform="rotate(45 10.5366 16.3945)" fill="currentColor" />
-                                    <rect x="10.5562" y="-0.556152" width="28" height="4" rx="2"
-                                        transform="rotate(45 10.5562 -0.556152)" fill="currentColor" />
-                                </svg>
+                                <img src="/assets/images/logo-bgn.png" alt="Logo BKU" class="icon-60"
+                                    style="width: 60px; height: 60px; object-fit: contain" />
                             </div>
                             <div class="logo-mini">
-                                <svg class="text-primary icon-30" viewBox="0 0 30 30" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="-0.757324" y="19.2427" width="28" height="4" rx="2"
-                                        transform="rotate(-45 -0.757324 19.2427)" fill="currentColor" />
-                                    <rect x="7.72803" y="27.728" width="28" height="4" rx="2"
-                                        transform="rotate(-45 7.72803 27.728)" fill="currentColor" />
-                                    <rect x="10.5366" y="16.3945" width="16" height="4" rx="2"
-                                        transform="rotate(45 10.5366 16.3945)" fill="currentColor" />
-                                    <rect x="10.5562" y="-0.556152" width="28" height="4" rx="2"
-                                        transform="rotate(45 10.5562 -0.556152)" fill="currentColor" />
-                                </svg>
+                                <img src="/assets/images/logo-bgn.png" alt="Logo BKU" class="icon-60"
+                                    style="width: 60px; height: 60px; object-fit: contain" />
                             </div>
                         </div>
                         <!--logo End-->
@@ -192,25 +174,22 @@
                                         <h6 class="mb-0 caption-title">{{ auth()->user()->name }}</h6>
                                         <p class="mb-0 caption-sub-title">
                                             @if (auth()->user()->role == 'admin')
-                                                Administrator
+                                            Administrator
                                             @else
-                                                Petugas
+                                            Petugas
                                             @endif
                                         </p>
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     <li>
-                                        <form action="{{ route('logout') }}" method="POST"
-                                            style="display: inline;">
+                                        <form action="{{ route('logout') }}" method="POST" style="display: inline;">
                                             @csrf
-                                            <button type="submit" class="dropdown-item"
-                                                style="border: none; background: none;">
+                                            <button type="submit" class="dropdown-item" style="border: none; background: none; cursor: pointer;">
                                                 Logout
                                             </button>
                                         </form>
                                     </li>
-
                                 </ul>
                             </li>
                         </ul>
@@ -247,8 +226,8 @@
     <script src="{{ asset('assets/js/charts/widgetcharts.js') }}"></script>
 
     <!-- mapchart Script -->
-    <script src="{{ asset('assets/js/charts/vectore-chart.js') }}"></script>
-    <script src="{{ asset('assets/js/charts/dashboard.js') }}"></script>
+    {{-- <script src="{{ asset('assets/js/charts/vectore-chart.js') }}"></script> --}}
+    {{-- <script src="{{ asset('assets/js/charts/dashboard.js') }}"></script> --}}
 
     <!-- fslightbox Script -->
     <script src="{{ asset('assets/js/plugins/fslightbox.js') }}"></script>
@@ -278,12 +257,30 @@
     {{-- Add Select2 JS before closing body or in scripts section --}}
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
-    $(document).ready(function() {
-        $('.select2-input').select2({
-            allowClear: true,
-            width: '100%'
+        $(document).ready(function() {
+            $('.select2-input').select2({
+                allowClear: true,
+                width: '100%'
+            });
         });
-    });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownToggle = document.getElementById('navbarDropdown');
+            const dropdownMenu = dropdownToggle.nextElementSibling;
+
+            dropdownToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                dropdownMenu.classList.toggle('show');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    dropdownMenu.classList.remove('show');
+                }
+            });
+        });
     </script>
 
 </body>
