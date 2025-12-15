@@ -7,6 +7,7 @@ use App\Http\Controllers\BahanBakuController;
 use App\Http\Controllers\BahanOperasionalController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\GajiController;
 use App\Http\Controllers\GiziController;
 use App\Http\Controllers\ImportController;
@@ -119,10 +120,14 @@ Route::middleware('auth')->group(function () {
         Route::get('lra', 'lra')->name('report.lra');
     });
 
-    Route::post('/import/bahan-baku', [ImportController::class, 'importBahanBaku'])->name('import.bahan-baku');
-    Route::post('/import/bahan-operasional', [ImportController::class, 'importBahanOperasional'])->name('import.bahan-operasional');
-    Route::post('/import/gizi', [ImportController::class, 'importGizi'])->name('import.gizi');
-    Route::post('/import/sekolah', [ImportController::class, 'importSekolah'])->name('import.sekolah');
-    Route::post('/import/supplier', [ImportController::class, 'importSupplier'])->name('import.supplier');
-    Route::post('/import/karyawan', [ImportController::class, 'importKaryawan'])->name('import.karyawan');
+    // import excel
+    Route::post('/import-excel/bahan-baku', [ImportController::class, 'importBahanBaku'])->name('import.bahan-baku');
+    Route::post('/import-excel/bahan-operasional', [ImportController::class, 'importBahanOperasional'])->name('import.bahan-operasional');
+    Route::post('/import-excel/gizi', [ImportController::class, 'importGizi'])->name('import.gizi');
+    Route::post('/import-excel/sekolah', [ImportController::class, 'importSekolah'])->name('import.sekolah');
+    Route::post('/import-excel/supplier', [ImportController::class, 'importSupplier'])->name('import.supplier');
+    Route::post('/import-excel/karyawan', [ImportController::class, 'importKaryawan'])->name('import.karyawan');
+
+    // export excel
+    Route::get('export-excel/rekap-porsi', [ExportController::class, 'exportRekapPorsi'])->name('export.rekap-porsi');
 });

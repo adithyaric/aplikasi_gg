@@ -89,4 +89,26 @@
 <!-- - relawan/karyawan -->
 
 <!-- tabel setting (informasi utama) -->
-dashboard
+<!-- dashboard -->
+
+export :
+- rekap penerimaan dana
+<!-- - rekap prosi -->
+- rekonsiliasi
+- bku
+- lpdb
+- lbbp
+- lbo
+- lbs
+- lra
+- sekolah
+- supplier
+- relawan
+- absensi
+- gaji
+- rekap menu
+- lembar po
+- bast
+- stock
+- kartu stock
+- stock opname
