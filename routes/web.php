@@ -130,4 +130,6 @@ Route::middleware('auth')->group(function () {
 
     // export excel
     Route::get('export-excel/rekap-porsi', [ExportController::class, 'exportRekapPorsi'])->name('export.rekap-porsi');
+    Route::get('export-excel/sekolah', [ExportController::class, 'exportSekolah'])->name('export.sekolah');
+    Route::get('export-excel/supplier', [ExportController::class, 'exportSupplier'])->name('export.supplier');
 });

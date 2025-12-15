@@ -101,8 +101,8 @@ export :
 - lbo
 - lbs
 - lra
-- sekolah
-- supplier
+<!-- - sekolah -->
+<!-- - supplier -->
 - relawan
 - absensi
 - gaji

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Anggaran;
+use App\Models\Sekolah;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -104,5 +106,72 @@ class ExportController extends Controller
                 return [];
             }
         }, 'REKAP_PORSI_' . date('Y-m-d_H-i-T') . '.xlsx');
+    }
+
+    public function exportSekolah()
+    {
+        $sekolahs = Sekolah::all();
+
+        return Excel::download(new class($sekolahs) implements \Maatwebsite\Excel\Concerns\FromView, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            private $sekolahs;
+
+            public function __construct($sekolahs)
+            {
+                $this->sekolahs = $sekolahs;
+            }
+
+            public function view(): \Illuminate\Contracts\View\View
+            {
+                return view('exports.sekolah', [
+                    'sekolahs' => $this->sekolahs,
+                ]);
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 15,
+                    'B' => 30,
+                    'C' => 20,
+                    'D' => 15,
+                    'E' => 15,
+                    'F' => 15,
+                    'G' => 15,
+                ];
+            }
+        }, 'SEKOLAH_' . date('Y-m-d_H-i') . '.xlsx');
+    }
+
+    public function exportSupplier()
+    {
+        $suppliers = Supplier::all();
+
+        return Excel::download(new class($suppliers) implements \Maatwebsite\Excel\Concerns\FromView, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            private $suppliers;
+
+            public function __construct($suppliers)
+            {
+                $this->suppliers = $suppliers;
+            }
+
+            public function view(): \Illuminate\Contracts\View\View
+            {
+                return view('exports.supplier', [
+                    'suppliers' => $this->suppliers,
+                ]);
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 15,
+                    'B' => 30,
+                    'C' => 15,
+                    'D' => 20,
+                    'E' => 20,
+                    'F' => 30,
+                ];
+            }
+        }, 'SUPPLIER_' . date('Y-m-d_H-i') . '.xlsx');
     }
 }
