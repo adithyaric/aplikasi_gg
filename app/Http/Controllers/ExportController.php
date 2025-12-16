@@ -18,6 +18,7 @@ use App\Models\StockAdjustment;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Spatie\Activitylog\Models\Activity;
 
 class ExportController extends Controller
 {
@@ -1103,5 +1104,92 @@ class ExportController extends Controller
                 ];
             }
         }, 'LPDB_' . str_replace('-', '_', $request->start_month) . '.xlsx');
+    }
+
+    public function exportLBBP(Request $request)
+    {
+        $query = RekeningRekapBKU::whereHas('transaction')
+            ->with(['transaction.order.items.bahanBaku'])
+            ->where('jenis_bahan', 'Bahan Pokok')
+            ->orderBy('tanggal_transaksi', 'asc');
+
+        // Filter by date range if provided
+        if ($request->has('start_at') && $request->has('end_at')) {
+            $startDate = Carbon::parse($request->start_at)->startOfDay();
+            $endDate = Carbon::parse($request->end_at)->endOfDay();
+
+            $query->whereBetween('tanggal_transaksi', [$startDate, $endDate]);
+        }
+
+        $data = $query->get()
+            ->flatMap(function ($rekening) {
+                $orderItems = $rekening->transaction->order->items ?? collect();
+
+                return $orderItems->map(function ($item) use ($rekening) {
+                    if ($item->bahanBaku) {
+                        // Get historical gov_price based on tanggal_transaksi
+                        $govPrice = Activity::where('subject_type', BahanBaku::class)
+                            ->where('subject_id', $item->bahan_baku_id)
+                            ->where('created_at', '<=', $rekening->tanggal_transaksi)
+                            ->orderBy('created_at', 'desc')
+                            ->first();
+
+                        $historicalGovPrice = $govPrice ?
+                            ($govPrice->properties['attributes']['gov_price'] ??
+                                $item->bahanBaku->gov_price) :
+                            $item->bahanBaku->gov_price;
+
+                        return [
+                            'tanggal' => $rekening->tanggal_transaksi,
+                            'nama_bahan' => $item->bahanBaku->nama,
+                            'kuantitas' => $item->quantity,
+                            'satuan' => $item->satuan,
+                            'harga_satuan' => $item->unit_cost,
+                            'total' => $item->subtotal,
+                            'supplier' => $rekening->supplier,
+                            'gov_price' => $historicalGovPrice,
+                            'rekening_id' => $rekening->id
+                        ];
+                    }
+                    return null;
+                })->filter();
+            });
+
+        return Excel::download(new class($data, $request->start_at, $request->end_at) implements \Maatwebsite\Excel\Concerns\FromView, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            private $data;
+            private $startDate;
+            private $endDate;
+
+            public function __construct($data, $startDate, $endDate)
+            {
+                $this->data = $data;
+                $this->startDate = $startDate;
+                $this->endDate = $endDate;
+            }
+
+            public function view(): \Illuminate\Contracts\View\View
+            {
+                return view('exports.lbbp', [
+                    'data' => $this->data,
+                    'startDate' => $this->startDate,
+                    'endDate' => $this->endDate,
+                ]);
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 15,
+                    'B' => 15,
+                    'C' => 25,
+                    'D' => 15,
+                    'E' => 10,
+                    'F' => 15,
+                    'G' => 15,
+                    'H' => 25,
+                    'I' => 25,
+                ];
+            }
+        }, 'LBBP_' . date('Y-m-d_H-i') . '.xlsx');
     }
 }

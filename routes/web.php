@@ -143,4 +143,5 @@ Route::middleware('auth')->group(function () {
     Route::get('export-excel/purchase-order/{id}', [ExportController::class, 'exportPurchaseOrder'])->name('export.purchase-order');
     Route::get('export-excel/bku', [ExportController::class, 'exportBKU'])->name('export.bku');
     Route::get('export-excel/lpdb', [ExportController::class, 'exportLPDB'])->name('export.lpdb');
+    Route::get('export-excel/lbbp', [ExportController::class, 'exportLBBP'])->name('export.lbbp');
 });

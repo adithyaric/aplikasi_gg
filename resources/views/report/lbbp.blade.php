@@ -184,8 +184,11 @@
                     <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <i class="bi bi-x-circle"></i> Tutup
                     </button>
-                    <button class="btn btn-success" id="btnCetakNow">
-                        <i class="bi bi-printer-fill"></i> Cetak
+                    <button class="btn btn-danger" id="btnCetakNow">
+                        <i class="bi bi-printer-fill"></i> Cetak PDF
+                    </button>
+                    <button class="btn btn-success" id="btnExportLBBP">
+                        <i class="bi bi-file-earmark-excel"></i> Export
                     </button>
                 </div>
             </div>
@@ -193,6 +196,21 @@
     </div>
 @endsection
 @push('js')
+    <script>
+        document.getElementById("btnExportLBBP").addEventListener("click", function() {
+            const startVal = $("#cetakStart").val();
+            const endVal = $("#cetakEnd").val();
+
+            let url = '{{ route('export.lbbp') }}';
+
+            if (startVal && endVal) {
+                url += `?start_at=${startVal}&end_at=${endVal}`;
+            }
+
+            console.log(url);
+            window.location.href = url;
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script>
