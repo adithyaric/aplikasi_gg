@@ -141,4 +141,5 @@ Route::middleware('auth')->group(function () {
     Route::get('export-excel/kartu-stok', [ExportController::class, 'exportKartuStok'])->name('export.kartu-stok');
     Route::get('export-excel/opname-stok', [ExportController::class, 'exportOpnameStok'])->name('export.opname-stok');
     Route::get('export-excel/purchase-order/{id}', [ExportController::class, 'exportPurchaseOrder'])->name('export.purchase-order');
+    Route::get('export-excel/bku', [ExportController::class, 'exportBKU'])->name('export.bku');
 });

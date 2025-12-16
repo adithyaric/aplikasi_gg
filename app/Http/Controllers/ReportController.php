@@ -70,13 +70,20 @@ class ReportController extends Controller
         ]);
     }
 
-    public function bku()
+    public function bku(Request $request)
     {
-        $rekeningBKU = RekeningRekapBKU::with('transaction.order.supplier')
+        $query = RekeningRekapBKU::with('transaction.order.supplier')
             ->orderBy('tanggal_transaksi', 'asc')
-            ->orderBy('id', 'asc')
-            ->get();
+            ->orderBy('id', 'asc');
 
+        if ($request->has('start_at') && $request->has('end_at')) {
+            $startDate = Carbon::parse($request->start_at);
+            $endDate = Carbon::parse($request->end_at);
+
+            $query->whereBetween('tanggal_transaksi', [$startDate, $endDate]);
+        }
+
+        $rekeningBKU = $query->get();
         $title = 'BKU';
 
         return view('report.bku', compact('rekeningBKU', 'title'));

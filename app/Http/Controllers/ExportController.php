@@ -963,4 +963,56 @@ class ExportController extends Controller
             }
         }, 'PO_' . $order->id . '_' . date('Y-m-d_H-i T') . '.xlsx');
     }
+
+    public function exportBKU(Request $request)
+    {
+        $query = RekeningRekapBKU::with('transaction.order.supplier')
+            ->orderBy('tanggal_transaksi', 'asc')
+            ->orderBy('id', 'asc');
+
+        // Filter by date range if provided
+        if ($request->has('start_at') && $request->has('end_at')) {
+            $startDate = Carbon::parse($request->start_at);
+            $endDate = Carbon::parse($request->end_at);
+
+            $query->whereBetween('tanggal_transaksi', [$startDate, $endDate]);
+        }
+
+        $rekeningBKU = $query->get();
+
+        return Excel::download(new class($rekeningBKU, $request->start_at, $request->end_at) implements \Maatwebsite\Excel\Concerns\FromView, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            private $rekeningBKU;
+            private $startDate;
+            private $endDate;
+
+            public function __construct($rekeningBKU, $startDate, $endDate)
+            {
+                $this->rekeningBKU = $rekeningBKU;
+                $this->startDate = $startDate;
+                $this->endDate = $endDate;
+            }
+
+            public function view(): \Illuminate\Contracts\View\View
+            {
+                return view('exports.bku', [
+                    'rekeningBKU' => $this->rekeningBKU,
+                    'startDate' => $this->startDate,
+                    'endDate' => $this->endDate,
+                ]);
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 15,
+                    'B' => 15,
+                    'C' => 20,
+                    'D' => 60,
+                    'E' => 25,
+                    'F' => 25,
+                    'G' => 25,
+                ];
+            }
+        }, 'BKU_' . date('Y-m-d_H-i') . '.xlsx');
+    }
 }

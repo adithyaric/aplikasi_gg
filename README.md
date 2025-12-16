@@ -95,7 +95,7 @@ export :
 <!-- - rekap penerimaan dana -->
 <!-- - rekap prosi -->
 <!-- - rekonsiliasi -->
-- bku
+<!-- - bku -->
 - lpdb
 - lbbp
 - lbo
