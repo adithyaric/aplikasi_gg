@@ -145,7 +145,7 @@
                                                 {{-- @else --}}
                                                 <button type="button" class="btn btn-sm btn-info"
                                                     onclick="showOrderDetail({{ $order->id }})">
-                                                    <span class="btn-inner">Detail</span>
+                                                    <span class="btn-inner"><i class="bi bi-eye"></i> Detail</span>
                                                 </button>
                                                 {{-- @endif --}}
                                                 <button type="button" class="btn btn-sm btn-danger"

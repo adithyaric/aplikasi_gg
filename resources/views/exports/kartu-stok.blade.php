@@ -80,7 +80,7 @@
         </tr>
         <tr>
             <td colspan="8"></td>
-            <td style="text-align: right;">Jakarta, {{ date('d F Y') }}</td>
+            <td style="text-align: right;">{{ $setting->kabupaten ?? 'Maros' }}, {{ date('d F Y') }}</td>
         </tr>
         <tr>
             <td>Mengetahui</td>

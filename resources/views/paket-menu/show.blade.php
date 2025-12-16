@@ -66,7 +66,8 @@
                                                     <th>No</th>
                                                     <th>Bahan Makanan</th>
                                                     <th>Kelompok</th>
-                                                    <th>Berat Bersih (gram)</th>
+                                                    <th>Berat Bersih</th>
+                                                    <th>Satuan</th>
                                                     <th>Kalori (kkal)</th>
                                                 </tr>
                                             </thead>
@@ -85,7 +86,8 @@
                                                         <td>
                                                             <span class="badge bg-info">{{ $bahan->kelompok }}</span>
                                                         </td>
-                                                        <td>{{ number_format($bahan->berat_bersih, 2) }} gram</td>
+                                                        <td>{{ number_format($bahan->berat_bersih, 2) }}</td>
+                                                        <td>{{ $bahan->satuan }}</td>
                                                         <td>{{ number_format($bahan->energi, 2) }} kkal</td>
                                                     </tr>
                                                 @endforeach

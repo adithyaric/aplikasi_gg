@@ -98,13 +98,13 @@
                                                 <button type="button" class="btn btn-sm btn-info btn-period-detail"
                                                     data-mulai="{{ $period['tanggal_mulai']->format('Y-m-d') }}"
                                                     data-akhir="{{ $period['tanggal_akhir']->format('Y-m-d') }}">
-                                                    Detail
+                                                    <i class="bi bi-eye"></i> Detail
                                                 </button>
                                                 <a href="{{ route('export.gaji', [
                                                         'tanggal_mulai' => $period['tanggal_mulai']->format('Y-m-d'),
                                                         'tanggal_akhir' => $period['tanggal_akhir']->format('Y-m-d'),
-                                                    ]) }}" class="btn btn-sm btn-warning">
-                                                    <i class="fas fa-file-export"></i> Export
+                                                    ]) }}" class="btn btn-sm btn-success">
+                                                    <i class="bi bi-file-earmark-excel "></i> Export
                                                 </a>
                                             </td>
                                         </tr>

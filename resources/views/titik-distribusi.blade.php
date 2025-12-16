@@ -50,10 +50,10 @@
                                             <input type="text" class="form-control form-control-sm" id="search-school"
                                                 placeholder="Cari Alamat/Nama PIC/Nama sekolah...">
                                             <button class="btn btn-sm btn-primary" type="button" id="btn-search-school">
-                                                <i class="fas fa-search"></i> Cari
+                                                <i class="bi bi-search"></i> Cari
                                             </button>
                                             <a href="{{ route('titik-distribusi') }}" class="btn btn-sm btn-secondary">
-                                                <i class="fas fa-reset"></i> reset
+                                                reset
                                             </a>
                                         </div>
                                     </div>
@@ -68,10 +68,10 @@
                                             <input type="text" class="form-control form-control-sm" id="search-supplier"
                                                 placeholder="Cari Alamat/Nama Supplier...">
                                             <button class="btn btn-sm btn-primary" type="button" id="btn-search-supplier">
-                                                <i class="fas fa-search"></i> Cari
+                                                <i class="bi bi-search"></i> Cari
                                             </button>
                                             <a href="{{ route('titik-distribusi') }}" class="btn btn-sm btn-secondary">
-                                                <i class="fas fa-reset"></i> reset
+                                                reset
                                             </a>
                                         </div>
                                     </div>

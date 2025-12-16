@@ -97,12 +97,13 @@
                                                     </div>
                                                     <div class="col-md-3">
                                                         @if ($index === 0)
-                                                            <label>Berat Bersih (gram) <span
+                                                            <label>Berat Bersih <span
                                                                     class="text-danger">*</span></label>
                                                         @endif
                                                         <input type="number" class="form-control berat-input"
                                                             value="{{ $bahan->berat_bersih }}" min="0"
                                                             step="0.01" placeholder="0.00">
+                                                        //TODO tambah tampilan satuan
                                                     </div>
                                                     <div class="col-md-3">
                                                         @if ($index === 0)
@@ -173,7 +174,7 @@
                 const bahanId = row.data('bahan-id');
                 const berat = parseFloat(beratInput.val()) || 0;
                 const kaloriPer100 = kaloriData[bahanId] || 0;
-                const totalKalori = (berat * kaloriPer100) / 100;
+                const totalKalori = (berat * kaloriPer100) * 10;
                 kaloriInput.val(totalKalori.toFixed(2));
                 updateMenuTotalKalori(row.closest('.menu-item'));
                 updateTotalKalori();
@@ -228,7 +229,7 @@
                     if (bahanData && bahanData.length > 0) {
                         bahanData.forEach((bahan, index) => {
                             const beratBersihLabel = index === 0 ?
-                                '<label>Berat Bersih (gram) <span class="text-danger">*</span></label>' :
+                                '<label>Berat Bersih <span class="text-danger">*</span></label>' :
                                 '';
                             const kaloriLabel = index === 0 ? '<label>Kalori (kkal)</label>' : '';
 

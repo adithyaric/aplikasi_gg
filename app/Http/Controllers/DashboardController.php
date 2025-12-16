@@ -73,7 +73,8 @@ class DashboardController extends Controller
         $totalRealisasi = $totalPengeluaran;
 
         foreach ($anggaranData as $anggaran) {
-            $days = $anggaran->start_date->diffInDays($anggaran->end_date) + 1;
+            // $days = $anggaran->start_date->diffInDays($anggaran->end_date) + 1; //$days skip sabtu & minggu
+            $days = $this->getBusinessDays($anggaran->start_date, $anggaran->end_date);
             $totalAnggaran += ($anggaran->budget_porsi_8k + $anggaran->budget_porsi_10k
                 + $anggaran->budget_operasional + $anggaran->budget_sewa) * $days;
         }
@@ -270,7 +271,8 @@ class DashboardController extends Controller
 
         foreach ($anggarans as $date => $group) {
             $totalAnggaran = $group->sum(function ($anggaran) {
-                $days = max(1, $anggaran->start_date->diffInDays($anggaran->end_date) + 1);
+                // $days = max(1, $anggaran->start_date->diffInDays($anggaran->end_date) + 1); //$days skip sabtu & minggu
+                $days = max(1, $this->getBusinessDays($anggaran->start_date, $anggaran->end_date));
                 return ($anggaran->budget_porsi_8k + $anggaran->budget_porsi_10k
                     + $anggaran->budget_operasional + $anggaran->budget_sewa) * $days;
             });
@@ -355,7 +357,8 @@ class DashboardController extends Controller
             })
             ->map(function ($group) {
                 return $group->sum(function ($anggaran) {
-                    $days = $anggaran->start_date->diffInDays($anggaran->end_date) + 1;
+                    // $days = $anggaran->start_date->diffInDays($anggaran->end_date) + 1; //$days skip sabtu & minggu
+                    $days = $this->getBusinessDays($anggaran->start_date, $anggaran->end_date);
                     return ($anggaran->budget_porsi_8k + $anggaran->budget_porsi_10k
                         + $anggaran->budget_operasional + $anggaran->budget_sewa) * $days;
                 });
@@ -378,6 +381,22 @@ class DashboardController extends Controller
             'anggaran' => $anggaranWeekly,
             'realisasi' => $realisasiWeekly
         ];
+    }
+
+    private function getBusinessDays($startDate, $endDate)
+    {
+        $businessDays = 0;
+        $current = $startDate->copy();
+
+        while ($current <= $endDate) {
+            // Check if not Saturday (6) or Sunday (0)
+            if ($current->dayOfWeek !== 0 && $current->dayOfWeek !== 6) {
+                $businessDays++;
+            }
+            $current->addDay();
+        }
+
+        return $businessDays;
     }
 
     public function rekonsiliasi()

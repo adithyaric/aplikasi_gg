@@ -51,13 +51,13 @@
                             </div>
                             <div class="col-md-4">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-file-import me-2"></i> Import
+                                    <i class="bi bi-upload"></i> Import
                                 </button>
-                                <a href="{{ asset('templates/template-karyawan.csv') }}" class="btn btn-success ms-2">
-                                    <i class="fas fa-download me-2"></i> Template
+                                <a href="{{ asset('templates/template-karyawan.csv') }}" class="btn btn-secondary ms-2">
+                                    <i class="bi bi-file-earmark-spreadsheet"></i> Template
                                 </a>
-                                <a href="{{ route('export.relawan') }}" class="btn btn-warning ms-2">
-                                    <i class="fas fa-file-export me-2"></i> Export
+                                <a href="{{ route('export.relawan') }}" class="btn btn-success ms-2">
+                                    <i class="bi bi-file-earmark-excel"></i> Export
                                 </a>
                             </div>
                         </form>

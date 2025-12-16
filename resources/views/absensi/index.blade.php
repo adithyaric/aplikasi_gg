@@ -66,6 +66,15 @@
                                             <td><span class="badge bg-danger">{{ $tidakHadir }}</span></td>
                                             <td><span class="badge bg-info">{{ $confirmed }}</span></td>
                                             <td>
+                                                @if ($confirmed < count($items))
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-primary btn-bulk-confirm-absensi"
+                                                        data-tanggal="{{ $tanggal }}"
+                                                        data-period="{{ \Carbon\Carbon::parse($tanggal)->format('d/m/Y') }}">
+                                                        <i class="bi bi-check-lg"></i> Konfirm
+                                                    </button>
+                                                @endif
+                                                @if (!$confirmed)
                                                 <a href="{{ route('absensi.create', ['tanggal' => $tanggal]) }}"
                                                     class="btn btn-sm btn-success">
                                                     <span class="btn-inner">
@@ -77,21 +86,14 @@
                                                         </svg>
                                                     </span>
                                                 </a>
+                                                @endif
                                                 <button type="button" class="btn btn-sm btn-info btn-detail"
                                                     data-tanggal="{{ $tanggal }}">
-                                                    <i class="fas fa-eye"></i> Detail
+                                                    <i class="bi bi-eye"></i> Detail
                                                 </button>
-                                                <a href="{{ route('export.absensi', ['tanggal' => $tanggal]) }}" class="btn btn-sm btn-warning">
-                                                    <i class="fas fa-file-export"></i> Export
+                                                <a href="{{ route('export.absensi', ['tanggal' => $tanggal]) }}" class="btn btn-sm btn-success">
+                                                    <i class="bi bi-file-earmark-excel "></i> Export
                                                 </a>
-                                                @if ($confirmed < count($items))
-                                                    <button type="button"
-                                                        class="btn btn-sm btn-primary btn-bulk-confirm-absensi"
-                                                        data-tanggal="{{ $tanggal }}"
-                                                        data-period="{{ \Carbon\Carbon::parse($tanggal)->format('d/m/Y') }}">
-                                                        <i class="fas fa-check"></i> Konfirmasi
-                                                    </button>
-                                                @endif
                                             </td>
                                         </tr>
                                     @empty

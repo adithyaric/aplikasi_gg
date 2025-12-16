@@ -51,7 +51,7 @@
                                 <div class="col-12 mb-0">
                                     <div class="card border-0 shadow-sm">
                                         <div class="card-header bg-primary text-white py-2">
-                                            <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informasi Dasar</h6>
+                                            <h6 class="mb-0"><i class="bi bi-info-circle "></i> Informasi Dasar</h6>
                                         </div>
                                         <div class="card-body p-1">
                                             <div class="row g-1">
@@ -93,7 +93,7 @@
                                 <div class="col-12 mb-0">
                                     <div class="card border-0 shadow-sm">
                                         <div class="card-header bg-success text-white py-2">
-                                            <h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Makronutrien</h6>
+                                            <h6 class="mb-0"><i class="bi bi-pie-chart"></i> Makronutrien</h6>
                                         </div>
                                         <div class="card-body p-1">
                                             <div class="row g-1">
@@ -143,7 +143,7 @@
                                 <div class="col-12 mb-0">
                                     <div class="card border-0 shadow-sm">
                                         <div class="card-header bg-info text-white py-2">
-                                            <h6 class="mb-0"><i class="fas fa-atom me-2"></i>Mineral</h6>
+                                            <h6 class="mb-0"><i class="bi bi-info-circle"></i> Mineral</h6>
                                         </div>
                                         <div class="card-body p-1">
                                             <div class="row g-1">
@@ -193,7 +193,7 @@
                                 <div class="col-12 mb-0">
                                     <div class="card border-0 shadow-sm">
                                         <div class="card-header bg-warning text-dark py-2">
-                                            <h6 class="mb-0"><i class="fas fa-flask me-2"></i>Nutrien Tambahan</h6>
+                                            <h6 class="mb-0"><i class="bi bi-flask"></i> Nutrien Tambahan</h6>
                                         </div>
                                         <div class="card-body p-1">
                                             <div class="row g-1 mb-2">

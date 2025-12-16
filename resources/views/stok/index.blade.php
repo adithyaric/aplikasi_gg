@@ -12,8 +12,8 @@
                             <p>Makan Sehat Bergizi</p>
                         </div>
                         <div>
-                            <a href="{{ route('export.stok') }}" class="btn btn-warning ms-2">
-                                <i class="fas fa-file-export me-2"></i> Export
+                            <a href="{{ route('export.stok') }}" class="btn btn-success ms-2">
+                                <i class="bi bi-file-earmark-excel "></i> Export
                             </a>
                         </div>
                     </div>

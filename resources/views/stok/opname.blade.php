@@ -77,12 +77,12 @@
                                 <i class="bi bi-save"></i> Save Stok Opname
                             </button>
                             <div class="d-flex gap-2">
-                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalCetakKartu">
+                            <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalCetakKartu">
                                 <i class="bi bi-printer"></i> Cetak Stok Opname
                             </button>
-                                <button class="btn btn-info" id="btnExportOpname">
-                                    <i class="bi bi-file-earmark-excel"></i> Export
-                                </button>
+                                {{-- <button class="btn btn-warning" id="btnExportOpname"> --}}
+                                    {{-- <i class="bi bi-file-earmark-excel"></i> Export --}}
+                                {{-- </button> --}}
                             </div>
                         </div>
                     </div>
@@ -176,8 +176,11 @@
                     <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <i class="bi bi-x-circle"></i> Tutup
                     </button>
-                    <button class="btn btn-warning" id="btnCetakNow">
-                        <i class="bi bi-printer-fill"></i> Cetak
+                    <button class="btn btn-danger" id="btnCetakNow">
+                        <i class="bi bi-printer-fill"></i> Cetak PDF
+                    </button>
+                    <button class="btn btn-warning" id="btnExportOpname">
+                        <i class="bi bi-file-earmark-excel"></i> Export
                     </button>
                 </div>
             </div>

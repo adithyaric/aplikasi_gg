@@ -83,7 +83,7 @@
                                                             rowspan="{{ $paket->menus->sum(fn($m) => $m->bahanBakus->count()) }}">
                                                             <a href="{{ route('paketmenu.show', $paket->id) }}"
                                                                 class="btn btn-sm btn-info">
-                                                                <span class="btn-inner">Detail</span>
+                                                                <span class="btn-inner"><i class="bi bi-eye"></i> Detail</span>
                                                             </a>
                                                             <a href="{{ route('paketmenu.edit', $paket->id) }}"
                                                                 class="btn btn-sm btn-success">

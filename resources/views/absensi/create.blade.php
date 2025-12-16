@@ -51,7 +51,7 @@
                                             <th>Kategori</th>
                                             <th>Nominal Gaji/Hari</th>
                                             <th>Status Kehadiran</th>
-                                            <th>Confirmed</th>
+                                            <th style="display:none;">Confirmed</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -83,7 +83,7 @@
                                                             for="tidak_hadir_{{ $karyawan->id }}">Tidak Hadir</label>
                                                     </div>
                                                 </td>
-                                                <td>
+                                                <td style="display:none;">
                                                     <input type="hidden" name="karyawan[{{ $loop->index }}][confirmed]"
                                                         value="{{ $existingAbsensi[$karyawan->id]['confirmed'] ?? 0 }}"
                                                         class="confirmed-input" id="confirmed_{{ $karyawan->id }}">
