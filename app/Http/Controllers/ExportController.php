@@ -1343,4 +1343,179 @@ class ExportController extends Controller
             }
         }, 'LBS_' . date('Y-m-d_H-i') . '.xlsx');
     }
+
+    public function exportLRA(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        // Calculate totals from database
+        $totalPenerimaanBGN = 0;
+        $totalPenerimaanYayasan = 0;
+        $totalPenerimaanPihakLain = 0;
+        $totalBahanPokok = 0;
+        $totalBahanOperasional = 0;
+        $totalBudgetSewa = 0;
+        $totalBudgetBahanPangan = 0;
+        $totalBudgetOperasional = 0;
+
+        // Calculate penerimaan from RekeningRekapBKU
+        $rekeningQuery = RekeningRekapBKU::query();
+
+        if ($startDate && $endDate) {
+            $rekeningQuery->whereBetween('tanggal_transaksi', [
+                Carbon::parse($startDate)->startOfDay(),
+                Carbon::parse($endDate)->endOfDay()
+            ]);
+        }
+
+        $rekeningData = $rekeningQuery->get();
+
+        foreach ($rekeningData as $item) {
+            if (str_contains($item->jenis_bahan, 'Penerimaan BGN')) {
+                $totalPenerimaanBGN += $item->debit;
+            } elseif (str_contains($item->jenis_bahan, 'Penerimaan Yayasan')) {
+                $totalPenerimaanYayasan += $item->debit;
+            } elseif (str_contains($item->jenis_bahan, 'Penerimaan Pihak Lainnya')) {
+                $totalPenerimaanPihakLain += $item->debit;
+            } elseif ($item->jenis_bahan == 'Bahan Pokok') {
+                $totalBahanPokok += $item->kredit;
+            } elseif ($item->jenis_bahan == 'Bahan Operasional') {
+                $totalBahanOperasional += $item->kredit;
+            }
+        }
+
+        // Calculate budgets from Anggaran
+        $anggaranQuery = Anggaran::query();
+
+        if ($startDate && $endDate) {
+            $anggaranQuery->where(function ($q) use ($startDate, $endDate) {
+                $q->whereBetween('start_date', [$startDate, $endDate])
+                    ->orWhereBetween('end_date', [$startDate, $endDate])
+                    ->orWhere(function ($q2) use ($startDate, $endDate) {
+                        $q2->where('start_date', '<=', $startDate)
+                            ->where('end_date', '>=', $endDate);
+                    });
+            });
+        }
+
+        $anggarans = $anggaranQuery->get();
+
+        foreach ($anggarans as $anggaran) {
+            $totalBudgetBahanPangan += ($anggaran->budget_porsi_8k + $anggaran->budget_porsi_10k);
+            $totalBudgetOperasional += $anggaran->budget_operasional;
+            $totalBudgetSewa += $anggaran->budget_sewa;
+        }
+
+        // Collect admin inputs from request
+        $adminInputs = $request->only([
+            'anggaran_sisa_dana',
+            'realisasi_sisa_dana',
+            'realisasi_bgn',
+            'realisasi_yayasan',
+            'realisasi_pihak_lain',
+            'realisasi_bahan_pangan',
+            'realisasi_operasional',
+            'realisasi_sewa'
+        ]);
+
+        // Prepare data for export
+        $exportData = [
+            'penerimaanItems' => [
+                [
+                    'uraian' => 'Penerimaan dari BGN (Sisa dana Periode Sebelumnya)',
+                    'anggaran' => $adminInputs['anggaran_sisa_dana'] ?? 0,
+                    'realisasi' => $adminInputs['realisasi_sisa_dana'] ?? 0,
+                ],
+                [
+                    'uraian' => 'Penerimaan dari BGN',
+                    'anggaran' => $totalPenerimaanBGN,
+                    'realisasi' => $adminInputs['realisasi_bgn'] ?? $totalPenerimaanBGN,
+                ],
+                [
+                    'uraian' => 'Penerimaan dari Yayasan',
+                    'anggaran' => $totalPenerimaanYayasan,
+                    'realisasi' => $adminInputs['realisasi_yayasan'] ?? $totalPenerimaanYayasan,
+                ],
+                [
+                    'uraian' => 'Penerimaan dari Pihak Lainnya',
+                    'anggaran' => $totalPenerimaanPihakLain,
+                    'realisasi' => $adminInputs['realisasi_pihak_lain'] ?? $totalPenerimaanPihakLain,
+                ],
+            ],
+            'belanjaItems' => [
+                [
+                    'uraian' => 'Belanja Bahan Pangan',
+                    'anggaran' => $totalBudgetBahanPangan,
+                    'realisasi' => $adminInputs['realisasi_bahan_pangan'] ?? $totalBahanPokok,
+                ],
+                [
+                    'uraian' => 'Belanja Operasional',
+                    'anggaran' => $totalBudgetOperasional,
+                    'realisasi' => $adminInputs['realisasi_operasional'] ?? $totalBahanOperasional,
+                ],
+                [
+                    'uraian' => 'Belanja Sewa',
+                    'anggaran' => $totalBudgetSewa,
+                    'realisasi' => $adminInputs['realisasi_sewa'] ?? $totalBudgetSewa,
+                ],
+            ]
+        ];
+
+        // Calculate totals
+        $totalAnggaranPenerimaan = array_sum(array_column($exportData['penerimaanItems'], 'anggaran'));
+        $totalRealisasiPenerimaan = array_sum(array_column($exportData['penerimaanItems'], 'realisasi'));
+        $totalAnggaranBelanja = array_sum(array_column($exportData['belanjaItems'], 'anggaran'));
+        $totalRealisasiBelanja = array_sum(array_column($exportData['belanjaItems'], 'realisasi'));
+
+        return Excel::download(
+            new class($exportData, $startDate, $endDate, $totalAnggaranPenerimaan, $totalRealisasiPenerimaan, $totalAnggaranBelanja, $totalRealisasiBelanja) implements \Maatwebsite\Excel\Concerns\FromView, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+                private $exportData;
+                private $startDate;
+                private $endDate;
+                private $totalAnggaranPenerimaan;
+                private $totalRealisasiPenerimaan;
+                private $totalAnggaranBelanja;
+                private $totalRealisasiBelanja;
+
+                public function __construct($exportData, $startDate, $endDate, $totalAnggaranPenerimaan, $totalRealisasiPenerimaan, $totalAnggaranBelanja, $totalRealisasiBelanja)
+                {
+                    $this->exportData = $exportData;
+                    $this->startDate = $startDate;
+                    $this->endDate = $endDate;
+                    $this->totalAnggaranPenerimaan = $totalAnggaranPenerimaan;
+                    $this->totalRealisasiPenerimaan = $totalRealisasiPenerimaan;
+                    $this->totalAnggaranBelanja = $totalAnggaranBelanja;
+                    $this->totalRealisasiBelanja = $totalRealisasiBelanja;
+                }
+
+                public function view(): \Illuminate\Contracts\View\View
+                {
+                    return view('exports.lra', [
+                        'penerimaanItems' => $this->exportData['penerimaanItems'],
+                        'belanjaItems' => $this->exportData['belanjaItems'],
+                        'startDate' => $this->startDate,
+                        'endDate' => $this->endDate,
+                        'totalAnggaranPenerimaan' => $this->totalAnggaranPenerimaan,
+                        'totalRealisasiPenerimaan' => $this->totalRealisasiPenerimaan,
+                        'totalAnggaranBelanja' => $this->totalAnggaranBelanja,
+                        'totalRealisasiBelanja' => $this->totalRealisasiBelanja,
+                    ]);
+                }
+
+                public function columnWidths(): array
+                {
+                    return [
+                        'A' => 50,
+                        'B' => 25,
+                        'C' => 25,
+                        'D' => 20,
+                    ];
+                }
+            },
+            ($startDate && $endDate)
+                ? 'LRA_' . str_replace('-', '', $startDate) . '_' . str_replace('-', '', $endDate) . '.xlsx'
+                : 'LRA_All.xlsx'
+        );
+    }
 }

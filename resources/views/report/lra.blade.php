@@ -132,12 +132,14 @@
                                         <tr data-section="belanja">
                                             <td class="text-start">{{ $item['uraian'] }}</td>
                                             <td>
-                                                <span class="tampil-anggaran-value">{{ number_format($item['anggaran'], 0, ',', '.') }}</span>
+                                                <span
+                                                    class="tampil-anggaran-value">{{ number_format($item['anggaran'], 0, ',', '.') }}</span>
                                                 <input type="hidden" class="anggaran-value"
                                                     value="{{ $item['anggaran'] }}">
                                             </td>
                                             <td>
-                                                <span class="">{{ number_format($item['realisasi'], 0, ',', '.') }}</span>
+                                                <span
+                                                    class="">{{ number_format($item['realisasi'], 0, ',', '.') }}</span>
                                                 <input type="hidden" class="realisasi-input"
                                                     name="{{ $item['input_realisasi_name'] }}"
                                                     value="{{ $item['realisasi'] }}">
@@ -214,8 +216,11 @@
                     <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <i class="bi bi-x-circle"></i> Tutup
                     </button>
-                    <button class="btn btn-success" id="btnCetakNow">
-                        <i class="bi bi-printer-fill"></i> Cetak
+                    <button class="btn btn-danger" id="btnCetakNow">
+                        <i class="bi bi-printer-fill"></i> Cetak PDF
+                    </button>
+                    <button class="btn btn-success" id="btnExportLRA">
+                        <i class="bi bi-file-earmark-excel"></i> Export
                     </button>
                 </div>
             </div>
@@ -224,6 +229,38 @@
 @endsection
 
 @push('js')
+    <script>
+        // Add this inside $(document).ready function or at the end of existing script
+        $('#btnExportLRA').on('click', function() {
+            const startDate = $('#startDate').val();
+            const endDate = $('#endDate').val();
+
+            // if (!startDate || !endDate) {
+            //     alert('Pilih periode terlebih dahulu!');
+            //     return;
+            // }
+
+            // Collect all form data
+            const formData = new URLSearchParams();
+            formData.append('start_date', startDate);
+            formData.append('end_date', endDate);
+
+            // Collect user inputs
+            $('.anggaran-input, .realisasi-input').each(function() {
+                const name = $(this).attr('name');
+                const value = $(this).val() || 0;
+                if (name) {
+                    formData.append(name, value);
+                }
+            });
+
+            // Build export URL
+            const exportUrl = '{{ route('export.lra') }}?' + formData.toString();
+
+            // Open export in new window
+            window.location.href = exportUrl;
+        });
+    </script>
     <script>
         $(document).ready(function() {
             function calculatePercentage(anggaran, realisasi) {
