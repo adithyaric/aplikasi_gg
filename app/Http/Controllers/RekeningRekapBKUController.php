@@ -88,6 +88,25 @@ class RekeningRekapBKUController extends Controller
             'Penerimaan Pihak Lainnya',
         ];
 
+        $jenisBukuPembantu = [
+            'dana bahan baku',
+            'dana operasional',
+            'dana insentif fasilitas',
+            'pungutan/setoran ppn',
+            'pungutan/setoran pph21',
+            'pungutan/setoran pph22',
+            'pungutan/setoran pph23',
+            'pungutan/setoran pph pasal4 ayat2',
+            'biaya bahan baku',
+            'biaya operasional',
+            'biaya insentif fasilitas',
+        ];
+
+        $sumberDana = [
+            'petty cash/cash in hand',
+            'kas di bank',
+        ];
+
         $title = 'Formulir Rekap BKU';
 
         return view('keuangan.rekening-rekap-bku.create', [

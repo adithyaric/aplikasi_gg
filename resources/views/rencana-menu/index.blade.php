@@ -270,10 +270,10 @@
                                     let beratBersih = bahan.berat_bersih;
                                     let satuan = bahan.satuan;
 
-                                    // // Convert gram to kilogram
+                                    // Convert gram to kilogram
                                     // if (satuan.toLowerCase() === 'gram' || satuan.toLowerCase() === 'gr' || satuan.toLowerCase() === 'g') {
-                                    //     beratBersih = beratBersih / 1000;
-                                    //     satuan = 'kg';
+                                        beratBersih = beratBersih / 1000;
+                                        satuan = 'kg';
                                     // }
 
                                     const totalKebutuhan = beratBersih * paket.pivot.porsi;

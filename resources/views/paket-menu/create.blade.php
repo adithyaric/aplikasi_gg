@@ -72,7 +72,7 @@
                                                     </option>
                                                 @endforeach
                                             </select>
-                                            //TODO tambah tampilan satuan
+                                            {{-- //TODO tambah tampilan satuan --}}
                                         </div>
                                         <div class="col-md-8 d-flex align-items-end justify-content-end">
                                             <button type="button" class="btn btn-outline-danger btn-sm remove-menu">
@@ -135,7 +135,7 @@
                 const bahanId = row.data('bahan-id');
                 const berat = parseFloat(beratInput.val()) || 0;
                 const kaloriPer100 = kaloriData[bahanId] || 0;
-                const totalKalori = (berat * kaloriPer100) * 10;
+                const totalKalori = (berat * kaloriPer100) / 100;
                 kaloriInput.val(totalKalori.toFixed(2));
 
                 updateMenuTotalKalori(row.closest('.menu-item'));

@@ -237,7 +237,7 @@
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center">
-                                <button type="button" class="btn btn-primary" id="tambah-item">
+                                <button type="button" class="btn btn-primary" id="tambah-item" style="display:none;">
                                     <i class="bi bi-plus-circle"></i> Tambah Item
                                 </button>
                                 <button type="submit" class="btn btn-success">Simpan</button>

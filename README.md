@@ -106,9 +106,9 @@ export :
 <!-- - relawan -->
 <!-- - absensi -->
 <!-- - gaji -->
-- rekap menu???
+- rekap menu : perencanaan menu
 <!-- - lembar po -->
-- bast???
+- bast : masing-masing penerimaan barang
 <!-- - stock -->
 <!-- - kartu stock -->
 <!-- - stock opname -->

@@ -27,7 +27,21 @@ class RekeningRekapBKU extends Model
         'bulan',
         'minggu',
         'transaction_id',
-        'jenis_buku_pembantu', //string :
+        //TODO tambah kolom :
+        'jenis_buku_pembantu',
+        /** string :
+        dana bahan baku,
+        dana operasional,
+        dana insentif fasilitas,
+        pungutan/setoran ppn,
+        pungutan/setoran pph21,
+        pungutan/setoran pph22,
+        pungutan/setoran pph23,
+        pungutan/setoran pph pasal4 ayat2,
+        biaya bahan baku,
+        biaya operasional,
+        biaya insentif fasilitas,
+        **/
         'sumber_dana', //string : (Petty cash/cash in hand), kas di bank
     ];
 
