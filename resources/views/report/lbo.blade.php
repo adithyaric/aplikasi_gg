@@ -145,7 +145,7 @@
                                     @foreach ($data as $index => $item)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item['tanggal']->format('d M Y') }}</td>
+                                            <td>{{ $item['tanggal']->format('d F Y') }}</td>
                                             <td>{{ $item['uraian'] }}</td>
                                             <td>{{ number_format($item['nominal'], 0, ',', '.') }}</td>
                                             {{-- <td>{{ $item['keterangan'] }}</td> --}}
@@ -462,28 +462,59 @@
 
                 const all = getTabelUtamaData();
 
+                // const filtered = all.filter((r) => {
+                //     if (!r.tanggal) return false;
+
+                //     // Pecah berdasarkan "/"
+                //     const parts = r.tanggal.split(/[\/]/);
+
+                //     if (parts.length < 3) return false; // format tidak valid
+
+                //     let [day, month, year] = parts;
+
+                //     // Pastikan semuanya angka
+                //     day = parseInt(day);
+                //     month = parseInt(month);
+                //     year = parseInt(year);
+
+                //     // 🔹 Jika tahun hanya 2 digit, tambahkan 2000
+                //     if (year < 100) {
+                //         year = 2000 + year;
+                //     }
+
+                //     const tgl = new Date(year, month - 1, day);
+                //     return tgl >= start && tgl <= end;
+                // });
+
+                function parseTanggalEN(str) {
+                    const months = {
+                        January: 0, February: 1, March: 2, April: 3,
+                        May: 4, June: 5, July: 6, August: 7,
+                        September: 8, October: 9, November: 10, December: 11
+                    };
+
+                    const parts = str.trim().split(" ");
+                    if (parts.length !== 3) return null;
+
+                    const day = parseInt(parts[0], 10);
+                    const month = months[parts[1]];
+                    const year = parseInt(parts[2], 10);
+
+                    return new Date(year, month, day);
+                }
+
                 const filtered = all.filter((r) => {
-                    if (!r.tanggal) return false;
+                    const tgl = parseTanggalEN(r.tanggal);
+                    if (!tgl) return false;
 
-                    // Pecah berdasarkan "/"
-                    const parts = r.tanggal.split(/[\/]/);
+                    const startDate = new Date(start);
+                    const endDate = new Date(end);
 
-                    if (parts.length < 3) return false; // format tidak valid
+                    // inclusive
+                    startDate.setHours(0, 0, 0, 0);
+                    endDate.setHours(23, 59, 59, 999);
 
-                    let [day, month, year] = parts;
-
-                    // Pastikan semuanya angka
-                    day = parseInt(day);
-                    month = parseInt(month);
-                    year = parseInt(year);
-
-                    // 🔹 Jika tahun hanya 2 digit, tambahkan 2000
-                    if (year < 100) {
-                        year = 2000 + year;
-                    }
-
-                    const tgl = new Date(year, month - 1, day);
-                    return tgl >= start && tgl <= end;
+                    return tgl >= startDate && tgl <= endDate;
                 });
 
                 renderCetakTable(filtered);

@@ -382,14 +382,37 @@
                 const end = new Date($("#cetakEnd").val());
                 const all = getTabelUtamaData();
 
-                const filtered = all.filter((r) => {
-                    // Contoh format tanggal kamu: "24 April 2025"
-                    const tgl = new Date(
-                        r.tanggal.replace(/(\d+)\s(\w+)\s(\d+)/, "$1 $2 $3")
-                    );
-                    return tgl >= start && tgl <= end;
-                });
+                function parseTanggalID(str) {
+                    const months = {
+                        Januari: 0, Februari: 1, Maret: 2, April: 3,
+                        Mei: 4, Juni: 5, Juli: 6, Agustus: 7,
+                        September: 8, Oktober: 9, November: 10, Desember: 11
+                    };
 
+                    const parts = str.trim().split(" ");
+                    if (parts.length !== 3) return null;
+
+                    const day = parseInt(parts[0], 10);
+                    const month = months[parts[1]];
+                    const year = parseInt(parts[2], 10);
+
+                    return new Date(year, month, day);
+                }
+
+                // 🔹 FIX filter tanggal (MODAL ONLY)
+                const filtered = all.filter((r) => {
+                    const tgl = parseTanggalID(r.tanggal);
+                    if (!tgl) return false;
+
+                    const startDate = new Date(start);
+                    const endDate = new Date(end);
+
+                    // inclusive (samakan dengan filter utama)
+                    startDate.setHours(0, 0, 0, 0);
+                    endDate.setHours(23, 59, 59, 999);
+
+                    return tgl >= startDate && tgl <= endDate;
+                });
                 renderCetakTable(filtered);
                 $("#periodeCetakText").text(
                     `${$("#cetakStart").val()} s.d. ${$("#cetakEnd").val()}`

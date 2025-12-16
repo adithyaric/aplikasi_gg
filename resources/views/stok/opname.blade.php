@@ -179,7 +179,7 @@
                     <button class="btn btn-danger" id="btnCetakNow">
                         <i class="bi bi-printer-fill"></i> Cetak PDF
                     </button>
-                    <button class="btn btn-warning" id="btnExportOpname">
+                    <button class="btn btn-success" id="btnExportOpname">
                         <i class="bi bi-file-earmark-excel"></i> Export
                     </button>
                 </div>

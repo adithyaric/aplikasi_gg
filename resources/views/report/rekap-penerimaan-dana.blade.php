@@ -75,7 +75,7 @@
                                     @foreach ($rekeningKoranVa as $item)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item->tanggal_transaksi->format('d M Y') }}</td>
+                                            <td>{{ $item->tanggal_transaksi->format('d F Y') }}</td>
                                             <td>{{ $item->uraian }}</td>
                                             <td>{{ $item->minggu ?? '' }}</td>
                                             <td>{{ number_format($item->kredit, 0, ',', '.') }}</td>
@@ -326,11 +326,42 @@
                 const end = new Date($("#cetakEnd").val());
                 const all = getTabelUtamaData();
 
+                // const filtered = all.filter((r) => {
+                //     const parts = r.tanggal.split(/[\/ ]/); // support 24/04/25 9.05.48
+                //     const tgl = new Date("20" + parts[2], parts[1] - 1, parts[
+                //         0]); // asumsi format dd/mm/yy
+                //     return tgl >= start && tgl <= end;
+                // });
+
+                function parseTanggalEN(str) {
+                    const months = {
+                        January: 0, February: 1, March: 2, April: 3,
+                        May: 4, June: 5, July: 6, August: 7,
+                        September: 8, October: 9, November: 10, December: 11
+                    };
+
+                    const parts = str.trim().split(" ");
+                    if (parts.length !== 3) return null;
+
+                    const day = parseInt(parts[0], 10);
+                    const month = months[parts[1]];
+                    const year = parseInt(parts[2], 10);
+
+                    return new Date(year, month, day);
+                }
+
                 const filtered = all.filter((r) => {
-                    const parts = r.tanggal.split(/[\/ ]/); // support 24/04/25 9.05.48
-                    const tgl = new Date("20" + parts[2], parts[1] - 1, parts[
-                        0]); // asumsi format dd/mm/yy
-                    return tgl >= start && tgl <= end;
+                    const tgl = parseTanggalEN(r.tanggal);
+                    if (!tgl) return false;
+
+                    const startDate = new Date(start);
+                    const endDate = new Date(end);
+
+                    // inclusive
+                    startDate.setHours(0, 0, 0, 0);
+                    endDate.setHours(23, 59, 59, 999);
+
+                    return tgl >= startDate && tgl <= endDate;
                 });
 
                 renderCetakTable(filtered);

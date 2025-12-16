@@ -31,7 +31,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="custom-datatable-entries">
+                        <div class="custom-datatableLBBP-entries">
                             <div class="row align-items-end mb-4 justify-content-between">
                                 <!-- 🔹 Bagian Kiri: Filter Tanggal -->
                                 <div class="col d-flex flex-wrap align-items-end gap-2">
@@ -60,7 +60,7 @@
                                 </div>
                             </div>
 
-                            <table id="datatable" class="table table-striped align-middle" data-toggle="data-table"
+                            <table id="datatableLBBP" class="table table-striped align-middle" data-toggle="data-table"
                                 cellspacing="0" cellpadding="5">
                                 <thead class="text-center align-middle">
                                     <tr>
@@ -101,87 +101,6 @@
             </div>
         </div>
     </div>
-@endsection
-@push('js')
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
-    <script>
-        flatpickr("#dateRange", {
-            mode: "range",
-            dateFormat: "d/m/Y",
-            locale: "id", // biar pakai bahasa Indonesia
-            altInput: true,
-            altFormat: "j F Y", // contoh: 24 April 2025
-            allowInput: true,
-        });
-    </script>
-    <script>
-        flatpickr("#startDate", {
-            inline: true,
-            dateFormat: "d/m/Y",
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            // 🔹 Cek apakah DataTable sudah ada
-            let table;
-            if ($.fn.DataTable.isDataTable("#datatable")) {
-                table = $("#datatable").DataTable(); // gunakan instance yang sudah ada
-            } else {
-                table = $("#datatable").DataTable({
-                    scrollX: true,
-                    pageLength: 10,
-                    autoWidth: false,
-                });
-            }
-
-            // 🔹 Inisialisasi Flatpickr (Range)
-            const fp = flatpickr("#dateRange", {
-                mode: "range",
-                dateFormat: "d/m/Y",
-                locale: "id",
-                altInput: true,
-                altFormat: "j F Y",
-                allowInput: true,
-            });
-
-            // 🔹 Fungsi bantu parse tanggal
-            function parseDate(str) {
-                if (!str) return null;
-                const [day, month, year] = str.split("/");
-                return new Date(`${year}-${month}-${day}`);
-            }
-
-            // 🔹 Tombol Filter ditekan
-            $("#filterDate").on("click", function() {
-                const range = fp.selectedDates;
-                if (range.length === 2) {
-                    const min = range[0];
-                    const max = range[1];
-
-                    $.fn.dataTable.ext.search.push(function(settings, data) {
-                        if (settings.nTable.id !== "datatable") return true;
-                        const tanggalTabel = data[1]; // kolom tanggal
-                        const date = parseDate(tanggalTabel);
-                        if (!date) return false;
-                        return date >= min && date <= max;
-                    });
-
-                    table.draw();
-                    $.fn.dataTable.ext.search.pop();
-                } else {
-                    alert("Silakan pilih rentang tanggal terlebih dahulu.");
-                }
-            });
-
-            // 🔹 Tombol Reset ditekan
-            $("#resetDate").on("click", function() {
-                fp.clear();
-                table.search("").draw();
-            });
-        });
-    </script>
-
     <div class="modal fade" id="modalCetakKartu" tabindex="-1" aria-labelledby="modalCetakLBBPlabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content p-4">
@@ -272,179 +191,169 @@
             </div>
         </div>
     </div>
+@endsection
+@push('js')
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script>
         $(document).ready(function() {
-                    // 🔹 Ambil data dari tabel utama LBBP
-                    function getTabelUtamaData() {
-                        const rows = [];
-                        $("#datatable tbody tr").each(function() {
-                            const tanggalTd = $(this).find("td:eq(1)");
-                            const tanggalText = tanggalTd.text().trim();
 
-                            const row = {
-                                no: $(this).find("td:eq(0)").text().trim(),
-                                tanggal: tanggalText,
-                                namaBahan: $(this).find("td:eq(2)").text().trim(),
-                                kuantitas: parseFloat(
-                                    $(this).find("td:eq(3)").text().replace(/[^\d.-]/g, "")
-                                ) || 0,
-                                satuan: $(this).find("td:eq(4)").text().trim(),
-                                hargaSatuan: parseFloat(
-                                    $(this).find("td:eq(5)").text().replace(/[^\d.-]/g, "")
-                                ) || 0,
-                                total: parseFloat(
-                                    $(this).find("td:eq(6)").text().replace(/[^\d.-]/g, "")
-                                ) || 0,
-                                supplier: $(this).find("td:eq(7)").text().trim(),
-                                surveiHarga: $(this).find("td:eq(8)").text().trim(),
-                                // Store original date for filtering
-                                originalDate: tanggalText
-                            };
-                            if (row.tanggal) rows.push(row);
-                        });
-                        return rows;
-                    }
+            /* =========================
+               INIT DATATABLE
+            ========================= */
+            const table = $.fn.DataTable.isDataTable("#datatableLBBP") ?
+                $("#datatableLBBP").DataTable() :
+                $("#datatableLBBP").DataTable({
+                    scrollX: true,
+                    pageLength: 10,
+                    autoWidth: false,
+                });
 
-                    // Update the filter function to use proper date format:
-                    $("#filterDate").on("click", function() {
-                                const range = fp.selectedDates;
-                                if (range.length === 2) {
-                                    const min = range[0];
-                                    const max = range[1];
 
-                                    $.fn.dataTable.ext.search.push(function(settings, data) {
-                                        if (settings.nTable.id !== "datatable") return true;
+            /* =========================
+               DATE PARSER (d M Y)
+               ex: 01 Dec 2025
+            ========================= */
+            function parseTanggal(str) {
+                const months = {
+                    Jan: 0,
+                    Feb: 1,
+                    Mar: 2,
+                    Apr: 3,
+                    May: 4,
+                    Jun: 5,
+                    Jul: 6,
+                    Aug: 7,
+                    Sep: 8,
+                    Oct: 9,
+                    Nov: 10,
+                    Dec: 11
+                };
+                const p = str.split(" ");
+                if (p.length !== 3) return null;
+                return new Date(p[2], months[p[1]], p[0]);
+            }
 
-                                        // Parse DD/MM/YYYY format from table
-                                        const tanggalTabel = data[1];
-                                        const [day, month, year] = tanggalTabel.split('/');
-                                        const date = new Date(year, month - 1, day);
+            /* =========================
+               MAIN DATE RANGE FILTER
+            ========================= */
+            const fp = flatpickr("#dateRange", {
+                mode: "range",
+                dateFormat: "d/m/Y",
+                locale: "id",
+                altInput: true,
+                altFormat: "j F Y"
+            });
 
-                                        if (!date || isNaN(date)) return false;
-                                        return date >= min && date <= max;
-                                    });
-                                    table.draw();
-                                    $.fn.dataTable.ext.search.pop();
-                                } else {
-                                    alert("Silakan pilih
-                                        rentang tanggal terlebih dahulu.
-                                        "); } });
+            $("#filterDate").on("click", function() {
+                if (fp.selectedDates.length !== 2) return;
 
-                                        // 🔹 Render ke tabel cetak
-                                        function renderCetakTable(data) {
-                                            const tbody = $("#tabelCetak tbody");
-                                            tbody.empty();
-                                            let totalNilai = 0;
+                const min = fp.selectedDates[0];
+                const max = fp.selectedDates[1];
 
-                                            data.forEach((item, i) => {
-                                                totalNilai += item.total;
-                                                tbody.append(`
-        <tr>
-          <td>${i + 1}</td>
-          <td>${item.tanggal}</td>
-          <td>${item.namaBahan}</td>
-          <td>${item.kuantitas}</td>
-          <td>${item.satuan}</td>
-          <td>${item.hargaSatuan.toLocaleString("id-ID")}</td>
-          <td>${item.total.toLocaleString("id-ID")}</td>
-          <td>${item.supplier}</td>
-          <td>${item.surveiHarga}</td>
-        </tr>
-      `);
-                                            });
+                $.fn.dataTable.ext.search.push(function(settings, data) {
+                    if (settings.nTable.id !== "datatableLBBP") return true;
 
-                                            // Tambahkan total di bawah tabel
-                                            //       tbody.append(`
-                                        //   <tr class="fw-bold table-light">
-                                        //     <td colspan="6" class="text-end">TOTAL</td>
-                                        //     <td>${totalNilai.toLocaleString("id-ID")}</td>
-                                        //     <td colspan="2"></td>
-                                        //   </tr>
-                                        // `);
-                                        }
+                    const tgl = parseTanggal(data[1]);
+                    if (!tgl) return false;
 
-                                        // 🔹 Saat modal dibuka
-                                        $("#modalCetakKartu").on("shown.bs.modal", function() {
-                                            renderCetakTable(getTabelUtamaData());
-                                            const today = new Date();
-                                            $("#tanggalCetak").text(
-                                                `Tegal, ${today.toLocaleDateString("id-ID", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}`
-                                            );
-                                        });
+                    tgl.setHours(0, 0, 0, 0);
+                    min.setHours(0, 0, 0, 0);
+                    max.setHours(23, 59, 59, 999);
 
-                                        // 🔹 Filter tanggal
-                                        $("#btnFilterCetak").on("click", function() {
-                                            const start = new Date($("#cetakStart").val());
-                                            const end = new Date($("#cetakEnd").val());
-                                            const all = getTabelUtamaData();
+                    return tgl >= min && tgl <= max;
+                });
 
-                                            const filtered = all.filter((r) => {
-                                                const parts = r.tanggal.split(/[\/-]/);
-                                                if (parts.length < 3) return false;
-                                                const year = parts[0].length === 4 ? parts[0] : parts[2];
-                                                const tgl = new Date(year, parts[1] - 1, parts[0]);
-                                                return (
-                                                    (!isNaN(start) ? tgl >= start : true) &&
-                                                    (!isNaN(end) ? tgl <= end : true)
-                                                );
-                                            });
+                table.draw();
+                $.fn.dataTable.ext.search.pop();
+            });
 
-                                            renderCetakTable(filtered);
-                                            $("#periodeCetakText").text(
-                                                `${$("#cetakStart").val() || "?"} s.d. ${
-              $("#cetakEnd").val() || "?"
-            }`
-                                            );
-                                        });
+            $("#resetDate").on("click", function() {
+                fp.clear();
+                table.search("").draw();
+            });
 
-                                        // 🔹 Reset filter
-                                        $("#btnResetCetak").on("click", function() {
-                                            $("#cetakStart").val("");
-                                            $("#cetakEnd").val("");
-                                            $("#periodeCetakText").text("Semua Periode");
-                                            renderCetakTable(getTabelUtamaData());
-                                        });
+            /* =========================
+               GET DATA FOR MODAL
+            ========================= */
+            function getTableData() {
+                const rows = [];
 
-                                        // 🔹 Tombol Cetak ke Jendela Baru
-                                        $(document).on("click", "#btnCetakNow", function() {
-                                            const printContent = document.getElementById("printArea").outerHTML;
-                                            const printWindow = window.open(
-                                                "",
-                                                "_blank",
-                                                "width=1000,height=800"
-                                            );
-                                            printWindow.document.write(`
-      <html>
-        <head>
-          <title>Cetak LBBP</title>
-          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-          <style>
-            body { font-family: 'Segoe UI', sans-serif; font-size: 13px; margin: 20px; }
-            table { width: 100%; border-collapse: collapse; page-break-inside: auto; }
-            th, td { padding: 6px; vertical-align: middle; font-size: 12px; }
-            thead { display: table-header-group; }
-            tr { page-break-inside: avoid; page-break-after: auto; }
-            h5 { margin-bottom: 15px; }
-            @page { size: A4 landscape; margin: 12mm; }
-            @media print { body { -webkit-print-color-adjust: exact; } }
-          </style>
-        </head>
-        <body>${printContent}</body>
-      </html>
-    `);
-                                            printWindow.document.close();
-                                            printWindow.focus();
+                table.rows({
+                    search: "applied"
+                }).every(function() {
+                    const d = this.data();
+                    rows.push({
+                        tanggal: d[1],
+                        namaBahan: d[2],
+                        kuantitas: d[3],
+                        satuan: d[4],
+                        hargaSatuan: d[5],
+                        total: d[6],
+                        supplier: d[7],
+                        surveiHarga: d[8]
+                    });
+                });
 
-                                            setTimeout(() => {
-                                                printWindow.print();
-                                                printWindow.close();
-                                            }, 800);
-                                        });
-                                    });
+                return rows;
+            }
+
+            /* =========================
+               RENDER MODAL TABLE
+            ========================= */
+            function renderCetak(data) {
+                const tbody = $("#tabelCetak tbody");
+                tbody.empty();
+
+                data.forEach((r, i) => {
+                    tbody.append(`
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${r.tanggal}</td>
+                    <td>${r.namaBahan}</td>
+                    <td>${r.kuantitas}</td>
+                    <td>${r.satuan}</td>
+                    <td>${r.hargaSatuan}</td>
+                    <td>${r.total}</td>
+                    <td>${r.supplier}</td>
+                    <td>${r.surveiHarga}</td>
+                </tr>
+            `);
+                });
+            }
+
+            /* =========================
+               MODAL OPEN
+            ========================= */
+            $("#modalCetakKartu").on("shown.bs.modal", function() {
+                renderCetak(getTableData());
+            });
+
+            /* =========================
+               MODAL DATE FILTER
+            ========================= */
+            $("#btnFilterCetak").on("click", function() {
+                const start = new Date($("#cetakStart").val());
+                const end = new Date($("#cetakEnd").val());
+
+                const filtered = getTableData().filter(r => {
+                    const tgl = parseTanggal(r.tanggal);
+                    if (!tgl) return false;
+
+                    start.setHours(0, 0, 0, 0);
+                    end.setHours(23, 59, 59, 999);
+
+                    return tgl >= start && tgl <= end;
+                });
+
+                renderCetak(filtered);
+            });
+
+            $("#btnResetCetak").on("click", function() {
+                $("#cetakStart, #cetakEnd").val("");
+                renderCetak(getTableData());
+            });
+
+        });
     </script>
 @endpush

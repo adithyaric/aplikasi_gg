@@ -28,7 +28,7 @@ class ReportController extends Controller
                 // Skip weekends if needed (optional)
                 // if (!$currentDate->isWeekend()) {
                 $rekapData[] = [
-                    'tanggal' => $currentDate->format('d M Y'),
+                    'tanggal' => $currentDate->format('d F Y'),
                     'rencana_total' => $anggaran->total_porsi,
                     'rencana_10k' => $anggaran->porsi_10k,
                     'rencana_8k' => $anggaran->porsi_8k,

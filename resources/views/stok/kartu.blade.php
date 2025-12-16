@@ -150,15 +150,12 @@
                             <label class="form-label">Sampai Tanggal</label>
                             <input type="date" id="cetakEnd" class="form-control" />
                         </div>
-                        <div class="col-md-3 d-flex gap-2">
+                        <div class="col-md-6 d-flex gap-2">
                             <button class="btn btn-primary" id="btnFilterCetak">
                                 <i class="bi bi-funnel"></i> Filter
                             </button>
                             <button class="btn btn-secondary" id="btnResetCetak">
                                 <i class="bi bi-arrow-counterclockwise"></i> Reset
-                            </button>
-                            <button class="btn btn-warning" id="btnExportKartu">
-                                <i class="bi bi-file-earmark-excel"></i> Export
                             </button>
                         </div>
                     </div>
@@ -240,8 +237,11 @@
                     <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <i class="bi bi-x-circle"></i> Tutup
                     </button>
-                    <button class="btn btn-success" id="btnCetakNow">
-                        <i class="bi bi-printer-fill"></i> Cetak
+                    <button class="btn btn-danger" id="btnCetakNow">
+                        <i class="bi bi-printer-fill"></i> Cetak PDF
+                    </button>
+                    <button class="btn btn-success" id="btnExportKartu">
+                        <i class="bi bi-file-earmark-excel"></i> Export
                     </button>
                 </div>
             </div>
