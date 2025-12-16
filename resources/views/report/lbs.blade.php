@@ -91,8 +91,119 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="modalCetakKartu" tabindex="-1" aria-labelledby="modalCetakKartuLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content p-4">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-printer-fill"></i> Cetak Laporan Biaya Sewa (LBS)
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- 🔹 Filter Periode -->
+                    <div class="row mb-3 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label">Dari Tanggal</label>
+                            <input type="date" id="cetakStart" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Sampai Tanggal</label>
+                            <input type="date" id="cetakEnd" class="form-control" />
+                        </div>
+                        <div class="col-md-3 d-flex gap-2">
+                            <button class="btn btn-primary" id="btnFilterCetak">
+                                <i class="bi bi-funnel"></i> Filter
+                            </button>
+                            <button class="btn btn-secondary" id="btnResetCetak">
+                                <i class="bi bi-arrow-counterclockwise"></i> Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- 🔹 Area Cetak -->
+                    <div id="printArea">
+                        <div class="text-center mb-4">
+                            <h5><strong>Laporan Biaya Sewa (LBS)</strong></h5>
+                            <p class="mb-0">
+                                Periode: <span id="periodeCetakText">Semua Periode</span>
+                            </p>
+                        </div>
+
+                        <!-- 🔹 Tabel Cetak -->
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped align-middle text-center" id="tabelCetak">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Tanggal</th>
+                                        <th>Jumlah Porsi</th>
+                                        <th>Uraian</th>
+                                        <th>Nominal</th>
+                                        <th>Keterangan</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                                <!-- <tfoot>
+                                            <tr>
+                                              <th colspan="4" class="text-end">Total</th>
+                                              <th id="totalNominal" class="text-end">0</th>
+                                              <th></th>
+                                            </tr>
+                                          </tfoot> -->
+                            </table>
+                        </div>
+
+                        <!-- 🔹 Footer Tanda Tangan -->
+                        <div class="row mt-5">
+                            <div class="col-6 text-center">
+                                <p>Mengetahui,</p>
+                                <p class="mt-5 mb-0 fw-bold">______________________</p>
+                                <small>Kepala Bagian</small>
+                            </div>
+                            <div class="col-6 text-center">
+                                <p id="tanggalCetak"></p>
+                                <p class="mt-5 mb-0 fw-bold">______________________</p>
+                                <small>Petugas Keuangan</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-top-0">
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Tutup
+                    </button>
+                    <button class="btn btn-danger" id="btnCetakNow">
+                        <i class="bi bi-printer-fill"></i> Cetak PDF
+                    </button>
+                    <button class="btn btn-success" id="btnExportLBS">
+                        <i class="bi bi-file-earmark-excel"></i> Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @push('js')
+    <script>
+        document.getElementById("btnExportLBS").addEventListener("click", function() {
+            const startVal = $("#cetakStart").val();
+            const endVal = $("#cetakEnd").val();
+
+            let url = '{{ route('export.lbs') }}';
+
+            if (startVal && endVal) {
+                url += `?start_at=${startVal}&end_at=${endVal}`;
+            }
+
+            console.log(url);
+            window.location.href = url;
+        });
+    </script>
     <script>
         const allData = @json($data);
     </script>
@@ -173,100 +284,6 @@
             });
         });
     </script>
-
-    <div class="modal fade" id="modalCetakKartu" tabindex="-1" aria-labelledby="modalCetakKartuLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content p-4">
-                <div class="modal-header border-bottom-0">
-                    <h5 class="modal-title fw-bold">
-                        <i class="bi bi-printer-fill"></i> Cetak Laporan Biaya Sewa (LBS)
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <div class="modal-body">
-                    <!-- 🔹 Filter Periode -->
-                    <div class="row mb-3 align-items-end">
-                        <div class="col-md-3">
-                            <label class="form-label">Dari Tanggal</label>
-                            <input type="date" id="cetakStart" class="form-control" />
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Sampai Tanggal</label>
-                            <input type="date" id="cetakEnd" class="form-control" />
-                        </div>
-                        <div class="col-md-3 d-flex gap-2">
-                            <button class="btn btn-primary" id="btnFilterCetak">
-                                <i class="bi bi-funnel"></i> Filter
-                            </button>
-                            <button class="btn btn-secondary" id="btnResetCetak">
-                                <i class="bi bi-arrow-counterclockwise"></i> Reset
-                            </button>
-                        </div>
-                    </div>
-
-                    <hr />
-
-                    <!-- 🔹 Area Cetak -->
-                    <div id="printArea">
-                        <div class="text-center mb-4">
-                            <h5><strong>Laporan Biaya Sewa (LBS)</strong></h5>
-                            <p class="mb-0">
-                                Periode: <span id="periodeCetakText">Semua Periode</span>
-                            </p>
-                        </div>
-
-                        <!-- 🔹 Tabel Cetak -->
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped align-middle text-center" id="tabelCetak">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Tanggal</th>
-                                        <th>Jumlah Porsi</th>
-                                        <th>Uraian</th>
-                                        <th>Nominal</th>
-                                        <th>Keterangan</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                                <!-- <tfoot>
-                                    <tr>
-                                      <th colspan="4" class="text-end">Total</th>
-                                      <th id="totalNominal" class="text-end">0</th>
-                                      <th></th>
-                                    </tr>
-                                  </tfoot> -->
-                            </table>
-                        </div>
-
-                        <!-- 🔹 Footer Tanda Tangan -->
-                        <div class="row mt-5">
-                            <div class="col-6 text-center">
-                                <p>Mengetahui,</p>
-                                <p class="mt-5 mb-0 fw-bold">______________________</p>
-                                <small>Kepala Bagian</small>
-                            </div>
-                            <div class="col-6 text-center">
-                                <p id="tanggalCetak"></p>
-                                <p class="mt-5 mb-0 fw-bold">______________________</p>
-                                <small>Petugas Keuangan</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer border-top-0">
-                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-circle"></i> Tutup
-                    </button>
-                    <button class="btn btn-success" id="btnCetakNow">
-                        <i class="bi bi-printer-fill"></i> Cetak
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script>
         $(document).ready(function() {

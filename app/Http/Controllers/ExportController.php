@@ -1250,4 +1250,97 @@ class ExportController extends Controller
             }
         }, 'LBO_' . date('Y-m-d_H-i') . '.xlsx');
     }
+
+    public function exportLBS(Request $request)
+    {
+        $query = Anggaran::query();
+
+        // Filter by date range if provided
+        if ($request->has('start_at') && $request->has('end_at')) {
+            $startDate = Carbon::parse($request->start_at);
+            $endDate = Carbon::parse($request->end_at);
+
+            $query->where(function ($q) use ($startDate, $endDate) {
+                $q->whereBetween('start_date', [$startDate, $endDate])
+                    ->orWhereBetween('end_date', [$startDate, $endDate])
+                    ->orWhere(function ($q2) use ($startDate, $endDate) {
+                        $q2->where('start_date', '<=', $startDate)
+                            ->where('end_date', '>=', $endDate);
+                    });
+            });
+        }
+
+        $anggarans = $query->get();
+        $data = [];
+
+        foreach ($anggarans as $anggaran) {
+            $currentDate = $anggaran->start_date->copy();
+            $endDate = $anggaran->end_date->copy();
+
+            while ($currentDate <= $endDate) {
+                // If date filters are provided, skip dates outside the range
+                if ($request->has('start_at') && $request->has('end_at')) {
+                    $filterStart = Carbon::parse($request->start_at);
+                    $filterEnd = Carbon::parse($request->end_at);
+
+                    if ($currentDate->lt($filterStart) || $currentDate->gt($filterEnd)) {
+                        $currentDate->addDay();
+                        continue;
+                    }
+                }
+
+                $data[] = [
+                    'tanggal' => $currentDate->copy(),
+                    'date_sort' => $currentDate->format('Y-m-d'),
+                    'jumlah_porsi' => $anggaran->total_porsi,
+                    'uraian' => "Biaya Sewa tanggal " . $currentDate->translatedFormat('d F Y') .
+                        " sebanyak " . $anggaran->total_porsi . " Porsi Penerima Manfaat",
+                    'nominal' => $anggaran->budget_sewa,
+                    'keterangan' => ucwords(str_replace('_', ' ', $anggaran->aturan_sewa)),
+                    'rekening_id' => $anggaran->id
+                ];
+
+                $currentDate->addDay();
+            }
+        }
+
+        // Sort by date
+        usort($data, function ($a, $b) {
+            return strcmp($a['date_sort'], $b['date_sort']);
+        });
+
+        return Excel::download(new class($data, $request->start_at, $request->end_at) implements \Maatwebsite\Excel\Concerns\FromView, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            private $data;
+            private $startDate;
+            private $endDate;
+
+            public function __construct($data, $startDate, $endDate)
+            {
+                $this->data = $data;
+                $this->startDate = $startDate;
+                $this->endDate = $endDate;
+            }
+
+            public function view(): \Illuminate\Contracts\View\View
+            {
+                return view('exports.lbs', [
+                    'data' => $this->data,
+                    'startDate' => $this->startDate,
+                    'endDate' => $this->endDate,
+                ]);
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 5,
+                    'B' => 20,
+                    'C' => 15,
+                    'D' => 60,
+                    'E' => 20,
+                    'F' => 20,
+                ];
+            }
+        }, 'LBS_' . date('Y-m-d_H-i') . '.xlsx');
+    }
 }

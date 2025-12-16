@@ -231,9 +231,23 @@ class ReportController extends Controller
     {
         $title = 'LBS';
 
-        // Get all anggaran data
-        $anggarans = Anggaran::all();
+        $query = Anggaran::query();
 
+        if ($request->has('start_at') && $request->has('end_at')) {
+            $startDate = Carbon::parse($request->start_at);
+            $endDate = Carbon::parse($request->end_at);
+
+            $query->where(function ($q) use ($startDate, $endDate) {
+                $q->whereBetween('start_date', [$startDate, $endDate])
+                    ->orWhereBetween('end_date', [$startDate, $endDate])
+                    ->orWhere(function ($q2) use ($startDate, $endDate) {
+                        $q2->where('start_date', '<=', $startDate)
+                            ->where('end_date', '>=', $endDate);
+                    });
+            });
+        }
+
+        $anggarans = $query->get();
         $data = [];
 
         foreach ($anggarans as $anggaran) {
@@ -241,14 +255,25 @@ class ReportController extends Controller
             $endDate = $anggaran->end_date->copy();
 
             while ($currentDate <= $endDate) {
+                // If date filters are provided, skip dates outside the range
+                if ($request->has('start_at') && $request->has('end_at')) {
+                    $filterStart = Carbon::parse($request->start_at);
+                    $filterEnd = Carbon::parse($request->end_at);
+
+                    if ($currentDate->lt($filterStart) || $currentDate->gt($filterEnd)) {
+                        $currentDate->addDay();
+                        continue;
+                    }
+                }
+
                 $data[] = [
                     'tanggal' => $currentDate->format('d F Y'),
                     'date_sort' => $currentDate->format('Y-m-d'),
                     'jumlah_porsi' => $anggaran->total_porsi,
-                    'uraian' => "Biaya Sewa tanggal " . $currentDate->format('d F Y') .
+                    'uraian' => "Biaya Sewa tanggal " . $currentDate->translatedFormat('d F Y') .
                         " sebanyak " . $anggaran->total_porsi . " Porsi Penerima Manfaat",
                     'nominal' => $anggaran->budget_sewa,
-                    'keterangan' => $anggaran->aturan_sewa,
+                    'keterangan' => ucwords(str_replace('_', ' ', $anggaran->aturan_sewa)),
                     'rekening_id' => $anggaran->id
                 ];
 

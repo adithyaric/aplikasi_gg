@@ -98,8 +98,8 @@ export :
 <!-- - bku -->
 <!-- - lpdb -->
 <!-- - lbbp -->
-- lbo
-- lbs
+<!-- - lbo -->
+<!-- - lbs -->
 - lra
 <!-- - sekolah -->
 <!-- - supplier -->

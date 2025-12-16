@@ -145,4 +145,5 @@ Route::middleware('auth')->group(function () {
     Route::get('export-excel/lpdb', [ExportController::class, 'exportLPDB'])->name('export.lpdb');
     Route::get('export-excel/lbbp', [ExportController::class, 'exportLBBP'])->name('export.lbbp');
     Route::get('export-excel/lbo', [ExportController::class, 'exportLBO'])->name('export.lbo');
+    Route::get('export-excel/lbs', [ExportController::class, 'exportLBS'])->name('export.lbs');
 });
