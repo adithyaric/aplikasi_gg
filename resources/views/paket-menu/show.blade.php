@@ -94,7 +94,7 @@
                                             </tbody>
                                             <tfoot class="table-light">
                                                 <tr>
-                                                    <th colspan="4" class="text-end">Total Kalori Menu:</th>
+                                                    <th colspan="5" class="text-end">Total Kalori Menu:</th>
                                                     <th>
                                                         <span class="text-primary">
                                                             {{ number_format($totalKaloriMenu, 2) }} kkal

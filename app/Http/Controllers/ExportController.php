@@ -9,6 +9,7 @@ use App\Models\BahanBaku;
 use App\Models\BahanOperasional;
 use App\Models\Gaji;
 use App\Models\Karyawan;
+use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\RekeningKoranVa;
 use App\Models\RekeningRekapBKU;
@@ -927,5 +928,39 @@ class ExportController extends Controller
             'gov_price' => $item->gov_price ?? 0,
             'type' => $type,
         ];
+    }
+
+    public function exportPurchaseOrder($id)
+    {
+        $order = Order::with(['supplier', 'items.bahanBaku', 'items.bahanOperasional', 'transaction'])
+            ->findOrFail($id);
+
+        return Excel::download(new class($order) implements \Maatwebsite\Excel\Concerns\FromView, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            private $order;
+
+            public function __construct($order)
+            {
+                $this->order = $order;
+            }
+
+            public function view(): \Illuminate\Contracts\View\View
+            {
+                return view('exports.purchase-order', [
+                    'order' => $this->order,
+                ]);
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 15,
+                    'B' => 35,
+                    'C' => 15,
+                    'D' => 15,
+                    'E' => 20,
+                    'F' => 25,
+                ];
+            }
+        }, 'PO_' . $order->id . '_' . date('Y-m-d_H-i T') . '.xlsx');
     }
 }
