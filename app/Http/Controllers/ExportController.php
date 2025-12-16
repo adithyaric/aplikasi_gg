@@ -10,6 +10,7 @@ use App\Models\BahanOperasional;
 use App\Models\Gaji;
 use App\Models\Karyawan;
 use App\Models\OrderItem;
+use App\Models\RekeningKoranVa;
 use App\Models\Sekolah;
 use App\Models\StockAdjustment;
 use App\Models\Supplier;
@@ -113,6 +114,44 @@ class ExportController extends Controller
                 return [];
             }
         }, 'REKAP_PORSI_' . date('Y-m-d_H-i-T') . '.xlsx');
+    }
+
+    public function exportRekapPenerimaanDana()
+    {
+        $data = RekeningKoranVa::where('kredit', '>', 0)
+            ->orderBy('tanggal_transaksi', 'desc')
+            ->get();
+
+        $totalKredit = $data->sum('kredit');
+
+        return Excel::download(new class($data, $totalKredit) implements \Maatwebsite\Excel\Concerns\FromView, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            private $data;
+            private $totalKredit;
+
+            public function __construct($data, $totalKredit)
+            {
+                $this->data = $data;
+                $this->totalKredit = $totalKredit;
+            }
+
+            public function view(): \Illuminate\Contracts\View\View
+            {
+                return view('exports.rekap-penerimaan-dana', [
+                    'data' => $this->data,
+                    'totalKredit' => $this->totalKredit,
+                ]);
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 5,
+                    'B' => 25,
+                    'C' => 50,
+                    'D' => 25,
+                ];
+            }
+        }, 'REKAP_PENERIMAAN_DANA_' . date('Y-m-d_H-i') . '.xlsx');
     }
 
     public function exportSekolah()

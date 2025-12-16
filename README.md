@@ -92,7 +92,7 @@
 <!-- dashboard -->
 
 export :
-- rekap penerimaan dana
+<!-- - rekap penerimaan dana -->
 <!-- - rekap prosi -->
 - rekonsiliasi
 - bku
@@ -112,3 +112,7 @@ export :
 <!-- - stock -->
 <!-- - kartu stock -->
 <!-- - stock opname -->
+
+ -- Border"
+ -- Footer belum rapih
+ -- Fix filter tanggal : format('d M Y')
