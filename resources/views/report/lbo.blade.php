@@ -166,138 +166,6 @@
             </div>
         </div>
     </div>
-@endsection
-@push('js')
-<script>
-    function showOrderDetailBKU(id) {
-    $.ajax({
-        url: "{{ route('orders.index') }}/" + id,
-        method: 'GET',
-        success: function(response) {
-            $('#detail_order_number_bku').text(response.order_number);
-            $('#detail_supplier_bku').text(response.supplier?.nama || '-');
-            $('#detail_tanggal_po_bku').text(response.tanggal_po ? new Date(response.tanggal_po)
-                .toLocaleDateString('id-ID') : '-');
-            $('#detail_tanggal_penerimaan_bku').text(response.tanggal_penerimaan ? new Date(response
-                .tanggal_penerimaan).toLocaleDateString('id-ID') : '-');
-            $('#detail_grand_total_bku').text('Rp ' + new Intl.NumberFormat('id-ID').format(response
-                .grand_total || 0));
-            $('#detail_status_bku').text(response.status || '-');
-
-            // Clear items table
-            $('#detail_items_bku').empty();
-
-            // Populate items
-            if (response.items && response.items.length > 0) {
-                response.items.forEach(function(item) {
-                    $('#detail_items_bku').append(
-                        '<tr>' +
-                        '<td>' + (item.bahan_baku?.nama || item.bahan_operasional?.nama) +
-                        '</td>' +
-                        '<td>' + (item.quantity || 0) + '</td>' +
-                        '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.unit_cost ||
-                            0) + '</td>' +
-                        '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.subtotal ||
-                            0) + '</td>' +
-                        '</tr>'
-                    );
-                });
-            } else {
-                $('#detail_items_bku').append(
-                    '<tr><td colspan="4" class="text-center">Tidak ada items</td></tr>');
-            }
-
-            $('#modalOrderDetailBKU').modal('show');
-        },
-        error: function(xhr) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'Terjadi kesalahan saat mengambil data detail'
-            });
-        }
-    });
-}
-</script>
-
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script>
-        flatpickr("#dateRange", {
-            mode: "range",
-            dateFormat: "d/m/Y",
-            locale: "id", // biar pakai bahasa Indonesia
-            altInput: true,
-            altFormat: "j F Y", // contoh: 24 April 2025
-            allowInput: true,
-        });
-    </script>
-    <script>
-        flatpickr("#startDate", {
-            inline: true,
-            dateFormat: "d/m/Y",
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            // 🔹 Cek apakah DataTable sudah ada
-            let table;
-            if ($.fn.DataTable.isDataTable("#datatable")) {
-                table = $("#datatable").DataTable(); // gunakan instance yang sudah ada
-            } else {
-                table = $("#datatable").DataTable({
-                    scrollX: true,
-                    pageLength: 10,
-                    autoWidth: false,
-                });
-            }
-
-            // 🔹 Inisialisasi Flatpickr (Range)
-            const fp = flatpickr("#dateRange", {
-                mode: "range",
-                dateFormat: "d/m/Y",
-                locale: "id",
-                altInput: true,
-                altFormat: "j F Y",
-                allowInput: true,
-            });
-
-            // 🔹 Fungsi bantu parse tanggal
-            function parseDate(str) {
-                if (!str) return null;
-                const [day, month, year] = str.split("/");
-                return new Date(`${year}-${month}-${day}`);
-            }
-
-            // 🔹 Tombol Filter ditekan
-            $("#filterDate").on("click", function() {
-                const range = fp.selectedDates;
-                if (range.length === 2) {
-                    const min = range[0];
-                    const max = range[1];
-
-                    $.fn.dataTable.ext.search.push(function(settings, data) {
-                        if (settings.nTable.id !== "datatable") return true;
-                        const tanggalTabel = data[1]; // kolom tanggal
-                        const date = parseDate(tanggalTabel);
-                        if (!date) return false;
-                        return date >= min && date <= max;
-                    });
-
-                    table.draw();
-                    $.fn.dataTable.ext.search.pop();
-                } else {
-                    alert("Silakan pilih rentang tanggal terlebih dahulu.");
-                }
-            });
-
-            // 🔹 Tombol Reset ditekan
-            $("#resetDate").on("click", function() {
-                fp.clear();
-                table.search("").draw();
-            });
-        });
-    </script>
-
     <div class="modal fade" id="modalCetakKartu" tabindex="-1" aria-labelledby="modalCetakKartuLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-xl">
@@ -378,13 +246,162 @@
                     <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <i class="bi bi-x-circle"></i> Tutup
                     </button>
-                    <button class="btn btn-success" id="btnCetakNow">
-                        <i class="bi bi-printer-fill"></i> Cetak
+                    <button class="btn btn-danger" id="btnCetakNow">
+                        <i class="bi bi-printer-fill"></i> Cetak PDF
+                    </button>
+                    <button class="btn btn-success" id="btnExportLBO">
+                        <i class="bi bi-file-earmark-excel"></i> Export
                     </button>
                 </div>
             </div>
         </div>
     </div>
+@endsection
+@push('js')
+    <script>
+        document.getElementById("btnExportLBO").addEventListener("click", function() {
+            const startVal = $("#cetakStart").val();
+            const endVal = $("#cetakEnd").val();
+
+            let url = '{{ route('export.lbo') }}';
+
+            if (startVal && endVal) {
+                url += `?start_at=${startVal}&end_at=${endVal}`;
+            }
+
+            console.log(url);
+            window.location.href = url;
+        });
+    </script>
+    <script>
+        function showOrderDetailBKU(id) {
+            $.ajax({
+                url: "{{ route('orders.index') }}/" + id,
+                method: 'GET',
+                success: function(response) {
+                    $('#detail_order_number_bku').text(response.order_number);
+                    $('#detail_supplier_bku').text(response.supplier?.nama || '-');
+                    $('#detail_tanggal_po_bku').text(response.tanggal_po ? new Date(response.tanggal_po)
+                        .toLocaleDateString('id-ID') : '-');
+                    $('#detail_tanggal_penerimaan_bku').text(response.tanggal_penerimaan ? new Date(response
+                        .tanggal_penerimaan).toLocaleDateString('id-ID') : '-');
+                    $('#detail_grand_total_bku').text('Rp ' + new Intl.NumberFormat('id-ID').format(response
+                        .grand_total || 0));
+                    $('#detail_status_bku').text(response.status || '-');
+
+                    // Clear items table
+                    $('#detail_items_bku').empty();
+
+                    // Populate items
+                    if (response.items && response.items.length > 0) {
+                        response.items.forEach(function(item) {
+                            $('#detail_items_bku').append(
+                                '<tr>' +
+                                '<td>' + (item.bahan_baku?.nama || item.bahan_operasional?.nama) +
+                                '</td>' +
+                                '<td>' + (item.quantity || 0) + '</td>' +
+                                '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.unit_cost ||
+                                    0) + '</td>' +
+                                '<td>Rp ' + new Intl.NumberFormat('id-ID').format(item.subtotal ||
+                                    0) + '</td>' +
+                                '</tr>'
+                            );
+                        });
+                    } else {
+                        $('#detail_items_bku').append(
+                            '<tr><td colspan="4" class="text-center">Tidak ada items</td></tr>');
+                    }
+
+                    $('#modalOrderDetailBKU').modal('show');
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Terjadi kesalahan saat mengambil data detail'
+                    });
+                }
+            });
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        flatpickr("#dateRange", {
+            mode: "range",
+            dateFormat: "d/m/Y",
+            locale: "id", // biar pakai bahasa Indonesia
+            altInput: true,
+            altFormat: "j F Y", // contoh: 24 April 2025
+            allowInput: true,
+        });
+    </script>
+    <script>
+        flatpickr("#startDate", {
+            inline: true,
+            dateFormat: "d/m/Y",
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            // 🔹 Cek apakah DataTable sudah ada
+            let table;
+            if ($.fn.DataTable.isDataTable("#datatable")) {
+                table = $("#datatable").DataTable(); // gunakan instance yang sudah ada
+            } else {
+                table = $("#datatable").DataTable({
+                    scrollX: true,
+                    pageLength: 10,
+                    autoWidth: false,
+                });
+            }
+
+            // 🔹 Inisialisasi Flatpickr (Range)
+            const fp = flatpickr("#dateRange", {
+                mode: "range",
+                dateFormat: "d/m/Y",
+                locale: "id",
+                altInput: true,
+                altFormat: "j F Y",
+                allowInput: true,
+            });
+
+            // 🔹 Fungsi bantu parse tanggal
+            function parseDate(str) {
+                if (!str) return null;
+                const [day, month, year] = str.split("/");
+                return new Date(`${year}-${month}-${day}`);
+            }
+
+            // 🔹 Tombol Filter ditekan
+            $("#filterDate").on("click", function() {
+                const range = fp.selectedDates;
+                if (range.length === 2) {
+                    const min = range[0];
+                    const max = range[1];
+
+                    $.fn.dataTable.ext.search.push(function(settings, data) {
+                        if (settings.nTable.id !== "datatable") return true;
+                        const tanggalTabel = data[1]; // kolom tanggal
+                        const date = parseDate(tanggalTabel);
+                        if (!date) return false;
+                        return date >= min && date <= max;
+                    });
+
+                    table.draw();
+                    $.fn.dataTable.ext.search.pop();
+                } else {
+                    alert("Silakan pilih rentang tanggal terlebih dahulu.");
+                }
+            });
+
+            // 🔹 Tombol Reset ditekan
+            $("#resetDate").on("click", function() {
+                fp.clear();
+                table.search("").draw();
+            });
+        });
+    </script>
 
     <script>
         $(document).ready(function() {
@@ -488,9 +505,18 @@
 
                 function parseTanggalEN(str) {
                     const months = {
-                        January: 0, February: 1, March: 2, April: 3,
-                        May: 4, June: 5, July: 6, August: 7,
-                        September: 8, October: 9, November: 10, December: 11
+                        January: 0,
+                        February: 1,
+                        March: 2,
+                        April: 3,
+                        May: 4,
+                        June: 5,
+                        July: 6,
+                        August: 7,
+                        September: 8,
+                        October: 9,
+                        November: 10,
+                        December: 11
                     };
 
                     const parts = str.trim().split(" ");

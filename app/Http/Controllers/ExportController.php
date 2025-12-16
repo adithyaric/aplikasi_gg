@@ -1192,4 +1192,62 @@ class ExportController extends Controller
             }
         }, 'LBBP_' . date('Y-m-d_H-i') . '.xlsx');
     }
+
+    public function exportLBO(Request $request)
+    {
+        $query = RekeningRekapBKU::where('jenis_bahan', 'Bahan Operasional')
+            ->orderBy('tanggal_transaksi', 'asc');
+
+        // Filter by date range if provided
+        if ($request->has('start_at') && $request->has('end_at')) {
+            $startDate = Carbon::parse($request->start_at)->startOfDay();
+            $endDate = Carbon::parse($request->end_at)->endOfDay();
+
+            $query->whereBetween('tanggal_transaksi', [$startDate, $endDate]);
+        }
+
+        $data = $query->get()
+            ->map(function ($item) {
+                return [
+                    'tanggal' => $item->tanggal_transaksi,
+                    'uraian' => $item->uraian,
+                    'nominal' => $item->kredit,
+                    'keterangan' => $item->transaction?->order?->order_number,
+                    'rekening_id' => $item->id,
+                ];
+            });
+
+        return Excel::download(new class($data, $request->start_at, $request->end_at) implements \Maatwebsite\Excel\Concerns\FromView, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            private $data;
+            private $startDate;
+            private $endDate;
+
+            public function __construct($data, $startDate, $endDate)
+            {
+                $this->data = $data;
+                $this->startDate = $startDate;
+                $this->endDate = $endDate;
+            }
+
+            public function view(): \Illuminate\Contracts\View\View
+            {
+                return view('exports.lbo', [
+                    'data' => $this->data,
+                    'startDate' => $this->startDate,
+                    'endDate' => $this->endDate,
+                ]);
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 15,
+                    'B' => 15,
+                    'C' => 50,
+                    'D' => 20,
+                    'E' => 25,
+                ];
+            }
+        }, 'LBO_' . date('Y-m-d_H-i') . '.xlsx');
+    }
 }
