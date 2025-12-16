@@ -1015,4 +1015,93 @@ class ExportController extends Controller
             }
         }, 'BKU_' . date('Y-m-d_H-i') . '.xlsx');
     }
+
+    public function exportLPDB(Request $request)
+    {
+        $request->validate([
+            'start_month' => 'required|date_format:Y-m'
+        ]);
+
+        $start = \Carbon\Carbon::parse($request->start_month . '-01')->startOfMonth();
+        $end = \Carbon\Carbon::parse($request->start_month . '-01')->endOfMonth();
+        $monthName = $start->translatedFormat('F');
+
+        // Get initial saldo
+        $lastEntry = RekeningRekapBKU::where('tanggal_transaksi', '<', $start)
+            ->orderBy('tanggal_transaksi', 'desc')
+            ->orderBy('id', 'desc')
+            ->first();
+        $saldoAwal = $lastEntry ? $lastEntry->saldo : 0;
+
+        // Get rekening data for the month
+        $rekeningData = RekeningRekapBKU::whereBetween('tanggal_transaksi', [$start, $end])
+            ->orderBy('tanggal_transaksi', 'asc')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $data = [];
+        $counter = 1;
+        $currentSaldo = $saldoAwal;
+
+        foreach ($rekeningData as $rekening) {
+            $penerimaanDana = in_array($rekening->jenis_bahan, ['Penerimaan BGN', 'Penerimaan Yayasan', 'Penerimaan Pihak Lainnya'])
+                ? $rekening->debit : 0;
+
+            $bahanPangan = $rekening->jenis_bahan == 'Bahan Pokok' ? $rekening->kredit : 0;
+            $operasional = $rekening->jenis_bahan == 'Bahan Operasional' ? $rekening->kredit : 0;
+            $sewa = $rekening->jenis_bahan == 'Pembayaran Sewa' ? $rekening->kredit : 0;
+
+            $totalPengeluaran = $bahanPangan + $operasional + $sewa;
+            $saldoAkhir = $currentSaldo + $penerimaanDana - $totalPengeluaran;
+
+            $data[] = [
+                'no' => $counter,
+                'tanggal' => $rekening->tanggal_transaksi->formatId('d F Y'),
+                'saldo_awal' => $currentSaldo,
+                'penerimaan_dana' => $penerimaanDana,
+                'bahan_pangan' => $bahanPangan,
+                'operasional' => $operasional,
+                'sewa' => $sewa,
+                'total' => $totalPengeluaran,
+                'saldo_akhir' => $saldoAkhir,
+            ];
+
+            $currentSaldo = $saldoAkhir;
+            $counter++;
+        }
+
+        return Excel::download(new class($data, $monthName) implements \Maatwebsite\Excel\Concerns\FromView, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            private $data;
+            private $monthName;
+
+            public function __construct($data, $monthName)
+            {
+                $this->data = $data;
+                $this->monthName = $monthName;
+            }
+
+            public function view(): \Illuminate\Contracts\View\View
+            {
+                return view('exports.lpdb', [
+                    'data' => $this->data,
+                    'monthName' => $this->monthName,
+                ]);
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 15,
+                    'B' => 12,
+                    'C' => 20,
+                    'D' => 20,
+                    'E' => 20,
+                    'F' => 20,
+                    'G' => 20,
+                    'H' => 20,
+                    'I' => 20,
+                ];
+            }
+        }, 'LPDB_' . str_replace('-', '_', $request->start_month) . '.xlsx');
+    }
 }

@@ -96,7 +96,7 @@ export :
 <!-- - rekap prosi -->
 <!-- - rekonsiliasi -->
 <!-- - bku -->
-- lpdb
+<!-- - lpdb -->
 - lbbp
 - lbo
 - lbs

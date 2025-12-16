@@ -193,7 +193,7 @@
                         <i class="bi bi-x-circle"></i> Tutup
                     </button>
                     <button class="btn btn-danger" id="btnCetakNow">
-                        <i class="bi bi-printer-fill"></i> Cetak PDf
+                        <i class="bi bi-printer-fill"></i> Cetak PDF
                     </button>
                     <button class="btn btn-success" id="btnExportBKU">
                         <i class="bi bi-file-earmark-excel"></i> Export

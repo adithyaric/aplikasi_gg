@@ -43,11 +43,6 @@
                                         <input type="month" id="startMonth" class="form-control form-control-sm"
                                             value="{{ $startMonth }}" />
                                     </div>
-                                    {{-- <div class="col-auto"> --}}
-                                    {{-- <label class="form-label mb-1">Sampai Bulan</label> --}}
-                                    {{-- <input type="month" id="endMonth" class="form-control form-control-sm" --}}
-                                    {{-- value="{{ $endMonth }}" /> --}}
-                                    {{-- </div> --}}
                                     <div class="col-auto mt-4">
                                         <button id="filterMonth" class="btn btn-sm btn-primary">
                                             <i class="bi bi-funnel"></i> Filter
@@ -189,9 +184,18 @@
                     <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <i class="bi bi-x-circle"></i> Tutup
                     </button>
-                    <button class="btn btn-success" id="btnCetakLPDB">
-                        <i class="bi bi-printer-fill"></i> Cetak
+                    <button class="btn btn-danger" id="btnCetakLPDB">
+                        <i class="bi bi-printer-fill"></i> Cetak PDF
                     </button>
+                    @if($startMonth)
+                        <a href="{{ route('export.lpdb', ['start_month' => $startMonth]) }}" class="btn btn-success">
+                            <i class="bi bi-file-earmark-excel"></i> Export
+                        </a>
+                    @else
+                        <button class="btn btn-success" disabled>
+                            <i class="bi bi-file-earmark-excel"></i> Export
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>
