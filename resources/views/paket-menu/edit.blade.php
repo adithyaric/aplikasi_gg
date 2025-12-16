@@ -97,7 +97,7 @@
                                                     </div>
                                                     <div class="col-md-3">
                                                         @if ($index === 0)
-                                                            <label>Berat Bersih <span
+                                                            <label>Berat Bersih (gram) <span
                                                                     class="text-danger">*</span></label>
                                                         @endif
                                                         <input type="number" class="form-control berat-input"
@@ -229,7 +229,7 @@
                     if (bahanData && bahanData.length > 0) {
                         bahanData.forEach((bahan, index) => {
                             const beratBersihLabel = index === 0 ?
-                                '<label>Berat Bersih <span class="text-danger">*</span></label>' :
+                                '<label>Berat Bersih (gram) <span class="text-danger">*</span></label>' :
                                 '';
                             const kaloriLabel = index === 0 ? '<label>Kalori (kkal)</label>' : '';
 

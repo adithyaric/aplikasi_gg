@@ -66,7 +66,7 @@
                                                     <th>No</th>
                                                     <th>Bahan Makanan</th>
                                                     <th>Kelompok</th>
-                                                    <th>Berat Bersih</th>
+                                                    <th>Berat Bersih (gram)</th>
                                                     <th>Satuan</th>
                                                     <th>Kalori (kkal)</th>
                                                 </tr>

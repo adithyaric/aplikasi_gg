@@ -21,7 +21,7 @@
                                         d="M11.1445 7.72082L7.37954 11.4688C7.09654 11.7508 7.09654 12.2498 7.37954 12.5328L11.1445 16.2808C11.4385 16.5728 11.9135 16.5718 12.2055 16.2778C12.4975 15.9838 12.4975 15.5098 12.2035 15.2168L9.72654 12.7498H16.0815C16.4965 12.7498 16.8315 12.4138 16.8315 11.9998C16.8315 11.5858 16.4965 11.2498 16.0815 11.2498L9.72654 11.2498L12.2035 8.78382C12.3505 8.63682 12.4235 8.44482 12.4235 8.25182C12.4235 8.06082 12.3505 7.86882 12.2055 7.72282C11.9135 7.42982 11.4385 7.42882 11.1445 7.72082Z"
                                         fill="currentColor"></path>
                                 </svg>
-                                Kemba1i
+                                Kembali
                             </a>
                         </div>
                     </div>
@@ -195,7 +195,7 @@
                     if (bahanData && bahanData.length > 0) {
                         bahanData.forEach((bahan, index) => {
                             const beratBersihLabel = index === 0 ?
-                                '<label>Berat Bersih <span class="text-danger">*</span></label>' :
+                                '<label>Berat Bersih (gram) <span class="text-danger">*</span></label>' :
                                 '';
                             const kaloriLabel = index === 0 ? '<label>Kalori (kkal)</label>' : '';
 
