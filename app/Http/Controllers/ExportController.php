@@ -11,6 +11,7 @@ use App\Models\Gaji;
 use App\Models\Karyawan;
 use App\Models\OrderItem;
 use App\Models\RekeningKoranVa;
+use App\Models\RekeningRekapBKU;
 use App\Models\Sekolah;
 use App\Models\StockAdjustment;
 use App\Models\Supplier;
@@ -145,13 +146,120 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 5,
+                    'A' => 15,
                     'B' => 25,
                     'C' => 50,
                     'D' => 25,
                 ];
             }
         }, 'REKAP_PENERIMAAN_DANA_' . date('Y-m-d_H-i') . '.xlsx');
+    }
+
+    public function exportRekonsiliasi(Request $request)
+    {
+        $request->validate([
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+        ]);
+
+        $queryKoran = RekeningKoranVa::with('transaction.order.supplier')
+            ->orderBy('tanggal_transaksi', 'asc');
+
+        $queryBKU = RekeningRekapBKU::with('transaction.order.supplier')
+            ->orderBy('tanggal_transaksi', 'asc');
+
+        if ($request->start_date && $request->end_date) {
+            $queryKoran->whereBetween('tanggal_transaksi', [$request->start_date, $request->end_date]);
+            $queryBKU->whereBetween('tanggal_transaksi', [$request->start_date, $request->end_date]);
+        }
+
+        $rekeningKorans = $queryKoran->get();
+        $rekeningBKUs = $queryBKU->get();
+
+        // Group by date and calculate summaries
+        $koranByDate = $rekeningKorans->groupBy(function ($item) {
+            return $item->tanggal_transaksi->format('Y-m-d');
+        })->map(function ($group) {
+            return [
+                'count' => $group->count(),
+                'total_kredit' => $group->sum('kredit'),
+                'total_debit' => $group->sum('debit'),
+            ];
+        });
+
+        $bkuByDate = $rekeningBKUs->groupBy(function ($item) {
+            return $item->tanggal_transaksi->format('Y-m-d');
+        })->map(function ($group) {
+            return [
+                'count' => $group->count(),
+                'total_debit' => $group->sum('debit'),
+                'total_kredit' => $group->sum('kredit'),
+            ];
+        });
+
+        // Get all unique dates
+        $allDates = collect(array_merge(
+            $koranByDate->keys()->toArray(),
+            $bkuByDate->keys()->toArray()
+        ))->unique()->sort();
+
+        // Build reconciliation data
+        $reconciliationData = [];
+        $no = 1;
+
+        foreach ($allDates as $date) {
+            $koran = $koranByDate[$date] ?? ['count' => 0, 'total_kredit' => 0, 'total_debit' => 0];
+            $bku = $bkuByDate[$date] ?? ['count' => 0, 'total_debit' => 0, 'total_kredit' => 0];
+
+            $selisih = ($koran['total_kredit'] + $koran['total_debit']) - ($bku['total_debit'] + $bku['total_kredit']);
+
+            $reconciliationData[] = [
+                'no' => $no++,
+                'tanggal' => \Carbon\Carbon::parse($date),
+                'jml_rek' => $koran['count'],
+                'nilai_rek' => ($koran['total_kredit'] + $koran['total_debit']),
+                'jml_buku' => $bku['count'],
+                'nilai_buku' => ($bku['total_debit'] + $bku['total_kredit']),
+                'selisih' => $selisih,
+                'status' => abs($selisih) < 0.01 ? 'Match' : 'No Match'
+            ];
+        }
+
+        return Excel::download(new class($reconciliationData, $request->start_date, $request->end_date) implements \Maatwebsite\Excel\Concerns\FromView, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            private $reconciliationData;
+            private $startDate;
+            private $endDate;
+
+            public function __construct($reconciliationData, $startDate, $endDate)
+            {
+                $this->reconciliationData = $reconciliationData;
+                $this->startDate = $startDate;
+                $this->endDate = $endDate;
+            }
+
+            public function view(): \Illuminate\Contracts\View\View
+            {
+                return view('exports.rekonsiliasi', [
+                    'reconciliationData' => $this->reconciliationData,
+                    'startDate' => $this->startDate,
+                    'endDate' => $this->endDate,
+                ]);
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 15,
+                    'B' => 20,
+                    'C' => 15,
+                    'D' => 25,
+                    'E' => 15,
+                    'F' => 25,
+                    'G' => 20,
+                    'H' => 15,
+                ];
+            }
+        }, 'REKONSILIASI_' . date('Y-m-d_H-i') . '.xlsx');
     }
 
     public function exportSekolah()

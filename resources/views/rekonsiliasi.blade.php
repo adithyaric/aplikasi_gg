@@ -286,9 +286,12 @@
                     <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <i class="bi bi-x-circle"></i> Tutup
                     </button>
-                    <button class="btn btn-success" id="btnCetakNow">
-                        <i class="bi bi-printer-fill"></i> Cetak
+                    <button class="btn btn-danger" id="btnCetakNow">
+                        <i class="bi bi-printer-fill"></i> Cetak PDF
                     </button>
+                    <a href="{{ route('export.rekonsiliasi') }}" class="btn btn-success ms-2">
+                        <i class="bi bi-file-earmark-excel"></i> Export
+                    </a>
                 </div>
             </div>
         </div>

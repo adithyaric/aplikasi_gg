@@ -27,6 +27,8 @@ class RekeningRekapBKU extends Model
         'bulan',
         'minggu',
         'transaction_id',
+        'jenis_buku_pembantu', //string :
+        'sumber_dana', //string : (Petty cash/cash in hand), kas di bank
     ];
 
     protected $casts = [
