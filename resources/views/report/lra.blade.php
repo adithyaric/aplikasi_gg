@@ -245,23 +245,29 @@
                 const hiddenAnggaran = row.find('.anggaran-value[type="hidden"]');
                 const realisasiInput = row.find('.realisasi-input');
 
-                const name = realisasiInput.attr('name');
-                if (name) {
-                    // Get anggaran value
+                const realisasiName = realisasiInput.attr('name');
+                if (realisasiName) {
+                    // Get anggaran value and create anggaran name
                     let anggaranValue = 0;
+                    let anggaranName = '';
+
                     if (anggaranInput.length > 0) {
+                        // First row with input field
                         anggaranValue = anggaranInput.val() || 0;
-                        const anggaranName = anggaranInput.attr('name');
-                        if (anggaranName) {
-                            formData.append(anggaranName, anggaranValue);
-                        }
+                        anggaranName = anggaranInput.attr('name');
                     } else if (hiddenAnggaran.length > 0) {
+                        // Other rows with hidden input
                         anggaranValue = hiddenAnggaran.val() || 0;
+                        anggaranName = realisasiName.replace('realisasi_', 'anggaran_');
+                    }
+
+                    if (anggaranName) {
+                        formData.append(anggaranName, anggaranValue);
                     }
 
                     // Get realisasi value
                     const realisasiValue = realisasiInput.val() || 0;
-                    formData.append(name, realisasiValue);
+                    formData.append(realisasiName, realisasiValue);
                 }
             });
 

@@ -1365,7 +1365,7 @@ class ExportController extends Controller
                 [
                     'uraian' => 'Penerimaan dari BGN',
                     'anggaran' => $adminInputs['anggaran_bgn'] ?? 0,
-                    'realisasi' => $adminInputs['realisasi_bgn'] ?? 0, //TODO masih salah
+                    'realisasi' => $adminInputs['realisasi_bgn'] ?? 0,
                 ],
                 [
                     'uraian' => 'Penerimaan dari Yayasan',
