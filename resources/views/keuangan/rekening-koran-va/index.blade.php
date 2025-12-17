@@ -64,6 +64,9 @@
                                 <a href="{{ asset('templates/template-rekening-koran-va.csv') }}" class="btn btn-secondary ms-2">
                                     <i class="bi bi-file-earmark-spreadsheet"></i> Template
                                 </a>
+                                <a href="{{ route('export.rekening-koran-va') }}" class="btn btn-success ms-2">
+                                    <i class="bi bi-file-earmark-excel"></i> Export
+                                </a>
                             </div>
                         </form>
                     </div>

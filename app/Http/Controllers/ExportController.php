@@ -1604,4 +1604,44 @@ class ExportController extends Controller
             }
         }, 'BAST_' . $order->id . '_' . date('Y-m-d_H-i') . '.xlsx');
     }
+
+    public function exportRekeningKoranVA()
+    {
+        $rekeningKoran = RekeningKoranVa::with('transaction.order')
+            ->orderBy('tanggal_transaksi', 'asc')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        return Excel::download(new class($rekeningKoran) implements \Maatwebsite\Excel\Concerns\FromView, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            private $rekeningKoran;
+
+            public function __construct($rekeningKoran)
+            {
+                $this->rekeningKoran = $rekeningKoran;
+            }
+
+            public function view(): \Illuminate\Contracts\View\View
+            {
+                return view('exports.rekening-koran-va', [
+                    'rekeningKoran' => $this->rekeningKoran,
+                ]);
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 20,    // No
+                    'B' => 20,   // Tanggal
+                    'C' => 40,   // Uraian
+                    'D' => 20,   // Ref
+                    'E' => 20,   // Debit
+                    'F' => 20,   // Kredit
+                    'G' => 20,   // Saldo
+                    'H' => 20,   // Kategori Transaksi
+                    'I' => 20,   // Minggu
+                    'J' => 20,   // Link PO
+                ];
+            }
+        }, 'REKENING_KORAN_VA_' . date('Y-m-d_H-i') . '.xlsx');
+    }
 }

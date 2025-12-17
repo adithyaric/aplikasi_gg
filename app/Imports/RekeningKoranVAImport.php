@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\RekeningKoranVa;
 use App\Models\Transaction;
+use App\Models\Order;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -16,14 +17,6 @@ class RekeningKoranVAImport implements ToCollection, WithHeadingRow
     {
         DB::beginTransaction();
         try {
-            // Get all existing entries ordered for saldo calculation
-            $existingEntries = RekeningKoranVa::orderBy('tanggal_transaksi', 'asc')
-                ->orderBy('id', 'asc')
-                ->get();
-
-            // Clear existing data if needed (optional)
-            // RekeningKoranVa::truncate();
-
             $importedEntries = [];
 
             foreach ($rows as $row) {
@@ -32,9 +25,11 @@ class RekeningKoranVAImport implements ToCollection, WithHeadingRow
                     Carbon::parse($row['tanggal_transaksi']) : null;
 
                 $transactionId = null;
-                if (isset($row['transaction_id']) && !empty($row['transaction_id'])) {
-                    $transaction = Transaction::find($row['transaction_id']);
-                    $transactionId = $transaction ? $transaction->id : null;
+                if (isset($row['transaction_number']) && !empty($row['transaction_number'])) {
+                    $order = Order::where('order_number', $row['transaction_number'])->first();
+                    if ($order && $order->transaction) {
+                        $transactionId = $order->transaction->id;
+                    }
                 }
 
                 $importedEntries[] = [
