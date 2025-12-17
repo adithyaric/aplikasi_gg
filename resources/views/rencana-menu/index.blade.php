@@ -75,22 +75,23 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive text-nowrap custom-datatable-entries">
-                            <div class="col d-flex flex-wrap align-items-end gap-2 mb-1">
-                                <div class="col-auto">
-                                    <label class="form-label ">Rentang Periode</label>
-                                    <input type="text" id="dateRange" class="form-control form-control-sm"
-                                        placeholder="Pilih rentang tanggal" readonly />
-                                </div>
-                                <div class="col-auto mt-4">
-                                    <button id="filterDate" class="btn btn-sm btn-primary">
-                                        <i class="bi bi-funnel"></i> Filter
-                                    </button>
-                                    <button id="resetDate" class="btn btn-sm btn-secondary">
-                                        <i class="bi bi-arrow-counterclockwise"></i> Reset
-                                    </button>
-                                </div>
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <form method="GET" action="{{ route('rencanamenu.index') }}" class="d-flex gap-2">
+                                    <input type="date" name="start_date" class="form-control" value="{{ request('start_date') }}" placeholder="Start Date">
+                                    <input type="date" name="end_date" class="form-control" value="{{ request('end_date') }}" placeholder="End Date">
+                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                    <a href="{{ route('rencanamenu.index') }}" class="btn btn-secondary">Reset</a>
+                                    @if(request('start_date') || request('end_date'))
+                                        <a href="{{ route('export.rencana-menu', request()->query()) }}" class="btn btn-success">
+                                            <i class="bi bi-file-earmark-excel "></i> Export
+                                        </a>
+                                    @else
+                                        <button class="btn btn-success" disabled>
+                                            <i class="bi bi-file-earmark-excel "></i> Export
+                                        </button>
+                                    @endif
+                                </form>
                             </div>
-
                             <table id="datatable" class="table table-bordered table-sm" data-toggle="data-table">
                                 <thead>
                                     <tr>

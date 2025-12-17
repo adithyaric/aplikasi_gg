@@ -13,10 +13,12 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\RekeningKoranVa;
 use App\Models\RekeningRekapBKU;
+use App\Models\RencanaMenu;
 use App\Models\Sekolah;
 use App\Models\StockAdjustment;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Activitylog\Models\Activity;
 
@@ -1517,5 +1519,97 @@ class ExportController extends Controller
                 ? 'LRA_' . str_replace('-', '', $startDate) . '_' . str_replace('-', '', $endDate) . '.xlsx'
                 : 'LRA_All.xlsx'
         );
+    }
+
+    public function exportRencanaMenu(Request $request)
+    {
+        $query = RencanaMenu::with(['paketMenu.menus.bahanBakus'])
+            ->orderBy('start_date', 'asc');
+
+        if ($request->has('start_date') && $request->has('end_date')) {
+            $query->whereBetween('start_date', [$request->start_date, $request->end_date]);
+        }
+
+        $rencanaMenus = $query->get();
+
+        $exportData = [];
+        $rowNumber = 1;
+
+        foreach ($rencanaMenus as $rencana) {
+            foreach ($rencana->paketMenu as $paket) {
+                $porsi = $paket->pivot->porsi ?? 0;
+
+                foreach ($paket->menus as $menu) {
+                    // Get bahan bakus with paket-specific data
+                    $bahanBakus = DB::table('bahan_baku_menu')
+                        ->join('bahan_bakus', 'bahan_baku_menu.bahan_baku_id', '=', 'bahan_bakus.id')
+                        ->where('bahan_baku_menu.paket_menu_id', $paket->id)
+                        ->where('bahan_baku_menu.menu_id', $menu->id)
+                        ->select(
+                            'bahan_bakus.id',
+                            'bahan_bakus.nama',
+                            'bahan_bakus.satuan',
+                            'bahan_baku_menu.berat_bersih',
+                            'bahan_baku_menu.energi'
+                        )
+                        ->get();
+
+                    foreach ($bahanBakus as $index => $bahan) {
+                        $beratPerPorsi = $bahan->berat_bersih . ' ' . ($bahan->satuan ?? 'gram');
+                        // $totalKebutuhan = ($bahan->berat_bersih * $porsi) / 1000 . ' kg'; // Convert to kg if gram
+                        $totalKebutuhan = ($bahan->berat_bersih * $porsi) . ' ' . ($bahan->satuan ?? 'gram'); // Convert to kg if gram
+
+                        $exportData[] = [
+                            'no' => $rowNumber,
+                            'tanggal' => \Carbon\Carbon::parse($rencana->start_date)->translatedFormat('d F Y'),
+                            'paket_menu' => $paket->nama,
+                            'nama_menu' => $menu->nama,
+                            'bahan_makanan' => $bahan->nama,
+                            'berat_per_porsi' => $beratPerPorsi,
+                            'jumlah_porsi' => $porsi,
+                            'total_kebutuhan' => $totalKebutuhan,
+                        ];
+
+                        $rowNumber++;
+                    }
+                }
+            }
+        }
+
+        return Excel::download(new class($exportData, $request->start_date, $request->end_date) implements \Maatwebsite\Excel\Concerns\FromView, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            private $exportData;
+            private $startDate;
+            private $endDate;
+
+            public function __construct($exportData, $startDate, $endDate)
+            {
+                $this->exportData = $exportData;
+                $this->startDate = $startDate;
+                $this->endDate = $endDate;
+            }
+
+            public function view(): \Illuminate\Contracts\View\View
+            {
+                return view('exports.rencana-menu', [
+                    'exportData' => $this->exportData,
+                    'startDate' => $this->startDate,
+                    'endDate' => $this->endDate,
+                ]);
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 15,
+                    'B' => 20,
+                    'C' => 15,
+                    'D' => 25,
+                    'E' => 25,
+                    'F' => 20,
+                    'G' => 15,
+                    'H' => 20,
+                ];
+            }
+        }, 'REKAP_MENU_' . date('Y-m-d_H-i') . '.xlsx');
     }
 }
