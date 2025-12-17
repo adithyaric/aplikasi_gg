@@ -116,6 +116,8 @@ class RekeningRekapBKUController extends Controller
             'bahanoperasionals' => $bahanoperasionals,
             'suppliers' => $suppliers,
             'jenisBahanOptions' => $jenisBahanOptions,
+            'jenisBukuPembantu' => $jenisBukuPembantu,
+            'sumberDana' => $sumberDana,
             'title' => $title,
         ]);
     }
@@ -137,6 +139,8 @@ class RekeningRekapBKUController extends Controller
             'bulan' => 'nullable|integer|min:1|max:12',
             'minggu' => 'nullable|integer|min:1|max:4',
             'transaction_id' => 'nullable|exists:transactions,id',
+            'jenis_buku_pembantu' => 'nullable|string',
+            'sumber_dana' => 'nullable|string',
         ]);
 
         $jenisTransaksi = $request->input('jenis_transaksi');
@@ -248,6 +252,25 @@ class RekeningRekapBKUController extends Controller
             'Penerimaan Pihak Lainnya',
         ];
 
+        $jenisBukuPembantu = [
+            'dana bahan baku',
+            'dana operasional',
+            'dana insentif fasilitas',
+            'pungutan/setoran ppn',
+            'pungutan/setoran pph21',
+            'pungutan/setoran pph22',
+            'pungutan/setoran pph23',
+            'pungutan/setoran pph pasal4 ayat2',
+            'biaya bahan baku',
+            'biaya operasional',
+            'biaya insentif fasilitas',
+        ];
+
+        $sumberDana = [
+            'petty cash/cash in hand',
+            'kas di bank',
+        ];
+
         $title = 'Edit Rekap BKU';
         return view('keuangan.rekening-rekap-bku.edit', [
             'rekeningBKU' => $rekeningBKU,
@@ -257,6 +280,8 @@ class RekeningRekapBKUController extends Controller
             'bahanoperasionals' => $bahanoperasionals,
             'suppliers' => $suppliers,
             'jenisBahanOptions' => $jenisBahanOptions,
+            'jenisBukuPembantu' => $jenisBukuPembantu,
+            'sumberDana' => $sumberDana,
             'title' => $title,
         ]);
     }
@@ -278,6 +303,8 @@ class RekeningRekapBKUController extends Controller
             'bulan' => 'nullable|integer|min:1|max:12',
             'minggu' => 'nullable|integer|min:1|max:4',
             'transaction_id' => 'nullable|exists:transactions,id',
+            'jenis_buku_pembantu' => 'nullable|string',
+            'sumber_dana' => 'nullable|string',
         ]);
 
         DB::beginTransaction();

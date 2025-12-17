@@ -1014,6 +1014,8 @@ class ExportController extends Controller
                     'E' => 25,
                     'F' => 25,
                     'G' => 25,
+                    'H' => 25,
+                    'I' => 25,
                 ];
             }
         }, 'BKU_' . date('Y-m-d_H-i') . '.xlsx');

@@ -165,6 +165,8 @@
                                         {{-- <th>Bulan</th> --}}
                                         {{-- <th>Minggu</th> --}}
                                         <th>Link PO</th>
+                                        <th>Jenis Buku Pembantu</th>
+                                        <th>Sumber Dana</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -204,6 +206,8 @@
                                                     -
                                                 @endif
                                             </td>
+                                            <td>{{ ucwords(str_replace('_', ' ', $item->jenis_buku_pembantu)) }}</td>
+                                            <td>{{ ucwords(str_replace('_', ' ', $item->sumber_dana)) }}</td>
                                             <td>
                                                 <a href="{{ route('rekening-rekap-bku.edit', $item->id) }}"
                                                     class="btn btn-sm btn-success">

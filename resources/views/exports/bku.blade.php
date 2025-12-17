@@ -8,10 +8,10 @@
 <body>
     <table>
         <tr>
-            <td colspan="7" style="text-align: center; font-weight: bold; font-size: 16px;">Buku Kas Umum (BKU)</td>
+            <td colspan="9" style="text-align: center; font-weight: bold; font-size: 16px;">Buku Kas Umum (BKU)</td>
         </tr>
         <tr>
-            <td colspan="7"></td>
+            <td colspan="9"></td>
         </tr>
         <tr>
             <td>Nama SPPG :</td>
@@ -43,7 +43,7 @@
             <td colspan="5"></td>
         </tr>
         <tr>
-            <td colspan="7"></td>
+            <td colspan="9"></td>
         </tr>
         <tr style="text-align: center;">
             <td>No</td>
@@ -53,6 +53,8 @@
             <td>Pemasukan (Debit)</td>
             <td>Pengeluaran (Kredit)</td>
             <td>Saldo</td>
+            <th>Jenis Buku Pembantu</th>
+            <th>Sumber Dana</th>
         </tr>
         @foreach ($rekeningBKU as $index => $item)
             <tr>
@@ -71,16 +73,19 @@
                     @endif
                 </td>
                 <td>Rp{{ number_format($item->saldo, 0, ',', '.') }}</td>
+                <td>{{ ucwords(str_replace('_', ' ', $item->jenis_buku_pembantu)) }}</td>
+                <td>{{ ucwords(str_replace('_', ' ', $item->sumber_dana)) }}</td>
+
             </tr>
         @endforeach
         <tr>
-            <td colspan="7"></td>
+            <td colspan="9"></td>
         </tr>
         <tr>
-            <td colspan="7"></td>
+            <td colspan="9"></td>
         </tr>
         <tr>
-            <td colspan="7"></td>
+            <td colspan="9"></td>
         </tr>
         <tr>
             <td colspan="6"></td>
@@ -96,16 +101,16 @@
             <td>Akuntan,</td>
         </tr>
         <tr>
-            <td colspan="7"></td>
+            <td colspan="9"></td>
         </tr>
         <tr>
-            <td colspan="7"></td>
+            <td colspan="9"></td>
         </tr>
         <tr>
-            <td colspan="7"></td>
+            <td colspan="9"></td>
         </tr>
         <tr>
-            <td colspan="7"></td>
+            <td colspan="9"></td>
         </tr>
         <tr>
             <td style="border-top: 1px solid #000;">{{ $setting->nama_sppi ?? 'Rina Fatma Sari, S.TR.Sos' }}</td>

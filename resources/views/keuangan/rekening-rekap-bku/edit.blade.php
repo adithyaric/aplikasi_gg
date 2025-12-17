@@ -277,6 +277,41 @@
                             <input type="hidden" id="kredit" name="kredit"
                                 value="{{ old('kredit', $rekeningBKU->kredit) }}">
 
+<div class="row mt-1">
+    <div class="form-group col-6">
+        <label class="form-label" for="jenis_buku_pembantu">Jenis Buku Pembantu</label>
+        <select class="form-select @error('jenis_buku_pembantu') is-invalid @enderror"
+                id="jenis_buku_pembantu" name="jenis_buku_pembantu">
+            <option value="">-- Pilih Jenis Buku Pembantu --</option>
+            @foreach ($jenisBukuPembantu as $option)
+                <option value="{{ $option }}"
+                    {{ old('jenis_buku_pembantu', $rekeningBKU->jenis_buku_pembantu) == $option ? 'selected' : '' }}>
+                    {{ $option }}
+                </option>
+            @endforeach
+        </select>
+        @error('jenis_buku_pembantu')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+
+    <div class="form-group col-6">
+        <label class="form-label" for="sumber_dana">Sumber Dana</label>
+        <select class="form-select @error('sumber_dana') is-invalid @enderror"
+                id="sumber_dana" name="sumber_dana">
+            <option value="">-- Pilih Sumber Dana --</option>
+            @foreach ($sumberDana as $option)
+                <option value="{{ $option }}"
+                    {{ old('sumber_dana', $rekeningBKU->sumber_dana) == $option ? 'selected' : '' }}>
+                    {{ $option }}
+                </option>
+            @endforeach
+        </select>
+        @error('sumber_dana')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+</div>
                             <div class="d-flex justify-content-end mt-4">
                                 <a href="{{ route('rekening-rekap-bku.index') }}"
                                     class="btn btn-secondary me-2">Batal</a>

@@ -93,6 +93,8 @@
                                             <th>Pemasukkan (Debit)</th>
                                             <th>Pengeluaran (Kredit)</th>
                                             <th>Saldo</th>
+                                            <th>Jenis Buku Pembantu</th>
+                                            <th>Sumber Dana</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -114,9 +116,10 @@
                                                 </td>
                                                 <td>{{ $item->uraian }}</td>
                                                 <td>{{ $item->debit ? number_format($item->debit, 0, ',', '.') : '' }}</td>
-                                                <td>{{ $item->kredit ? number_format($item->kredit, 0, ',', '.') : '' }}
-                                                </td>
+                                                <td>{{ $item->kredit ? number_format($item->kredit, 0, ',', '.') : '' }}</td>
                                                 <td>{{ number_format($item->saldo, 0, ',', '.') }}</td>
+                                                <td>{{ ucwords(str_replace('_', ' ', $item->jenis_buku_pembantu)) }}</td>
+                                                <td>{{ ucwords(str_replace('_', ' ', $item->sumber_dana)) }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -169,6 +172,8 @@
                                         <th>Pemasukkan (Debit)</th>
                                         <th>Pengeluaran (Kredit)</th>
                                         <th>Saldo</th>
+                                        <th>Jenis Buku Pembantu</th>
+                                        <th>Sumber Dana</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -282,6 +287,8 @@
                         debit: $(this).find("td:eq(5)").text().trim() || 0,
                         kredit: $(this).find("td:eq(6)").text().trim() ||0,
                         saldo: $(this).find("td:eq(7)").text().trim(),
+                        jenis_buku_pembantu: $(this).find("td:eq(8)").text().trim(),
+                        sumber_dana: $(this).find("td:eq(9)").text().trim(),
                     };
                     if (row.tanggal) rows.push(row);
                 });
@@ -301,6 +308,8 @@
                         <td>${item.debit}</td>
                         <td>${item.kredit}</td>
                         <td>${item.saldo}</td>
+                        <td>${item.jenis_buku_pembantu}</td>
+                        <td>${item.sumber_dana}</td>
                     </tr>
                 `);
                 });

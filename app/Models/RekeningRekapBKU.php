@@ -27,7 +27,6 @@ class RekeningRekapBKU extends Model
         'bulan',
         'minggu',
         'transaction_id',
-        //TODO tambah kolom :
         'jenis_buku_pembantu',
         /** string :
         dana bahan baku,
