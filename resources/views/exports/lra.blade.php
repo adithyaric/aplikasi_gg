@@ -99,30 +99,30 @@
         </tr>
         @endforeach
         <!-- Totals -->
-        <tr style="font-weight: bold;">
-            <td>Total Penerimaan</td>
-            <td>{{ number_format($totalAnggaranPenerimaan, 0, ',', '.') }}</td>
-            <td>{{ number_format($totalRealisasiPenerimaan, 0, ',', '.') }}</td>
-            <td>
-                @php
-                $totalPercentagePenerimaan = $totalAnggaranPenerimaan > 0 ? ($totalRealisasiPenerimaan /
-                $totalAnggaranPenerimaan) * 100 : 0;
-                @endphp
-                {{ number_format($totalPercentagePenerimaan, 2, ',', '.') }}%
-            </td>
-        </tr>
-        <tr style="font-weight: bold;">
-            <td>Total Belanja</td>
-            <td>{{ number_format($totalAnggaranBelanja, 0, ',', '.') }}</td>
-            <td>{{ number_format($totalRealisasiBelanja, 0, ',', '.') }}</td>
-            <td>
-                @php
-                $totalPercentageBelanja = $totalAnggaranBelanja > 0 ? ($totalRealisasiBelanja / $totalAnggaranBelanja) *
-                100 : 0;
-                @endphp
-                {{ number_format($totalPercentageBelanja, 2, ',', '.') }}%
-            </td>
-        </tr>
+        {{-- <tr style="font-weight: bold;"> --}}
+            {{-- <td>Total Penerimaan</td> --}}
+            {{-- <td>{{ number_format($totalAnggaranPenerimaan, 0, ',', '.') }}</td> --}}
+            {{-- <td>{{ number_format($totalRealisasiPenerimaan, 0, ',', '.') }}</td> --}}
+            {{-- <td> --}}
+                {{-- @php --}}
+                {{-- // $totalPercentagePenerimaan = $totalAnggaranPenerimaan > 0 ? ($totalRealisasiPenerimaan / --}}
+                {{-- // $totalAnggaranPenerimaan) * 100 : 0; --}}
+                {{-- // @endphp --}}
+                {{-- {{ number_format($totalPercentagePenerimaan, 2, ',', '.') }}% --}}
+            {{-- </td> --}}
+        {{-- </tr> --}}
+        {{-- <tr style="font-weight: bold;"> --}}
+            {{-- <td>Total Belanja</td> --}}
+            {{-- <td>{{ number_format($totalAnggaranBelanja, 0, ',', '.') }}</td> --}}
+            {{-- <td>{{ number_format($totalRealisasiBelanja, 0, ',', '.') }}</td> --}}
+            {{-- <td> --}}
+                {{-- @php --}}
+                {{-- // $totalPercentageBelanja = $totalAnggaranBelanja > 0 ? ($totalRealisasiBelanja / $totalAnggaranBelanja) * --}}
+                {{-- // 100 : 0; --}}
+                {{-- // @endphp --}}
+                {{-- {{ number_format($totalPercentageBelanja, 2, ',', '.') }}% --}}
+            {{-- </td> --}}
+        {{-- </tr> --}}
         <tr>
             <td colspan="4"></td>
         </tr>

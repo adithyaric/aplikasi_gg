@@ -50,8 +50,8 @@
                                     <thead>
                                         <tr class="fw-bold border-bottom">
                                             <th class="border-0">Tanggal</th>
-                                            <th class="border-0">Menu</th>
-                                            <th class="border-0 text-center">Aksi</th>
+                                            <th colspan="2" class="border-0">Menu</th>
+                                            {{-- <th class="border-0 text-center">Aksi</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -69,10 +69,12 @@
                                                                     <small class="fw-bold">{{ $paket->pivot->porsi }}
                                                                         porsi</small>
                                                                 </td>
+                                                                <td></td>
                                                             </tr>
                                                             @foreach ($paket->menus as $menu)
                                                                 <tr>
                                                                     <td class="ps-3">{{ $menu->nama }}</td>
+                                                                    <td></td>
                                                                     <td></td>
                                                                 </tr>
                                                                 @foreach ($menu->bahanBakus as $bahan)
@@ -85,9 +87,12 @@
                                                                     @endphp
                                                                     <tr>
                                                                         <td class="ps-5 text-muted">{{ $bahan->nama }}</td>
-                                                                        <td class="fw-bold text-end">
-                                                                            <small>{{ $pivotData->berat_bersih ?? 0 }}
-                                                                                {{ $bahan->satuan }}</small>
+                                                                        <td class="text-end">
+                                                                            {{-- <small>{{ $pivotData->berat_bersih ?? 0 }} {{ $bahan->satuan }}</small> --}}
+                                                                            <small>{{ $pivotData->berat_bersih/1000 ?? 0 }} kg</small>
+                                                                        </td>
+                                                                        <td>
+                                                                            <strong>{{ (($pivotData->berat_bersih/1000) * $paket->pivot->porsi) ?? 0 }} kg</strong>
                                                                         </td>
                                                                     </tr>
                                                                 @endforeach
@@ -95,12 +100,12 @@
                                                         @endforeach
                                                     </table>
                                                 </td>
-                                                <td class="align-middle text-center">
-                                                    <button class="btn btn-sm btn-success add-menu-btn"
-                                                        data-rencana-id="{{ $rencana->id }}" type="button">
-                                                        Add Menu
-                                                    </button>
-                                                </td>
+                                                {{-- <td class="align-middle text-center"> --}}
+                                                    {{-- <button class="btn btn-sm btn-success add-menu-btn" --}}
+                                                        {{-- data-rencana-id="{{ $rencana->id }}" type="button"> --}}
+                                                        {{-- Add Menu --}}
+                                                    {{-- </button> --}}
+                                                {{-- </td> --}}
                                             </tr>
                                         @empty
                                             <tr>

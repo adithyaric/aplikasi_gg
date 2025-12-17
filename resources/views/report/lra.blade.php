@@ -230,34 +230,58 @@
 
 @push('js')
     <script>
-        // Add this inside $(document).ready function or at the end of existing script
         $('#btnExportLRA').on('click', function() {
             const startDate = $('#startDate').val();
             const endDate = $('#endDate').val();
 
-            // if (!startDate || !endDate) {
-            //     alert('Pilih periode terlebih dahulu!');
-            //     return;
-            // }
-
-            // Collect all form data
             const formData = new URLSearchParams();
             formData.append('start_date', startDate);
             formData.append('end_date', endDate);
 
-            // Collect user inputs
-            $('.anggaran-input, .realisasi-input').each(function() {
-                const name = $(this).attr('name');
-                const value = $(this).val() || 0;
+            // Collect Penerimaan values
+            $('tbody tr[data-section="penerimaan"]').each(function() {
+                const row = $(this);
+                const anggaranInput = row.find('.anggaran-input');
+                const hiddenAnggaran = row.find('.anggaran-value[type="hidden"]');
+                const realisasiInput = row.find('.realisasi-input');
+
+                const name = realisasiInput.attr('name');
                 if (name) {
-                    formData.append(name, value);
+                    // Get anggaran value
+                    let anggaranValue = 0;
+                    if (anggaranInput.length > 0) {
+                        anggaranValue = anggaranInput.val() || 0;
+                        const anggaranName = anggaranInput.attr('name');
+                        if (anggaranName) {
+                            formData.append(anggaranName, anggaranValue);
+                        }
+                    } else if (hiddenAnggaran.length > 0) {
+                        anggaranValue = hiddenAnggaran.val() || 0;
+                    }
+
+                    // Get realisasi value
+                    const realisasiValue = realisasiInput.val() || 0;
+                    formData.append(name, realisasiValue);
                 }
             });
 
-            // Build export URL
-            const exportUrl = '{{ route('export.lra') }}?' + formData.toString();
+            // Collect Belanja values
+            $('tbody tr[data-section="belanja"]').each(function() {
+                const row = $(this);
+                const anggaranValue = row.find('.anggaran-value').val() || 0;
+                const realisasiInput = row.find('.realisasi-input');
+                const realisasiValue = realisasiInput.val() || 0;
+                const name = realisasiInput.attr('name');
 
-            // Open export in new window
+                if (name) {
+                    // Create anggaran name from realisasi name
+                    const anggaranName = name.replace('realisasi_', 'anggaran_');
+                    formData.append(anggaranName, anggaranValue);
+                    formData.append(name, realisasiValue);
+                }
+            });
+
+            const exportUrl = '{{ route('export.lra') }}?' + formData.toString();
             window.location.href = exportUrl;
         });
     </script>

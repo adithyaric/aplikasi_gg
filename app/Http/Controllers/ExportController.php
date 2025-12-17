@@ -102,11 +102,11 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 15,
+                    'A' => 20,
                     'B' => 20,
-                    'C' => 15,
-                    'D' => 15,
-                    'E' => 15,
+                    'C' => 20,
+                    'D' => 20,
+                    'E' => 20,
                     'F' => 20,
                     'G' => 20,
                     'H' => 20,
@@ -150,7 +150,7 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 15,
+                    'A' => 20,
                     'B' => 25,
                     'C' => 50,
                     'D' => 25,
@@ -253,14 +253,14 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 15,
+                    'A' => 20,
                     'B' => 20,
-                    'C' => 15,
+                    'C' => 20,
                     'D' => 25,
-                    'E' => 15,
+                    'E' => 20,
                     'F' => 25,
                     'G' => 20,
-                    'H' => 15,
+                    'H' => 20,
                 ];
             }
         }, 'REKONSILIASI_' . date('Y-m-d_H-i') . '.xlsx');
@@ -288,13 +288,13 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 15,
+                    'A' => 20,
                     'B' => 30,
                     'C' => 20,
-                    'D' => 15,
-                    'E' => 15,
-                    'F' => 15,
-                    'G' => 15,
+                    'D' => 20,
+                    'E' => 20,
+                    'F' => 20,
+                    'G' => 20,
                 ];
             }
         }, 'SEKOLAH_' . date('Y-m-d_H-i-T') . '.xlsx');
@@ -322,9 +322,9 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 15,
+                    'A' => 20,
                     'B' => 30,
-                    'C' => 15,
+                    'C' => 20,
                     'D' => 20,
                     'E' => 20,
                     'F' => 30,
@@ -355,12 +355,12 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 15,
-                    'B' => 15,
+                    'A' => 20,
+                    'B' => 20,
                     'C' => 25,
-                    'D' => 15,
+                    'D' => 20,
                     'E' => 30,
-                    'F' => 15,
+                    'F' => 20,
                     'G' => 40,
                 ];
             }
@@ -403,10 +403,10 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 15,
+                    'A' => 20,
                     'B' => 25,
-                    'C' => 15,
-                    'D' => 15,
+                    'C' => 20,
+                    'D' => 20,
                 ];
             }
         }, 'ABSENSI_' . Carbon::parse($tanggal)->format('Y-m-d') . '.xlsx');
@@ -456,11 +456,11 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 15,
+                    'A' => 20,
                     'B' => 25,
-                    'C' => 15,
-                    'D' => 15,
-                    'E' => 15,
+                    'C' => 20,
+                    'D' => 20,
+                    'E' => 20,
                 ];
             }
         }, 'GAJI_' . Carbon::parse($tanggal_mulai)->format('Y-m-d') . '_' . Carbon::parse($tanggal_akhir)->format('Y-m-d') . '.xlsx');
@@ -546,14 +546,14 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 15,
+                    'A' => 20,
                     'B' => 30,
                     'C' => 20,
-                    'D' => 15,
+                    'D' => 20,
                     'E' => 10,
-                    'F' => 15,
-                    'G' => 15,
-                    'H' => 15,
+                    'F' => 20,
+                    'G' => 20,
+                    'H' => 20,
                 ];
             }
         }, 'STOCK_' . date('Y-m-d_H-i') . '.xlsx');
@@ -733,11 +733,11 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 15,
-                    'B' => 15,
-                    'C' => 15,
-                    'D' => 15,
-                    'E' => 15,
+                    'A' => 20,
+                    'B' => 20,
+                    'C' => 20,
+                    'D' => 20,
+                    'E' => 20,
                     'F' => 20,
                     'G' => 20,
                     'H' => 20,
@@ -834,13 +834,13 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 15,
+                    'A' => 20,
                     'B' => 30,
                     'C' => 10,
                     'D' => 10,
-                    'E' => 15,
-                    'F' => 15,
-                    'G' => 15,
+                    'E' => 20,
+                    'F' => 20,
+                    'G' => 20,
                     'H' => 30,
                 ];
             }
@@ -956,10 +956,10 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 15,
+                    'A' => 20,
                     'B' => 35,
-                    'C' => 15,
-                    'D' => 15,
+                    'C' => 20,
+                    'D' => 20,
                     'E' => 20,
                     'F' => 25,
                 ];
@@ -1007,8 +1007,8 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 15,
-                    'B' => 15,
+                    'A' => 20,
+                    'B' => 20,
                     'C' => 20,
                     'D' => 60,
                     'E' => 25,
@@ -1094,7 +1094,7 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 15,
+                    'A' => 20,
                     'B' => 12,
                     'C' => 20,
                     'D' => 20,
@@ -1181,13 +1181,13 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 15,
-                    'B' => 15,
+                    'A' => 20,
+                    'B' => 20,
                     'C' => 25,
-                    'D' => 15,
+                    'D' => 20,
                     'E' => 10,
-                    'F' => 15,
-                    'G' => 15,
+                    'F' => 20,
+                    'G' => 20,
                     'H' => 25,
                     'I' => 25,
                 ];
@@ -1243,8 +1243,8 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 15,
-                    'B' => 15,
+                    'A' => 20,
+                    'B' => 20,
                     'C' => 50,
                     'D' => 20,
                     'E' => 25,
@@ -1335,9 +1335,9 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 15,
+                    'A' => 20,
                     'B' => 20,
-                    'C' => 15,
+                    'C' => 20,
                     'D' => 60,
                     'E' => 20,
                     'F' => 20,
@@ -1348,81 +1348,13 @@ class ExportController extends Controller
 
     public function exportLRA(Request $request)
     {
-        //TODO fix lra, input & percentage not quite right
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        // Calculate totals from database
-        $totalPenerimaanBGN = 0;
-        $totalPenerimaanYayasan = 0;
-        $totalPenerimaanPihakLain = 0;
-        $totalBahanPokok = 0;
-        $totalBahanOperasional = 0;
-        $totalBudgetSewa = 0;
-        $totalBudgetBahanPangan = 0;
-        $totalBudgetOperasional = 0;
-
-        // Calculate penerimaan from RekeningRekapBKU
-        $rekeningQuery = RekeningRekapBKU::query();
-
-        if ($startDate && $endDate) {
-            $rekeningQuery->whereBetween('tanggal_transaksi', [
-                Carbon::parse($startDate)->startOfDay(),
-                Carbon::parse($endDate)->endOfDay()
-            ]);
-        }
-
-        $rekeningData = $rekeningQuery->get();
-
-        foreach ($rekeningData as $item) {
-            if (str_contains($item->jenis_bahan, 'Penerimaan BGN')) {
-                $totalPenerimaanBGN += $item->debit;
-            } elseif (str_contains($item->jenis_bahan, 'Penerimaan Yayasan')) {
-                $totalPenerimaanYayasan += $item->debit;
-            } elseif (str_contains($item->jenis_bahan, 'Penerimaan Pihak Lainnya')) {
-                $totalPenerimaanPihakLain += $item->debit;
-            } elseif ($item->jenis_bahan == 'Bahan Pokok') {
-                $totalBahanPokok += $item->kredit;
-            } elseif ($item->jenis_bahan == 'Bahan Operasional') {
-                $totalBahanOperasional += $item->kredit;
-            }
-        }
-
-        // Calculate budgets from Anggaran
-        $anggaranQuery = Anggaran::query();
-
-        if ($startDate && $endDate) {
-            $anggaranQuery->where(function ($q) use ($startDate, $endDate) {
-                $q->whereBetween('start_date', [$startDate, $endDate])
-                    ->orWhereBetween('end_date', [$startDate, $endDate])
-                    ->orWhere(function ($q2) use ($startDate, $endDate) {
-                        $q2->where('start_date', '<=', $startDate)
-                            ->where('end_date', '>=', $endDate);
-                    });
-            });
-        }
-
-        $anggarans = $anggaranQuery->get();
-
-        foreach ($anggarans as $anggaran) {
-            $totalBudgetBahanPangan += ($anggaran->budget_porsi_8k + $anggaran->budget_porsi_10k);
-            $totalBudgetOperasional += $anggaran->budget_operasional;
-            $totalBudgetSewa += $anggaran->budget_sewa;
-        }
-
         // Collect admin inputs from request
-        $adminInputs = $request->only([
-            'anggaran_sisa_dana',
-            'realisasi_sisa_dana',
-            'realisasi_bgn',
-            'realisasi_yayasan',
-            'realisasi_pihak_lain',
-            'realisasi_bahan_pangan',
-            'realisasi_operasional',
-            'realisasi_sewa'
-        ]);
+        $adminInputs = $request->except(['start_date', 'end_date']);
 
-        // Prepare data for export
+        // Prepare data for export using passed values
         $exportData = [
             'penerimaanItems' => [
                 [
@@ -1432,35 +1364,35 @@ class ExportController extends Controller
                 ],
                 [
                     'uraian' => 'Penerimaan dari BGN',
-                    'anggaran' => $totalPenerimaanBGN,
-                    'realisasi' => $adminInputs['realisasi_bgn'] ?? $totalPenerimaanBGN,
+                    'anggaran' => $adminInputs['anggaran_bgn'] ?? 0,
+                    'realisasi' => $adminInputs['realisasi_bgn'] ?? 0, //TODO masih salah
                 ],
                 [
                     'uraian' => 'Penerimaan dari Yayasan',
-                    'anggaran' => $totalPenerimaanYayasan,
-                    'realisasi' => $adminInputs['realisasi_yayasan'] ?? $totalPenerimaanYayasan,
+                    'anggaran' => $adminInputs['anggaran_yayasan'] ?? 0,
+                    'realisasi' => $adminInputs['realisasi_yayasan'] ?? 0,
                 ],
                 [
                     'uraian' => 'Penerimaan dari Pihak Lainnya',
-                    'anggaran' => $totalPenerimaanPihakLain,
-                    'realisasi' => $adminInputs['realisasi_pihak_lain'] ?? $totalPenerimaanPihakLain,
+                    'anggaran' => $adminInputs['anggaran_pihak_lain'] ?? 0,
+                    'realisasi' => $adminInputs['realisasi_pihak_lain'] ?? 0,
                 ],
             ],
             'belanjaItems' => [
                 [
                     'uraian' => 'Belanja Bahan Pangan',
-                    'anggaran' => $totalBudgetBahanPangan,
-                    'realisasi' => $adminInputs['realisasi_bahan_pangan'] ?? $totalBahanPokok,
+                    'anggaran' => $adminInputs['anggaran_bahan_pangan'] ?? 0,
+                    'realisasi' => $adminInputs['realisasi_bahan_pangan'] ?? 0,
                 ],
                 [
                     'uraian' => 'Belanja Operasional',
-                    'anggaran' => $totalBudgetOperasional,
-                    'realisasi' => $adminInputs['realisasi_operasional'] ?? $totalBahanOperasional,
+                    'anggaran' => $adminInputs['anggaran_operasional'] ?? 0,
+                    'realisasi' => $adminInputs['realisasi_operasional'] ?? 0,
                 ],
                 [
                     'uraian' => 'Belanja Sewa',
-                    'anggaran' => $totalBudgetSewa,
-                    'realisasi' => $adminInputs['realisasi_sewa'] ?? $totalBudgetSewa,
+                    'anggaran' => $adminInputs['anggaran_sewa'] ?? 0,
+                    'realisasi' => $adminInputs['realisasi_sewa'] ?? 0,
                 ],
             ]
         ];
@@ -1601,13 +1533,13 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 15,
+                    'A' => 20,
                     'B' => 20,
-                    'C' => 15,
+                    'C' => 20,
                     'D' => 25,
                     'E' => 25,
                     'F' => 20,
-                    'G' => 15,
+                    'G' => 20,
                     'H' => 20,
                 ];
             }
@@ -1660,11 +1592,11 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 15,
+                    'A' => 20,
                     'B' => 30,
-                    'C' => 15,
-                    'D' => 15,
-                    'E' => 15,
+                    'C' => 20,
+                    'D' => 20,
+                    'E' => 20,
                     'F' => 30,
                 ];
             }

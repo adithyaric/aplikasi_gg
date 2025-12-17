@@ -85,10 +85,12 @@
                                                                     <small class="fw-bold">{{ $paket->pivot->porsi }}
                                                                         porsi</small>
                                                                 </td>
+                                                                <td></td>
                                                             </tr>
                                                             @foreach ($paket->menus as $menu)
                                                                 <tr>
                                                                     <td class="ps-3">{{ $menu->nama }}</td>
+                                                                    <td></td>
                                                                     <td></td>
                                                                 </tr>
                                                                 @foreach ($menu->bahanBakus as $bahan)
@@ -101,7 +103,7 @@
                                                                     @endphp
                                                                     <tr>
                                                                         <td class="ps-5 text-muted">{{ $bahan->nama }}</td>
-                                                                        <td class="fw-bold text-end">
+                                                                        <td class="text-end">
                                                                             {{-- <small>{{ $pivotData->berat_bersih ?? 0 }} {{ $bahan->satuan }}</small> --}}
                                                                             <small>{{ $pivotData->berat_bersih/1000 ?? 0 }} kg</small>
                                                                         </td>
