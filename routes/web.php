@@ -127,6 +127,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/import-excel/sekolah', [ImportController::class, 'importSekolah'])->name('import.sekolah');
     Route::post('/import-excel/supplier', [ImportController::class, 'importSupplier'])->name('import.supplier');
     Route::post('/import-excel/karyawan', [ImportController::class, 'importKaryawan'])->name('import.karyawan');
+    Route::post('/import-excel/rekening-koran-va', [ImportController::class, 'importRekeningKoranVA'])->name('import.rekening-koran-va');
 
     // export excel
     Route::get('export-excel/rekap-porsi', [ExportController::class, 'exportRekapPorsi'])->name('export.rekap-porsi');

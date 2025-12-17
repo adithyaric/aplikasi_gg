@@ -1,0 +1,21 @@
+tanggal_transaksi,ref,uraian,debit,kredit,kategori_transaksi,minggu,transaction_id
+2024-01-01,REF001,Setoran Awal,0,10000000,Setoran Awal,1,
+2024-01-02,REF002,Pembayaran Supplier A,5000000,0,Pembayaran,1,1
+2024-01-03,REF003,Transfer Masuk,0,3000000,Transfer Masuk,1,
+2024-01-04,REF004,Pembayaran Supplier B,2000000,0,Pembayaran,1,2
+2024-01-05,REF005,Pembayaran Gaji,1500000,0,Gaji,1,
+2024-01-08,REF006,Transfer Masuk Customer X,0,5000000,Pembayaran Customer,2,
+2024-01-09,REF007,Biaya Administrasi,50000,0,Biaya Admin,2,
+2024-01-10,REF008,Pembayaran Supplier C,1000000,0,Pembayaran,2,3
+2024-01-11,REF009,Penerimaan Lainnya,0,750000,Penerimaan Lain,2,
+2024-01-12,REF010,Pembayaran Listrik,350000,0,Biaya Operasional,2,
+2024-01-15,REF011,Setoran Tambahan,0,2000000,Setoran,3,
+2024-01-16,REF012,Pembayaran Sewa,1000000,0,Sewa,3,
+2024-01-17,REF013,Pembayaran Supplier D,2500000,0,Pembayaran,3,4
+2024-01-18,REF014,Penerimaan Jasa,0,1500000,Penerimaan Jasa,3,
+2024-01-19,REF015,Biaya Internet,300000,0,Biaya Operasional,3,
+2024-01-22,REF016,Transfer Masuk Customer Y,0,4000000,Pembayaran Customer,4,
+2024-01-23,REF017,Pembayaran Supplier E,1800000,0,Pembayaran,4,5
+2024-01-24,REF018,Biaya Maintenance,450000,0,Biaya Operasional,4,
+2024-01-25,REF019,Pembayaran Bonus Karyawan,1200000,0,Bonus,4,
+2024-01-26,REF020,Penerimaan Lainnya,0,850000,Penerimaan Lain,4,
