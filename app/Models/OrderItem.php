@@ -16,7 +16,7 @@ class OrderItem extends Model
         'bahan_baku_id',
         'bahan_operasional_id',
         'quantity',
-        'quantity_diterima',
+        'quantity_diterima', //true, false
         'quantity_penggunaan',
         'penggunaan_input_type',
         'satuan',

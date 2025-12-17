@@ -108,7 +108,7 @@ export :
 <!-- - gaji -->
 <!-- - rekap menu : perencanaan menu -->
 <!-- - lembar po -->
-- bast : masing-masing penerimaan barang
+<!-- - bast : masing-masing penerimaan barang -->
 <!-- - stock -->
 <!-- - kartu stock -->
 <!-- - stock opname -->

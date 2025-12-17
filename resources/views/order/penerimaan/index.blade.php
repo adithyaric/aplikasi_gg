@@ -84,6 +84,9 @@
                                                     <i class="bi bi-eye"></i> Detail
                                                 </button>
                                                 {{-- @endif --}}
+                                                <a href="{{ route('export.bast', $order->id) }}" class="btn btn-sm btn-success">
+                                                    <i class="bi bi-file-earmark-excel "></i> Export
+                                                </a>
                                             </td>
                                         </tr>
                                     @endforeach

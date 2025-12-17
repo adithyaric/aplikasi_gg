@@ -1612,4 +1612,61 @@ class ExportController extends Controller
             }
         }, 'REKAP_MENU_' . date('Y-m-d_H-i') . '.xlsx');
     }
+
+    public function exportBAST($id)
+    {
+        $order = Order::with(['supplier', 'items.bahanBaku', 'items.bahanOperasional'])
+            ->findOrFail($id);
+
+        // Cast items to collection if it's an array
+        $items = collect($order->items);
+
+        $itemsData = $items->map(function ($item) {
+            // Make sure $item is an object
+            $item = (object) $item;
+
+            $qtyPO = $item->quantity;
+            $qtyDiterima = $item->quantity_diterima ? $item->quantity : '-';
+            $keterangan = $item->quantity_diterima ? 'Sesuai' : 'Tidak Sesuai';
+
+            return [
+                'jenis_bahan' => $item->bahanBaku->nama ?? $item->bahanOperasional->nama ?? '-',
+                'satuan' => $item->bahanBaku->satuan ?? $item->bahanOperasional->satuan ?? $item->satuan,
+                'qty_po' => $qtyPO,
+                'qty_diterima' => $qtyDiterima,
+                'keterangan' => $keterangan,
+            ];
+        });
+
+        return Excel::download(new class($order, $itemsData) implements \Maatwebsite\Excel\Concerns\FromView, \Maatwebsite\Excel\Concerns\WithColumnWidths {
+            private $order;
+            private $itemsData;
+
+            public function __construct($order, $itemsData)
+            {
+                $this->order = $order;
+                $this->itemsData = $itemsData;
+            }
+
+            public function view(): \Illuminate\Contracts\View\View
+            {
+                return view('exports.bast', [
+                    'order' => $this->order,
+                    'itemsData' => $this->itemsData,
+                ]);
+            }
+
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 15,
+                    'B' => 30,
+                    'C' => 15,
+                    'D' => 15,
+                    'E' => 15,
+                    'F' => 30,
+                ];
+            }
+        }, 'BAST_' . $order->id . '_' . date('Y-m-d_H-i') . '.xlsx');
+    }
 }

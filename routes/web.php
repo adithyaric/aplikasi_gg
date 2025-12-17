@@ -148,4 +148,5 @@ Route::middleware('auth')->group(function () {
     Route::get('export-excel/lbs', [ExportController::class, 'exportLBS'])->name('export.lbs');
     Route::get('export-excel/lra', [ExportController::class, 'exportLRA'])->name('export.lra');
     Route::get('export-excel/rencana-menu', [ExportController::class, 'exportRencanaMenu'])->name('export.rencana-menu');
+    Route::get('export-excel/bast/{id}', [ExportController::class, 'exportBAST'])->name('export.bast');
 });
