@@ -1335,7 +1335,7 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 5,
+                    'A' => 15,
                     'B' => 20,
                     'C' => 15,
                     'D' => 60,
@@ -1348,6 +1348,7 @@ class ExportController extends Controller
 
     public function exportLRA(Request $request)
     {
+        //TODO fix lra, input & percentage not quite right
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 

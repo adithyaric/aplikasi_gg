@@ -67,7 +67,7 @@
                                                     <th>Bahan Makanan</th>
                                                     <th>Kelompok</th>
                                                     <th>Berat Bersih (gram)</th>
-                                                    <th>Satuan</th>
+                                                    {{-- <th>Satuan</th> --}}
                                                     <th>Kalori (kkal)</th>
                                                 </tr>
                                             </thead>
@@ -86,15 +86,15 @@
                                                         <td>
                                                             <span class="badge bg-info">{{ $bahan->kelompok }}</span>
                                                         </td>
-                                                        <td>{{ number_format($bahan->berat_bersih, 2) }}</td>
-                                                        <td>{{ $bahan->satuan }}</td>
+                                                        <td>{{ number_format($bahan->berat_bersih, 2) }} gram</td>
+                                                        {{-- <td>{{ $bahan->satuan }}</td> --}}
                                                         <td>{{ number_format($bahan->energi, 2) }} kkal</td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>
                                             <tfoot class="table-light">
                                                 <tr>
-                                                    <th colspan="5" class="text-end">Total Kalori Menu:</th>
+                                                    <th colspan="4" class="text-end">Total Kalori Menu:</th>
                                                     <th>
                                                         <span class="text-primary">
                                                             {{ number_format($totalKaloriMenu, 2) }} kkal

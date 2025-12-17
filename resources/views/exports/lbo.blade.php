@@ -57,7 +57,7 @@
                 <td>{{ $index + 1 }}</td>
                 <td>{{ $item['tanggal']->format('d/m/Y') }}</td>
                 <td>{{ $item['uraian'] }}</td>
-                <td>{{ number_format($item['nominal'], 0, ',', '.') }}</td>
+                <td>{{ $item['nominal'] }}</td>
                 <td>{{ $item['keterangan'] }}</td>
             </tr>
         @endforeach
