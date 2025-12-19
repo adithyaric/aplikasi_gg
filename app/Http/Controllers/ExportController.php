@@ -102,15 +102,15 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,
-                    'B' => 20,
-                    'C' => 20,
-                    'D' => 20,
-                    'E' => 20,
-                    'F' => 20,
-                    'G' => 20,
-                    'H' => 20,
-                    'I' => 20,
+                    'A' => 25,
+                    'B' => 25,
+                    'C' => 25,
+                    'D' => 25,
+                    'E' => 25,
+                    'F' => 25,
+                    'G' => 25,
+                    'H' => 30,
+                    'I' => 25,
                 ];
             }
 
@@ -150,10 +150,10 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,
-                    'B' => 25,
+                    'A' => 25,
+                    'B' => 30,
                     'C' => 50,
-                    'D' => 25,
+                    'D' => 30,
                 ];
             }
         }, 'REKAP_PENERIMAAN_DANA_' . date('Y-m-d_H-i') . '.xlsx');
@@ -253,14 +253,14 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,
-                    'B' => 20,
-                    'C' => 20,
-                    'D' => 25,
-                    'E' => 20,
-                    'F' => 25,
-                    'G' => 20,
-                    'H' => 20,
+                    'A' => 25,
+                    'B' => 25,
+                    'C' => 25,
+                    'D' => 30,
+                    'E' => 25,
+                    'F' => 30,
+                    'G' => 25,
+                    'H' => 25,
                 ];
             }
         }, 'REKONSILIASI_' . date('Y-m-d_H-i') . '.xlsx');
@@ -288,13 +288,13 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,
-                    'B' => 30,
-                    'C' => 20,
-                    'D' => 20,
-                    'E' => 20,
-                    'F' => 20,
-                    'G' => 20,
+                    'A' => 25,
+                    'B' => 35,
+                    'C' => 25,
+                    'D' => 25,
+                    'E' => 25,
+                    'F' => 25,
+                    'G' => 30,
                 ];
             }
         }, 'SEKOLAH_' . date('Y-m-d_H-i-T') . '.xlsx');
@@ -322,12 +322,12 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,
-                    'B' => 30,
-                    'C' => 20,
-                    'D' => 20,
-                    'E' => 20,
-                    'F' => 30,
+                    'A' => 25,
+                    'B' => 35,
+                    'C' => 25,
+                    'D' => 25,
+                    'E' => 30,
+                    'F' => 35,
                 ];
             }
         }, 'SUPPLIER_' . date('Y-m-d_H-i-T') . '.xlsx');
@@ -355,12 +355,12 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,
-                    'B' => 20,
-                    'C' => 25,
-                    'D' => 20,
-                    'E' => 30,
-                    'F' => 20,
+                    'A' => 25,
+                    'B' => 25,
+                    'C' => 30,
+                    'D' => 25,
+                    'E' => 35,
+                    'F' => 25,
                     'G' => 40,
                 ];
             }
@@ -403,10 +403,10 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,
-                    'B' => 25,
-                    'C' => 20,
-                    'D' => 20,
+                    'A' => 25,
+                    'B' => 30,
+                    'C' => 25,
+                    'D' => 30,
                 ];
             }
         }, 'ABSENSI_' . Carbon::parse($tanggal)->format('Y-m-d') . '.xlsx');
@@ -456,11 +456,11 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,
-                    'B' => 25,
-                    'C' => 20,
-                    'D' => 20,
-                    'E' => 20,
+                    'A' => 25,
+                    'B' => 30,
+                    'C' => 25,
+                    'D' => 30,
+                    'E' => 30,
                 ];
             }
         }, 'GAJI_' . Carbon::parse($tanggal_mulai)->format('Y-m-d') . '_' . Carbon::parse($tanggal_akhir)->format('Y-m-d') . '.xlsx');
@@ -546,14 +546,14 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,
-                    'B' => 30,
-                    'C' => 20,
-                    'D' => 20,
-                    'E' => 10,
-                    'F' => 20,
-                    'G' => 20,
-                    'H' => 20,
+                    'A' => 25,
+                    'B' => 35,
+                    'C' => 25,
+                    'D' => 25,
+                    'E' => 25,
+                    'F' => 25,
+                    'G' => 25,
+                    'H' => 30,
                 ];
             }
         }, 'STOCK_' . date('Y-m-d_H-i') . '.xlsx');
@@ -733,15 +733,15 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,
-                    'B' => 20,
-                    'C' => 20,
-                    'D' => 20,
-                    'E' => 20,
-                    'F' => 20,
-                    'G' => 20,
-                    'H' => 20,
-                    'I' => 30,
+                    'A' => 25,
+                    'B' => 25,
+                    'C' => 25,
+                    'D' => 25,
+                    'E' => 25,
+                    'F' => 25,
+                    'G' => 25,
+                    'H' => 30,
+                    'I' => 35,
                 ];
             }
         }, 'KARTU_STOK_' . str_replace(' ', '_', $bahan->nama) . '_' . date('Y-m-d_H-i') . '.xlsx');
@@ -834,14 +834,14 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,
-                    'B' => 30,
-                    'C' => 10,
-                    'D' => 10,
-                    'E' => 20,
-                    'F' => 20,
-                    'G' => 20,
-                    'H' => 30,
+                    'A' => 25,
+                    'B' => 35,
+                    'C' => 25,
+                    'D' => 25,
+                    'E' => 25,
+                    'F' => 25,
+                    'G' => 25,
+                    'H' => 35,
                 ];
             }
         }, 'STOCK_OPNAME_' . date('Y-m-d_H-i') . '.xlsx');
@@ -956,12 +956,12 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,
+                    'A' => 25,
                     'B' => 35,
-                    'C' => 20,
-                    'D' => 20,
-                    'E' => 20,
-                    'F' => 25,
+                    'C' => 25,
+                    'D' => 25,
+                    'E' => 25,
+                    'F' => 30,
                 ];
             }
         }, 'PO_' . $order->id . '_' . date('Y-m-d_H-i T') . '.xlsx');
@@ -1007,15 +1007,15 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,
-                    'B' => 20,
-                    'C' => 20,
-                    'D' => 60,
-                    'E' => 25,
-                    'F' => 25,
-                    'G' => 25,
-                    'H' => 25,
-                    'I' => 25,
+                    'A' => 25,
+                    'B' => 25,
+                    'C' => 25,
+                    'D' => 75,
+                    'E' => 30,
+                    'F' => 30,
+                    'G' => 30,
+                    'H' => 30,
+                    'I' => 30,
                 ];
             }
         }, 'BKU_' . date('Y-m-d_H-i') . '.xlsx');
@@ -1096,15 +1096,15 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,
-                    'B' => 12,
-                    'C' => 20,
-                    'D' => 20,
-                    'E' => 20,
-                    'F' => 20,
-                    'G' => 20,
-                    'H' => 20,
-                    'I' => 20,
+                    'A' => 25,
+                    'B' => 25,
+                    'C' => 25,
+                    'D' => 25,
+                    'E' => 25,
+                    'F' => 25,
+                    'G' => 25,
+                    'H' => 25,
+                    'I' => 25,
                 ];
             }
         }, 'LPDB_' . str_replace('-', '_', $request->start_month) . '.xlsx');
@@ -1183,15 +1183,15 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,
-                    'B' => 20,
-                    'C' => 25,
-                    'D' => 20,
-                    'E' => 10,
-                    'F' => 20,
-                    'G' => 20,
-                    'H' => 25,
-                    'I' => 25,
+                    'A' => 25,
+                    'B' => 25,
+                    'C' => 30,
+                    'D' => 25,
+                    'E' => 25,
+                    'F' => 25,
+                    'G' => 25,
+                    'H' => 30,
+                    'I' => 30,
                 ];
             }
         }, 'LBBP_' . date('Y-m-d_H-i') . '.xlsx');
@@ -1245,11 +1245,11 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,
-                    'B' => 20,
+                    'A' => 25,
+                    'B' => 25,
                     'C' => 50,
-                    'D' => 20,
-                    'E' => 25,
+                    'D' => 25,
+                    'E' => 30,
                 ];
             }
         }, 'LBO_' . date('Y-m-d_H-i') . '.xlsx');
@@ -1337,12 +1337,12 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,
-                    'B' => 20,
-                    'C' => 20,
+                    'A' => 25,
+                    'B' => 25,
+                    'C' => 25,
                     'D' => 60,
-                    'E' => 20,
-                    'F' => 20,
+                    'E' => 25,
+                    'F' => 25,
                 ];
             }
         }, 'LBS_' . date('Y-m-d_H-i') . '.xlsx');
@@ -1444,9 +1444,9 @@ class ExportController extends Controller
                 {
                     return [
                         'A' => 50,
-                        'B' => 25,
-                        'C' => 25,
-                        'D' => 20,
+                        'B' => 30,
+                        'C' => 30,
+                        'D' => 25,
                     ];
                 }
             },
@@ -1535,14 +1535,14 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,
-                    'B' => 20,
-                    'C' => 20,
-                    'D' => 25,
-                    'E' => 25,
-                    'F' => 20,
-                    'G' => 20,
-                    'H' => 20,
+                    'A' => 25,
+                    'B' => 25,
+                    'C' => 25,
+                    'D' => 30,
+                    'E' => 30,
+                    'F' => 25,
+                    'G' => 25,
+                    'H' => 25,
                 ];
             }
         }, 'REKAP_MENU_' . date('Y-m-d_H-i') . '.xlsx');
@@ -1594,12 +1594,12 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,
-                    'B' => 30,
-                    'C' => 20,
-                    'D' => 20,
-                    'E' => 20,
-                    'F' => 30,
+                    'A' => 25,
+                    'B' => 35,
+                    'C' => 25,
+                    'D' => 25,
+                    'E' => 25,
+                    'F' => 35,
                 ];
             }
         }, 'BAST_' . $order->id . '_' . date('Y-m-d_H-i') . '.xlsx');
@@ -1630,16 +1630,16 @@ class ExportController extends Controller
             public function columnWidths(): array
             {
                 return [
-                    'A' => 20,    // No
-                    'B' => 20,   // Tanggal
+                    'A' => 25,    // No
+                    'B' => 25,   // Tanggal
                     'C' => 40,   // Uraian
-                    'D' => 20,   // Ref
-                    'E' => 20,   // Debit
-                    'F' => 20,   // Kredit
-                    'G' => 20,   // Saldo
-                    'H' => 20,   // Kategori Transaksi
-                    'I' => 20,   // Minggu
-                    'J' => 20,   // Link PO
+                    'D' => 25,   // Ref
+                    'E' => 25,   // Debit
+                    'F' => 25,   // Kredit
+                    'G' => 25,   // Saldo
+                    'H' => 25,   // Kategori Transaksi
+                    'I' => 25,   // Minggu
+                    'J' => 25,   // Link PO
                 ];
             }
         }, 'REKENING_KORAN_VA_' . date('Y-m-d_H-i') . '.xlsx');
