@@ -36,7 +36,8 @@ Route::middleware('guest')->group(function () {
     Route::post('/authenticate', [AuthController::class, 'login'])->name('authenticate');
 });
 
-Route::middleware('auth')->group(function () {
+// Dashboard & Setting for all roles
+Route::middleware(['auth', 'role:superadmin,admin,akuntan,ahligizi'])->group(function () {
     Route::get('/setting', [SettingPageController::class, 'index'])->name('settingpage.index');
     Route::post('/setting', [SettingPageController::class, 'store'])->name('settingpage.store');
 
@@ -45,17 +46,28 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/chart-data', [DashboardController::class, 'getChartData'])->name('dashboard.chart-data');
     Route::get('/titik-distribusi', [DashboardController::class, 'titikDistribusi'])->name('titik-distribusi');
     Route::get('/rekonsiliasi', [DashboardController::class, 'rekonsiliasi'])->name('rekonsiliasi');
+});
 
-    Route::resource('users', UserController::class);
-    Route::resource('categories', CategoryController::class);
-
-    //master data
+// Routes for Bahan Baku, Bahan Operasional, Gizi, Menu, Paket Menu, Perencanaan Menu (Admin & Ahli Gizi only)
+Route::middleware(['auth', 'role:superadmin,admin,ahligizi'])->group(function () {
     Route::resource('bahanbaku', BahanBakuController::class);
     Route::resource('bahanoperasional', BahanOperasionalController::class);
     Route::resource('gizi', GiziController::class);
     Route::resource('menu', MenuController::class);
     Route::resource('paketmenu', PaketMenuController::class);
     Route::resource('rencanamenu', RencanaMenuController::class);
+
+    // Import for gizi
+    Route::post('/import-excel/gizi', [ImportController::class, 'importGizi'])->name('import.gizi');
+
+    // Export for menu-related
+    Route::get('export-excel/rencana-menu', [ExportController::class, 'exportRencanaMenu'])->name('export.rencana-menu');
+});
+
+// Routes for Akuntan (Admin + Akuntan) - excluding gizi/menu/paketmenu
+Route::middleware(['auth', 'role:superadmin,admin,akuntan'])->group(function () {
+    Route::resource('users', UserController::class);
+    Route::resource('categories', CategoryController::class);
     Route::resource('sekolah', SekolahController::class);
     Route::resource('supplier', SupplierController::class);
 
@@ -63,11 +75,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders-add-menu-items', [OrderController::class, 'addMenuItems'])->name('orders.addMenuItems');
     Route::put('/orders/{order}/topost', [OrderController::class, 'UpdateToPost'])->name('orders.updateToPost');
 
-    //Penerimaan
+    // Penerimaan, Penggunaan, Pembayaran
     Route::get('/penerimaan', [OrderController::class, 'penerimaanIndex'])->name('penerimaan.index');
     Route::get('/penerimaan/{order}/edit', [OrderController::class, 'editPenerimaan'])->name('penerimaan.edit');
     Route::put('/penerimaan/{order}', [OrderController::class, 'updatePenerimaan'])->name('penerimaan.update');
-    //Penggunaan
+
     Route::get('/penggunaan', [OrderController::class, 'penggunaanIndex'])->name('penggunaan.index');
     Route::get('/penggunaan/{order}/edit', [OrderController::class, 'editPenggunaan'])->name('penggunaan.edit');
     Route::put('/penggunaan/{order}', [OrderController::class, 'updatePenggunaan'])->name('penggunaan.update');
@@ -76,6 +88,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/pembayaran/{order}/edit', [OrderController::class, 'editPembayaran'])->name('pembayaran.edit');
     Route::put('/pembayaran/{order}', [OrderController::class, 'updatePembayaran'])->name('pembayaran.update');
 
+    // Stok
     Route::get('/stok-kartu', [StokController::class, 'kartu'])->name('stok.kartu');
     Route::get('/stok/kartu/data', [StokController::class, 'getKartuData'])->name('stok.kartu.data');
 
@@ -86,12 +99,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/stok-opname/data', [StokController::class, 'getOpnameData'])->name('stok.opname.data');
     Route::post('/stok-opname/save', [StokController::class, 'saveOpname'])->name('stok.opname.save');
 
+    // Rekening & Anggaran
     Route::resource('rekening-koran-va', RekeningKoranVaController::class);
     Route::resource('rekening-rekap-bku', RekeningRekapBKUController::class);
 
     Route::resource('anggaran', AnggaranController::class);
 
-    //Karyawan, Absen & Gaji
+    // Karyawan, Absen & Gaji
     Route::resource('karyawan', KaryawanController::class);
     Route::resource('kategori-karyawan', KategoriKaryawanController::class);
 
@@ -109,6 +123,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/gaji/period-detail/{tanggal_mulai}/{tanggal_akhir}', [GajiController::class, 'periodDetail'])->name('gaji.period-detail');
     Route::post('/gaji/bulk-confirm/{tanggal_mulai}/{tanggal_akhir}', [GajiController::class, 'bulkConfirm'])->name('gaji.bulk-confirm');
 
+    // Reports
     Route::prefix('report')->controller(ReportController::class)->group(function () {
         Route::get('rekap-porsi', 'rekapPorsi')->name('report.rekap-porsi');
         Route::get('rekap-penerimaan-dana', 'rekapPenerimaanDana')->name('report.rekap-penerimaan-dana');
@@ -120,7 +135,7 @@ Route::middleware('auth')->group(function () {
         Route::get('lra', 'lra')->name('report.lra');
     });
 
-    // import excel
+    // Import excel (non-gizi)
     Route::post('/import-excel/bahan-baku', [ImportController::class, 'importBahanBaku'])->name('import.bahan-baku');
     Route::post('/import-excel/bahan-operasional', [ImportController::class, 'importBahanOperasional'])->name('import.bahan-operasional');
     Route::post('/import-excel/gizi', [ImportController::class, 'importGizi'])->name('import.gizi');
@@ -129,7 +144,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/import-excel/karyawan', [ImportController::class, 'importKaryawan'])->name('import.karyawan');
     Route::post('/import-excel/rekening-koran-va', [ImportController::class, 'importRekeningKoranVA'])->name('import.rekening-koran-va');
 
-    // export excel
+    // Export excel (non-gizi)
     Route::get('export-excel/rekap-porsi', [ExportController::class, 'exportRekapPorsi'])->name('export.rekap-porsi');
     Route::get('export-excel/rekap-penerimaan-dana', [ExportController::class, 'exportRekapPenerimaanDana'])->name('export.rekap-penerimaan-dana');
     Route::get('export-excel/rekonsiliasi', [ExportController::class, 'exportRekonsiliasi'])->name('export.rekonsiliasi');

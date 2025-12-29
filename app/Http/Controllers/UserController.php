@@ -9,11 +9,6 @@ use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $users = User::latest()->get();
@@ -21,22 +16,11 @@ class UserController extends Controller
         return view('users.index', compact('users', 'title'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -44,9 +28,11 @@ class UserController extends Controller
             'nrp' => 'required|string|max:50|unique:users,nrp',
             'pangkat' => 'nullable|string|max:100',
             'jabatan' => 'nullable|string|max:100',
-            'role' => 'required|in:admin,anggota',
+            'role' => 'required|in:superadmin,admin,akuntan,ahligizi',
             'password' => 'required|min:6',
             'ttd' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+        ], [], [
+            'nrp' => 'Username',
         ]);
 
         $ttdPath = null;
@@ -70,35 +56,16 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('toast_success', 'Data berhasil ditambahkan.');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
     public function show(User $user)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
     public function edit(User $user)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, User $user)
     {
         $request->validate([
@@ -106,9 +73,11 @@ class UserController extends Controller
             'nrp' => 'required|string|max:50|unique:users,nrp,' . $user->id,
             'pangkat' => 'nullable|string|max:100',
             'jabatan' => 'nullable|string|max:100',
-            'role' => 'required|in:admin,anggota',
+            'role' => 'required|in:superadmin,admin,akuntan,ahligizi',
             'password' => 'nullable|min:6',
             'ttd' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+        ], [], [
+            'nrp' => 'Username',
         ]);
 
         $ttdPath = $user->ttd; // tetap gunakan yang lama kalau tidak upload baru
@@ -138,12 +107,6 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('toast_success', 'Data berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         $user = User::findOrFail($id);

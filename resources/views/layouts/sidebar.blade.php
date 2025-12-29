@@ -91,6 +91,7 @@
                     </div>
                 </div>
             </div>
+
             <!-- Sidebar Menu Start -->
             <ul class="navbar-nav iq-main-menu" id="sidebar-menu">
                 <li class="nav-item static-item">
@@ -136,6 +137,7 @@
             </ul>
 
             <ul class="navbar-nav iq-main-menu" id="sidebar-menu">
+                @if(in_array(auth()->user()->role, ['superadmin', 'admin', 'akuntan']))
                 <!-- MASTER BAHAN -->
                 <li>
                     <hr class="hr-horizontal" />
@@ -146,6 +148,32 @@
                         <span class="mini-icon">-</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"
+                        href="{{ route('users.index') }}">
+                        <i class="icon">
+                            <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M9 2C6.38 2 4.25 4.13 4.25 6.75C4.25 9.32 6.26 11.4 8.88 11.49C8.96 11.48 9.04 11.48 9.1 11.49C9.12 11.49 9.13 11.49 9.15 11.49C9.16 11.49 9.16 11.49 9.17 11.49C11.73 11.4 13.74 9.32 13.75 6.75C13.75 4.13 11.62 2 9 2Z"
+                                    fill="currentColor" />
+                                <path
+                                    d="M14.08 14.1499C11.29 12.2899 6.73996 12.2899 3.92996 14.1499C2.65996 14.9999 1.95996 16.1499 1.95996 17.3799C1.95996 18.6099 2.65996 19.7499 3.91996 20.5899C5.31996 21.5299 7.15996 21.9999 8.99996 21.9999C10.84 21.9999 12.68 21.5299 14.08 20.5899C15.34 19.7399 16.04 18.5999 16.04 17.3599C16.03 16.1299 15.34 14.9899 14.08 14.1499Z"
+                                    fill="currentColor" />
+                                <path opacity="0.4"
+                                    d="M19.99 7.3401C20.15 9.2801 18.77 10.9801 16.86 11.2101C16.85 11.2101 16.85 11.2101 16.84 11.2101H16.81C16.75 11.2101 16.69 11.2101 16.64 11.2301C15.67 11.2801 14.78 10.9701 14.11 10.4001C15.14 9.4801 15.73 8.1001 15.61 6.6001C15.54 5.7901 15.26 5.0501 14.84 4.4201C15.22 4.2301 15.66 4.1101 16.11 4.0701C18.07 3.9001 19.82 5.3601 19.99 7.3401Z"
+                                    fill="currentColor" />
+                                <path opacity="0.4"
+                                    d="M21.99 16.5904C21.91 17.5604 21.29 18.4004 20.25 18.9704C19.25 19.5204 17.99 19.7804 16.74 19.7504C17.46 19.1004 17.88 18.2904 17.96 17.4304C18.06 16.1904 17.47 15.0004 16.29 14.0504C15.62 13.5204 14.84 13.1004 13.99 12.7904C16.2 12.1504 18.98 12.5804 20.69 13.9604C21.61 14.7004 22.08 15.6304 21.99 16.5904Z"
+                                    fill="currentColor" />
+                            </svg>
+                        </i>
+                        <span class="item-name">Users</span>
+                    </a>
+                </li>
+                @endif
+
+                @if(in_array(auth()->user()->role, ['superadmin', 'admin', 'ahligizi']))
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('bahanbaku.*') ? 'active' : '' }}"
                         href="{{ route('bahanbaku.index') }}">
@@ -180,6 +208,9 @@
                         <span class="item-name">Bahan Operasional</span>
                     </a>
                 </li>
+                @endif
+
+                @if(in_array(auth()->user()->role, ['superadmin', 'admin', 'ahligizi']))
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('gizi.*') ? 'active' : '' }}"
                         href="{{ route('gizi.index') }}">
@@ -203,6 +234,9 @@
                         <span class="item-name">Database Gizi</span>
                     </a>
                 </li>
+                @endif
+
+                @if(in_array(auth()->user()->role, ['superadmin', 'admin', 'akuntan']))
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('sekolah.*') ? 'active' : '' }}"
                         href="{{ route('sekolah.index') }}">
@@ -265,6 +299,9 @@
                         <span class="item-name">Titik Distribusi</span>
                     </a>
                 </li>
+                @endif
+
+                @if(in_array(auth()->user()->role, ['superadmin', 'admin', 'akuntan']))
                 <li>
                     <hr class="hr-horizontal" />
                 </li>
@@ -350,10 +387,13 @@
                         <span class="item-name">Gaji</span>
                     </a>
                 </li>
+                @endif
+
+                @if(in_array(auth()->user()->role, ['superadmin', 'admin', 'ahligizi']))
                 <li>
                     <hr class="hr-horizontal" />
                 </li>
-                <!-- MASTER MENU -->
+                <!-- MASTER Dapur -->
                 <li class="nav-item static-item">
                     <a class="nav-link static-item disabled" href="#" tabindex="-1">
                         <span class="default-icon">Master Dapur</span>
@@ -423,10 +463,13 @@
                         <span class="item-name">Perencanaan Menu</span>
                     </a>
                 </li>
+                @endif
+
+                @if(in_array(auth()->user()->role, ['superadmin', 'admin', 'akuntan']))
                 <li>
                     <hr class="hr-horizontal" />
                 </li>
-                <!-- MASTER MENU -->
+                <!-- MASTER Transaksi -->
                 <li class="nav-item static-item">
                     <a class="nav-link static-item disabled" href="#" tabindex="-1">
                         <span class="default-icon">Transaksi</span>
@@ -499,9 +542,13 @@
                         <span class="item-name">Pembayaran</span>
                     </a>
                 </li>
+                @endif
+
+                @if(in_array(auth()->user()->role, ['superadmin', 'admin', 'akuntan']))
                 <li>
                     <hr class="hr-horizontal" />
                 </li>
+                <!-- GUDANG -->
                 <li class="nav-item static-item">
                     <a class="nav-link static-item disabled" href="#" tabindex="-1">
                         <span class="default-icon">Gudang</span>
@@ -559,9 +606,13 @@
                         <span class="item-name">Stok Opname</span>
                     </a>
                 </li>
+                @endif
+
+                @if(in_array(auth()->user()->role, ['superadmin', 'admin', 'akuntan']))
                 <li>
                     <hr class="hr-horizontal" />
                 </li>
+                <!-- KEUANGAN -->
                 <li class="nav-item static-item">
                     <a class="nav-link static-item disabled" href="#" tabindex="-1">
                         <span class="default-icon">Keuangan</span>
@@ -635,10 +686,13 @@
                         <span class="item-name">Rekonsiliasi</span>
                     </a>
                 </li>
+                @endif
 
+                @if(in_array(auth()->user()->role, ['superadmin', 'admin', 'akuntan']))
                 <li>
                     <hr class="hr-horizontal" />
                 </li>
+                <!-- LAPORAN -->
                 <li class="nav-item static-item">
                     <a class="nav-link static-item disabled" href="#" tabindex="-1">
                         <span class="default-icon">Laporan</span>
@@ -797,6 +851,8 @@
                         <span class="item-name">LRA</span>
                     </a>
                 </li>
+                @endif
+
                 <li class="nav-item mb-5">
                     <div style="color: white !important; height:300px !important;">
                         ---

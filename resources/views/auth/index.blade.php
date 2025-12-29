@@ -60,7 +60,7 @@
                               <h4 class="logo-title ms-3">BGN Makan Sehat Bergizi</h4>
                            </a>
                            <h2 class="mb-2 text-center">Sign In</h2>
-                           <p class="text-center">Silahkan Masukkan NRP dan Password</p>
+                           <p class="text-center">Silahkan Masukkan Username dan Password</p>
 
                                 @if ($errors->any())
                                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -80,14 +80,14 @@
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label for="nrp" class="form-label">NRP</label>
+                                            <label for="nrp" class="form-label">Username</label>
                                             <input
                                             type="text"
                                             class="form-control"
                                             id="nrp"
                                             name="nrp"
                                             value="{{ old('nrp') }}"
-                                            placeholder="Masukkan NRP"
+                                            placeholder="Masukkan Username"
                                             required
                                             autofocus>
                                         </div>
