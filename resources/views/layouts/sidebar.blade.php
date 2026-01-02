@@ -43,7 +43,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h5 class="font-weight-bold">SPPG</h5>
-                                <p class="mb-0">{{ $setting->nama_sppg ?? '03 Mandai' }}</p>
+                                <p class="mb-0">{{ $settingView->nama_sppg ?? '-' }}</p>
                             </div>
                             <div class="master-card-content">
                                 <img src="/assets/images/logo-bgn.png" alt="Logo BKU" class="icon-60"
@@ -52,32 +52,32 @@
                         </div>
                         <div class="my-4">
                             <div class="card-number">
-                                <span class="fs-5 me-2">{{ $setting->provinsi ?? 'Sulawesi Selatan' }}</span>
+                                <span class="fs-5 me-2">{{ $settingView->provinsi ?? '-' }}</span>
                             </div>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
                             <p class="mb-0">Yayasan</p>
                         </div>
                         <div class="mb-3 d-flex align-items-center justify-content-between">
-                            <h6>{{ $setting->yayasan ?? 'Yayasan Mandai' }}</h6>
+                            <h6>{{ $settingView->yayasan ?? '-' }}</h6>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
                             <p class="mb-0">SPPI</p>
                         </div>
                         <div class="mb-3 d-flex align-items-center justify-content-between">
-                            <h6>{{ $setting->nama_sppi ?? 'Rina Fatma Sari, S.TR.Sos' }}</h6>
+                            <h6>{{ $settingView->nama_sppi ?? '-' }}</h6>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
                             <p class="mb-0">Akuntan SPPG</p>
                         </div>
                         <div class="mb-3 d-flex align-items-center justify-content-between">
-                            <h6>{{ $setting->akuntan_sppg ?? 'Nurul Anniza, S.Ak' }}</h6>
+                            <h6>{{ $settingView->akuntan_sppg ?? '-' }}</h6>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
                             <p class="mb-0">Ahli Gizi</p>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
-                            <h6>{{ $setting->ahli_gizi ?? 'Nur Hasmi Halik, S.Gz' }}</h6>
+                            <h6>{{ $settingView->ahli_gizi ?? '-' }}</h6>
                         </div>
                     </div>
                 </div>
@@ -109,7 +109,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('settingpage.index') ? 'active' : '' }}"
+                    <a class="nav-link {{ request()->routeIs('settingpage.*') ? 'active' : '' }}"
                         href="{{ route('settingpage.index') }}">
                         <i class="icon">
                             <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -122,7 +122,7 @@
                                     fill="currentColor"></path>
                             </svg>
                         </i>
-                        <span class="item-name">Informasi Utama</span>
+                        <span class="item-name">Master Dapur</span>
                     </a>
                 </li>
             </ul>
@@ -164,7 +164,7 @@
                 </li>
                 @endif
 
-                @if(in_array(auth()->user()->role, ['superadmin', 'admin', 'ahligizi']))
+                @if(in_array(auth()->user()->role, ['admin', 'ahligizi']))
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('bahanbaku.*') ? 'active' : '' }}"
                         href="{{ route('bahanbaku.index') }}">
@@ -201,7 +201,7 @@
                 </li>
                 @endif
 
-                @if(in_array(auth()->user()->role, ['superadmin', 'admin', 'ahligizi']))
+                @if(in_array(auth()->user()->role, ['admin', 'ahligizi']))
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('gizi.*') ? 'active' : '' }}"
                         href="{{ route('gizi.index') }}">
@@ -227,7 +227,7 @@
                 </li>
                 @endif
 
-                @if(in_array(auth()->user()->role, ['superadmin', 'admin', 'akuntan']))
+                @if(in_array(auth()->user()->role, ['admin', 'akuntan']))
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('sekolah.*') ? 'active' : '' }}"
                         href="{{ route('sekolah.index') }}">
@@ -292,7 +292,7 @@
                 </li>
                 @endif
 
-                @if(in_array(auth()->user()->role, ['superadmin', 'admin', 'akuntan']))
+                @if(in_array(auth()->user()->role, ['admin', 'akuntan']))
                 <li>
                     <hr class="hr-horizontal" />
                 </li>
@@ -380,7 +380,7 @@
                 </li>
                 @endif
 
-                @if(in_array(auth()->user()->role, ['superadmin', 'admin', 'ahligizi']))
+                @if(in_array(auth()->user()->role, ['admin', 'ahligizi']))
                 <li>
                     <hr class="hr-horizontal" />
                 </li>
@@ -456,7 +456,7 @@
                 </li>
                 @endif
 
-                @if(in_array(auth()->user()->role, ['superadmin', 'admin', 'akuntan']))
+                @if(in_array(auth()->user()->role, ['admin', 'akuntan']))
                 <li>
                     <hr class="hr-horizontal" />
                 </li>
@@ -535,7 +535,7 @@
                 </li>
                 @endif
 
-                @if(in_array(auth()->user()->role, ['superadmin', 'admin', 'akuntan']))
+                @if(in_array(auth()->user()->role, ['admin', 'akuntan']))
                 <li>
                     <hr class="hr-horizontal" />
                 </li>
@@ -599,7 +599,7 @@
                 </li>
                 @endif
 
-                @if(in_array(auth()->user()->role, ['superadmin', 'admin', 'akuntan']))
+                @if(in_array(auth()->user()->role, ['admin', 'akuntan']))
                 <li>
                     <hr class="hr-horizontal" />
                 </li>
@@ -679,7 +679,7 @@
                 </li>
                 @endif
 
-                @if(in_array(auth()->user()->role, ['superadmin', 'admin', 'akuntan']))
+                @if(in_array(auth()->user()->role, ['admin', 'akuntan']))
                 <li>
                     <hr class="hr-horizontal" />
                 </li>

@@ -17,5 +17,11 @@ class SettingPage extends Model
         'ahli_gizi',
         'akuntan_sppg',
         'asisten_lapangan',
+        'active', //true, false
     ];
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 }

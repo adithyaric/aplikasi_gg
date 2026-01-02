@@ -30,6 +30,6 @@ class AppServiceProvider extends ServiceProvider
             return $this->locale('id')->translatedFormat($format);
         });
 
-        view()->share('setting', SettingPage::first());
+        view()->share('settingView', SettingPage::where('active', true)->first() ?? []);
     }
 }

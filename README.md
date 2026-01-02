@@ -113,6 +113,9 @@ export :
 <!-- - kartu stock -->
 <!-- - stock opname -->
 
- -- Border"
- -- Footer belum rapih
+ <!-- -- Border" -->
+ <!-- -- Footer belum rapih -->
  <!-- -- Fix filter tanggal : format('d F Y') -->
+
+<!-- Super Admin : Informasi utama -> master dapur (datanya sama SettingPage) -->
+<!-- Dashboard, Master Dapur, User -->
