@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToSettingPage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Karyawan extends Model
 {
     use SoftDeletes;
+    use BelongsToSettingPage;
 
     protected $fillable = [
         'kategori_karyawan_id',

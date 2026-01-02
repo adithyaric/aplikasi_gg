@@ -19,7 +19,7 @@ trait BelongsToSettingPage
         // Global scope for queries
         static::addGlobalScope('setting_page', function (Builder $builder) {
             if (auth()->check() && !auth()->user()->isSuperAdmin()) {
-                $builder->where('setting_page_id', auth()->user()->setting_page_id);
+                $builder->where($builder->getModel()->getTable() . '.setting_page_id', auth()->user()->setting_page_id);
             }
         });
     }

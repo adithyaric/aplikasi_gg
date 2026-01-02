@@ -38,8 +38,7 @@ Route::middleware('guest')->group(function () {
 
 // Dashboard & Setting for all roles
 Route::middleware(['auth', 'role:superadmin,admin,akuntan,ahligizi'])->group(function () {
-    Route::get('/setting', [SettingPageController::class, 'index'])->name('settingpage.index');
-    Route::post('/setting', [SettingPageController::class, 'store'])->name('settingpage.store');
+    Route::resource('settingpage', SettingPageController::class);
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

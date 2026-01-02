@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToSettingPage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
@@ -11,6 +12,7 @@ class StockAdjustment extends Model
 {
     use SoftDeletes;
     // use LogsActivity;
+    use BelongsToSettingPage;
 
     protected $fillable = [
         'adjustment_date',

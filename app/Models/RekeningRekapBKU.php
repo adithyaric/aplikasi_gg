@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToSettingPage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RekeningRekapBKU extends Model
 {
     use SoftDeletes;
+    use BelongsToSettingPage;
 
     protected $table = 'rekening_rekap_bku';
 

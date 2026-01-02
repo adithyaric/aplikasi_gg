@@ -11,7 +11,12 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::latest()->get();
+        if (auth()->user()->isSuperAdmin()) {
+            $users = User::withoutGlobalScope('setting_page')->latest()->get();
+        } else {
+            $users = User::latest()->get();
+        }
+
         $title = 'Master Data User';
         return view('users.index', compact('users', 'title'));
     }
@@ -31,8 +36,10 @@ class UserController extends Controller
             'role' => 'required|in:superadmin,admin,akuntan,ahligizi',
             'password' => 'required|min:6',
             'ttd' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+            'setting_page_id' => 'nullable|exists:setting_pages,id',
         ], [], [
             'nrp' => 'Username',
+            'setting_page_id' => 'Dapur',
         ]);
 
         $ttdPath = null;
@@ -51,6 +58,7 @@ class UserController extends Controller
             'role' => $request->role,
             'password' => Hash::make($request->password),
             'ttd' => $ttdPath,
+            'setting_page_id' => $request->setting_page_id,
         ]);
 
         return redirect()->route('users.index')->with('toast_success', 'Data berhasil ditambahkan.');
@@ -76,11 +84,13 @@ class UserController extends Controller
             'role' => 'required|in:superadmin,admin,akuntan,ahligizi',
             'password' => 'nullable|min:6',
             'ttd' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+            // 'setting_page_id' => 'nullable|exists:setting_pages,id',
         ], [], [
             'nrp' => 'Username',
+            // 'setting_page_id' => 'Dapur',
         ]);
 
-        $ttdPath = $user->ttd; // tetap gunakan yang lama kalau tidak upload baru
+        $ttdPath = $user->ttd;
 
         if ($request->hasFile('ttd')) {
             // Hapus file lama jika ada
@@ -102,6 +112,7 @@ class UserController extends Controller
             'role' => $request->role,
             'password' => $request->password ? Hash::make($request->password) : $user->password,
             'ttd' => $ttdPath,
+            // 'setting_page_id' => $request->setting_page_id,
         ]);
 
         return redirect()->route('users.index')->with('toast_success', 'Data berhasil diperbarui.');

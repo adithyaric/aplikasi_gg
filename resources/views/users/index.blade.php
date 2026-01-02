@@ -72,6 +72,16 @@
                                     <input type="password" name="password" class="form-control" placeholder="Masukkan password" required>
                                 </div>
 
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Dapur</label>
+                                    <select name="setting_page_id" class="form-select">
+                                        <option value="">-- Pilih Dapur --</option>
+                                        @foreach(\App\Models\SettingPage::all() as $dapur)
+                                        <option value="{{ $dapur->id }}">{{ $dapur->nama_sppg }} ({{ $dapur->yayasan }})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
                                 {{-- <div class="form-group mb-4"> --}}
                                 {{-- <label class="form-label">Tanda Tangan (TTD)</label> --}}
                                 {{-- <input type="file" name="ttd" id="ttdTambah" class="form-control" accept=".png,.jpg,.jpeg"> --}}
@@ -185,6 +195,17 @@
                                     <input type="password" name="password" class="form-control" placeholder="Password baru (opsional)">
                                 </div>
 
+                                <input type="hidden" name="id" id="edit_id">
+                                <input type="hidden" name="setting_page_id" id="edit_setting_page_id">
+
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Dapur</label>
+                                    <select class="form-select" disabled>
+                                        <option id="edit_dapur_text">Loading...</option>
+                                    </select>
+                                    <small class="text-muted">Dapur tidak dapat diubah</small>
+                                </div>
+
                                 {{-- <div class="form-group mb-3"> --}}
                                 {{-- <label class="form-label">Tanda Tangan Saat Ini</label><br> --}}
                                 {{-- <img id="edit_ttd_preview" src="" alt="TTD" width="300" class="border rounded mb-2" style="display:none;"> --}}
@@ -219,7 +240,7 @@
 
     <div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="modalDeleteLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="border-radius: 15px; border: 1px solid #ddd; box-shadow: 0 8px 20px rgba(0,0,0,0.2);">
+            <div class="modal-content">
                 <div class="modal-header bg-danger">
                     <h5 class="modal-title text-white" id="modalDeleteLabel">Apakah Kamu Yakin ?</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -271,6 +292,7 @@
                                     {{-- <th>Pangkat</th> --}}
                                     {{-- <th>Jabatan</th> --}}
                                     <th>Role</th>
+                                    <th>Dapur</th>
                                     {{-- <th>TTD</th> --}}
                                     <th>Action</th>
                                 </tr>
@@ -284,6 +306,7 @@
                                     {{-- <td>{{ $user->pangkat }}</td> --}}
                                     {{-- <td>{{ $user->jabatan }}</td> --}}
                                     <td>{{ $user->role }}</td>
+                                    <td>{{ $user->settingPage?->nama_sppg }}</td>
                                     {{-- <td> --}}
                                     {{-- @if ($user->ttd) --}}
                                     {{-- <img src="{{ asset('storage/' . $user->ttd) }}" alt="TTD" width="90" class="border rounded"> --}}
@@ -320,6 +343,7 @@
                                             {{-- data-pangkat="{{ $user->pangkat }}"
                                             data-jabatan="{{ $user->jabatan }}" --}}
                                             data-role="{{ $user->role }}"
+                                            data-setting_page_id="{{ $user->settingPage?->nama_sppg }}"
                                             {{-- data-ttd="{{ $user->ttd ? asset('storage/' . $user->ttd) : '' }}" --}}>
                                             <span class="btn-inner">
                                                 <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -408,6 +432,12 @@
             roleSelect.value = userRole;
             console.log('userRole', userRole);
         }
+
+        // Set dapur
+        const settingPageId = btn.getAttribute('data-setting_page_id');
+        const dapurText = btn.getAttribute('data-dapur_text') || settingPageId;
+        document.getElementById('edit_setting_page_id').value = settingPageId || '';
+        document.getElementById('edit_dapur_text').textContent = dapurText;
 
         // Gambar tanda tangan
         // const ttd = btn.getAttribute('data-ttd');
