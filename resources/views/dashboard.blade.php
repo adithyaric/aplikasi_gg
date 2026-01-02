@@ -24,6 +24,40 @@
 @section('container')
     <!-- CONTAIN DASHBOARD -->
     <div class="conatiner-fluid content-inner mt-n5 py-0">
+        @if(auth()->user()->isSuperAdmin() && $settingPages)
+        <div class="row mb-1">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="GET" action="{{ route('dashboard') }}" class="row g-1 align-items-end">
+                            <div class="col-md-4">
+                                <label for="setting_page_id" class="form-label fw-semibold">Filter by Dapur</label>
+                                <select name="setting_page_id" id="setting_page_id" class="form-select">
+                                    <option value="">-- Semua Dapur --</option>
+                                    @foreach($settingPages as $sp)
+                                        <option value="{{ $sp->id }}" {{ $settingPageId == $sp->id ? 'selected' : '' }}>
+                                            {{ $sp->nama_sppg }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9 3H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                        <path d="M10 21C10.5523 21 11 20.5523 11 20C11 19.4477 10.5523 19 10 19C9.44772 19 9 19.4477 9 20C9 20.5523 9.44772 21 10 21Z" stroke="currentColor" stroke-width="2"/>
+                                        <path d="M14 21C14.5523 21 15 20.5523 15 20C15 19.4477 14.5523 19 14 19C13.4477 19 13 19.4477 13 20C13 20.5523 13.4477 21 14 21Z" stroke="currentColor" stroke-width="2"/>
+                                        <path d="M4.07901 10H19.9211M4.07901 10L6.01504 5.13333C6.41967 4.15066 7.37585 3.5 8.43708 3.5H15.5629C16.6242 3.5 17.5803 4.15066 17.985 5.13333L19.9211 10M4.07901 10L5.08402 14.8667C5.48865 15.8493 6.44483 16.5 7.50606 16.5H16.494C17.5552 16.5 18.5114 15.8493 18.916 14.8667L19.9211 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                    Filter
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
         <div class="row">
             <!-- UP SECTOR LAYER -->
             <div class="col-md-12 col-lg-12">
@@ -322,6 +356,11 @@
                                                 </tr>
                                             @endforeach
                                         </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="4"><a href="{{ route('rekonsiliasi') }}">Lihat Semua...</a></td>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </div>
@@ -499,7 +538,7 @@
 @push('js')
     <script>
         let chartMain, chartActivity, chartDistribusi, chartPorsi;
-
+        const settingPageId = '{{ $settingPageId ?? '' }}';
         // Initialize charts on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadCharts('week');
@@ -517,7 +556,12 @@
         });
 
         function loadCharts(filter) {
-            fetch(`{{ route('dashboard.chart-data') }}?filter=${filter}`)
+            let url = `{{ route('dashboard.chart-data') }}?filter=${filter}`;
+            if (settingPageId) {
+                url += `&setting_page_id=${settingPageId}`;
+            }
+
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     loadChartMain(data.pemasukan, data.pengeluaran);

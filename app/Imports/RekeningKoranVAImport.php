@@ -33,6 +33,7 @@ class RekeningKoranVAImport implements ToCollection, WithHeadingRow
                 }
 
                 $importedEntries[] = [
+                    'setting_page_id' => auth()->user()?->setting_page_id ?? null,
                     'tanggal_transaksi' => $tanggalTransaksi,
                     'ref' => $row['ref'] ?? null,
                     'uraian' => $row['uraian'] ?? null,

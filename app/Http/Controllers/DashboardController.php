@@ -13,62 +13,95 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
+        $settingPageId = $request->input('setting_page_id');
+        $user = auth()->user();
+
+        // For super admin, get all setting pages for dropdown
+        $settingPages = null;
+        if ($user->isSuperAdmin()) {
+            $settingPages = \App\Models\SettingPage::all();
+
+            // If no filter selected, use all data
+            if (!$settingPageId) {
+                // Queries will use withoutGlobalScope
+            }
+        }
+
         // Get current date and calculate periods
         $now = now();
         $twoWeeksAgo = $now->copy()->subDays(14);
         $oneWeekAgo = $now->copy()->subDays(7);
 
-        // 1. Total Pemasukan (from RekeningRekapBKU debit column)
-        $totalPemasukan = RekeningRekapBKU::whereIn('jenis_bahan', [
-            'Penerimaan BGN',
-            'Penerimaan Yayasan',
-            'Penerimaan Pihak Lainnya'
-        ])->sum('debit');
+        // Helper function to apply scope
+        $applyScope = function ($query) use ($user, $settingPageId) {
+            if ($user->isSuperAdmin()) {
+                $query->withoutGlobalScope('setting_page');
+                if ($settingPageId) {
+                    $query->where('setting_page_id', $settingPageId);
+                }
+            }
+            return $query;
+        };
 
-        // 2. Total Pengeluaran (from RekeningRekapBKU kredit column for expenses)
-        $totalPengeluaran = RekeningRekapBKU::whereIn('jenis_bahan', [
-            'Bahan Pokok',
-            'Bahan Operasional',
-            'Pembayaran Sewa'
-        ])->sum('kredit');
+        // 1. Total Pemasukan
+        $totalPemasukan = $applyScope(RekeningRekapBKU::query())
+            ->whereIn('jenis_bahan', [
+                'Penerimaan BGN',
+                'Penerimaan Yayasan',
+                'Penerimaan Pihak Lainnya'
+            ])->sum('debit');
 
-        // 3. Total Seluruh Porsi (from Anggaran)
-        $totalPorsi = Anggaran::sum('total_porsi');
+        // 2. Total Pengeluaran
+        $totalPengeluaran = $applyScope(RekeningRekapBKU::query())
+            ->whereIn('jenis_bahan', [
+                'Bahan Pokok',
+                'Bahan Operasional',
+                'Pembayaran Sewa'
+            ])->sum('kredit');
+
+        // 3. Total Seluruh Porsi
+        $totalPorsi = $applyScope(Anggaran::query())->sum('total_porsi');
 
         // 4. Pemasukan 2 Mingguan
-        $pemasukan2Mingguan = RekeningRekapBKU::whereIn('jenis_bahan', [
-            'Penerimaan BGN',
-            'Penerimaan Yayasan',
-            'Penerimaan Pihak Lainnya'
-        ])
+        $pemasukan2Mingguan = $applyScope(RekeningRekapBKU::query())
+            ->whereIn('jenis_bahan', [
+                'Penerimaan BGN',
+                'Penerimaan Yayasan',
+                'Penerimaan Pihak Lainnya'
+            ])
             ->where('tanggal_transaksi', '>=', $twoWeeksAgo)
             ->sum('debit');
 
         // 5. Pengeluaran 2 Mingguan
-        $pengeluaran2Mingguan = RekeningRekapBKU::whereIn('jenis_bahan', [
-            'Bahan Pokok',
-            'Bahan Operasional',
-            'Pembayaran Sewa'
-        ])
+        $pengeluaran2Mingguan = $applyScope(RekeningRekapBKU::query())
+            ->whereIn('jenis_bahan', [
+                'Bahan Pokok',
+                'Bahan Operasional',
+                'Pembayaran Sewa'
+            ])
             ->where('tanggal_transaksi', '>=', $twoWeeksAgo)
             ->sum('kredit');
 
-        // 6. Porsi 2 Mingguan (from anggaran within last 2 weeks)
-        $porsi2Mingguan = Anggaran::where(function ($query) use ($twoWeeksAgo, $now) {
-            $query->whereBetween('start_date', [$twoWeeksAgo, $now])
-                ->orWhereBetween('end_date', [$twoWeeksAgo, $now])
-                ->orWhere(function ($q) use ($twoWeeksAgo, $now) {
-                    $q->where('start_date', '<=', $twoWeeksAgo)
-                        ->where('end_date', '>=', $now);
-                });
-        })->sum('total_porsi');
+        // 6. Porsi 2 Mingguan
+        $porsi2Mingguan = $applyScope(Anggaran::query())
+            ->where(function ($query) use ($twoWeeksAgo, $now) {
+                $query->whereBetween('start_date', [$twoWeeksAgo, $now])
+                    ->orWhereBetween('end_date', [$twoWeeksAgo, $now])
+                    ->orWhere(function ($q) use ($twoWeeksAgo, $now) {
+                        $q->where('start_date', '<=', $twoWeeksAgo)
+                            ->where('end_date', '>=', $now);
+                    });
+            })->sum('total_porsi');
 
-        // 7. Saldo Saat Ini (from last RekeningRekapBKU entry)
-        $lastRekening = RekeningRekapBKU::latest('tanggal_transaksi')->latest('id')->first();
+        // 7. Saldo Saat Ini
+        $lastRekening = $applyScope(RekeningRekapBKU::query())
+            ->latest('tanggal_transaksi')
+            ->latest('id')
+            ->first();
         $saldoSaatIni = $lastRekening ? $lastRekening->saldo : 0;
 
-        // 8. Ringkasan Anggaran - Calculate total budget
-        $anggaranData = Anggaran::all();
+        // 8. Ringkasan Anggaran
+        $anggaranData = $applyScope(Anggaran::query())->get();
         $totalAnggaran = 0;
         $totalRealisasi = $totalPengeluaran;
 
@@ -83,24 +116,22 @@ class DashboardController extends Controller
         $sisaAnggaran = $totalAnggaran - $totalRealisasi;
 
         // 9. Porsi Breakdown
-        $porsi10k = Anggaran::sum('porsi_10k');
-        $porsi8k = Anggaran::sum('porsi_8k');
+        $porsi10k = $applyScope(Anggaran::query())->sum('porsi_10k');
+        $porsi8k = $applyScope(Anggaran::query())->sum('porsi_8k');
 
-        // 10. Riwayat Transaksi BKU (7 hari terakhir)
-        $riwayatTransaksi = RekeningRekapBKU::with('transaction.order')
+        // 10. Riwayat Transaksi BKU
+        $riwayatTransaksi = $applyScope(RekeningRekapBKU::query())
+            ->with('transaction.order')
             ->where('tanggal_transaksi', '>=', $oneWeekAgo)
             ->orderBy('tanggal_transaksi', 'desc')
             ->take(7)
             ->get();
 
-        // 11. Rekonsiliasi data for table (last 5 entries from reconciliation)
-        $rekonsiliasiData = $this->getRekonsiliasiData();
+        // 11. Rekonsiliasi data
+        $rekonsiliasiData = $this->getRekonsiliasiData($settingPageId);
 
-        // 12. Chart data (for Pemasukan vs Pengeluaran)
-        // $chartData = $this->getChartData();
-
-        // 13. Chart data for Anggaran vs Realisasi
-        $anggaranRealisasiData = $this->getAnggaranRealisasiData();
+        // 13. Chart data
+        $anggaranRealisasiData = $this->getAnggaranRealisasiData($settingPageId);
 
         return view('dashboard', compact(
             'totalPemasukan',
@@ -118,22 +149,39 @@ class DashboardController extends Controller
             'porsi8k',
             'riwayatTransaksi',
             'rekonsiliasiData',
-            // 'chartData',
-            'anggaranRealisasiData'
+            'anggaranRealisasiData',
+            'settingPages',
+            'settingPageId'
         ));
     }
 
-    private function getRekonsiliasiData()
+    private function getRekonsiliasiData($settingPageId = null)
     {
-        // Get last 5 reconciliation entries using existing logic
-        $rekeningKorans = RekeningKoranVa::with('transaction.order.supplier')
+        $user = auth()->user();
+
+        // Build base queries
+        $koranQuery = RekeningKoranVa::query();
+        $bkuQuery = RekeningRekapBKU::query();
+
+        // Apply filters for super admin
+        if ($user->isSuperAdmin()) {
+            $koranQuery->withoutGlobalScope('setting_page');
+            $bkuQuery->withoutGlobalScope('setting_page');
+
+            if ($settingPageId) {
+                $koranQuery->where('rekening_koran_vas.setting_page_id', $settingPageId);
+                $bkuQuery->where('rekening_rekap_bku.setting_page_id', $settingPageId);
+            }
+        }
+
+        $rekeningKorans = $koranQuery
             ->orderBy('tanggal_transaksi', 'desc')
-            ->take(50)
+            // ->take(50)
             ->get();
 
-        $rekeningBKUs = RekeningRekapBKU::with('transaction.order.supplier')
+        $rekeningBKUs = $bkuQuery
             ->orderBy('tanggal_transaksi', 'desc')
-            ->take(50)
+            // ->take(50)
             ->get();
 
         $koranByDate = $rekeningKorans->groupBy(function ($item) {
@@ -159,7 +207,7 @@ class DashboardController extends Controller
         $allDates = collect(array_merge(
             $koranByDate->keys()->toArray(),
             $bkuByDate->keys()->toArray()
-        ))->unique()->sort()->reverse()->take(5);
+        ))->unique()->sort()->reverse()->take(5); //ambil 5 data terakhir
 
         $reconciliationData = [];
 
@@ -184,6 +232,18 @@ class DashboardController extends Controller
     public function getChartData(Request $request)
     {
         $filter = $request->input('filter', 'week');
+        $settingPageId = $request->input('setting_page_id');
+        $user = auth()->user();
+
+        $applyScope = function ($query) use ($user, $settingPageId) {
+            if ($user->isSuperAdmin()) {
+                $query->withoutGlobalScope('setting_page');
+                if ($settingPageId) {
+                    $query->where('setting_page_id', $settingPageId);
+                }
+            }
+            return $query;
+        };
 
         // Calculate date range based on filter
         $now = now();
@@ -206,11 +266,12 @@ class DashboardController extends Controller
         }
 
         // Pemasukan data
-        $pemasukanData = RekeningRekapBKU::whereIn('jenis_bahan', [
-            'Penerimaan BGN',
-            'Penerimaan Yayasan',
-            'Penerimaan Pihak Lainnya'
-        ])
+        $pemasukanData = $applyScope(RekeningRekapBKU::query())
+            ->whereIn('jenis_bahan', [
+                'Penerimaan BGN',
+                'Penerimaan Yayasan',
+                'Penerimaan Pihak Lainnya'
+            ])
             ->where('tanggal_transaksi', '>=', $startDate)
             ->selectRaw('DATE(tanggal_transaksi) as date, SUM(debit) as total')
             ->groupBy('date')
@@ -221,11 +282,12 @@ class DashboardController extends Controller
             });
 
         // Pengeluaran data
-        $pengeluaranData = RekeningRekapBKU::whereIn('jenis_bahan', [
-            'Bahan Pokok',
-            'Bahan Operasional',
-            'Pembayaran Sewa'
-        ])
+        $pengeluaranData = $applyScope(RekeningRekapBKU::query())
+            ->whereIn('jenis_bahan', [
+                'Bahan Pokok',
+                'Bahan Operasional',
+                'Pembayaran Sewa'
+            ])
             ->where('tanggal_transaksi', '>=', $startDate)
             ->selectRaw('DATE(tanggal_transaksi) as date, SUM(kredit) as total')
             ->groupBy('date')
@@ -259,7 +321,8 @@ class DashboardController extends Controller
         $anggaranData = [];
         $realisasiData = [];
 
-        $anggarans = Anggaran::where('start_date', '>=', $startDate)
+        $anggarans = $applyScope(Anggaran::query())
+            ->where('start_date', '>=', $startDate)
             ->orWhere('end_date', '>=', $startDate)
             ->get()
             ->groupBy(function ($item) use ($filter) {
@@ -279,11 +342,12 @@ class DashboardController extends Controller
             $anggaranData[$date] = $totalAnggaran;
         }
 
-        $realisasi = RekeningRekapBKU::whereIn('jenis_bahan', [
-            'Bahan Pokok',
-            'Bahan Operasional',
-            'Pembayaran Sewa'
-        ])
+        $realisasi = $applyScope(RekeningRekapBKU::query())
+            ->whereIn('jenis_bahan', [
+                'Bahan Pokok',
+                'Bahan Operasional',
+                'Pembayaran Sewa'
+            ])
             ->where('tanggal_transaksi', '>=', $startDate)
             ->selectRaw('DATE(tanggal_transaksi) as date, SUM(kredit) as total')
             ->groupBy('date')
@@ -304,7 +368,8 @@ class DashboardController extends Controller
         }
 
         // Distribusi Porsi
-        $porsiData = Anggaran::where('start_date', '>=', $startDate)
+        $porsiData = $applyScope(Anggaran::query())
+            ->where('start_date', '>=', $startDate)
             ->orWhere('end_date', '>=', $startDate)
             ->get();
 
@@ -344,16 +409,27 @@ class DashboardController extends Controller
         ]);
     }
 
-    private function getAnggaranRealisasiData()
+    private function getAnggaranRealisasiData($settingPageId = null)
     {
-        // Get anggaran and realisasi by week for chart
-        $startDate = now()->subDays(90); // Last 90 days
+        $user = auth()->user();
+        $startDate = now()->subDays(90);
+
+        $applyScope = function ($query) use ($user, $settingPageId) {
+            if ($user->isSuperAdmin()) {
+                $query->withoutGlobalScope('setting_page');
+                if ($settingPageId) {
+                    $query->where('setting_page_id', $settingPageId);
+                }
+            }
+            return $query;
+        };
 
         // Group anggaran by week
-        $anggaranWeekly = Anggaran::where('start_date', '>=', $startDate)
+        $anggaranWeekly = $applyScope(Anggaran::query())
+            ->where('start_date', '>=', $startDate)
             ->get()
             ->groupBy(function ($item) {
-                return $item->start_date->format('Y-W'); // Year-Week
+                return $item->start_date->format('Y-W');
             })
             ->map(function ($group) {
                 return $group->sum(function ($anggaran) {
@@ -365,11 +441,12 @@ class DashboardController extends Controller
             });
 
         // Group realisasi by week
-        $realisasiWeekly = RekeningRekapBKU::whereIn('jenis_bahan', [
-            'Bahan Pokok',
-            'Bahan Operasional',
-            'Pembayaran Sewa'
-        ])
+        $realisasiWeekly = $applyScope(RekeningRekapBKU::query())
+            ->whereIn('jenis_bahan', [
+                'Bahan Pokok',
+                'Bahan Operasional',
+                'Pembayaran Sewa'
+            ])
             ->where('tanggal_transaksi', '>=', $startDate)
             ->selectRaw('YEARWEEK(tanggal_transaksi, 1) as week, SUM(kredit) as total')
             ->groupBy('week')
@@ -399,19 +476,39 @@ class DashboardController extends Controller
         return $businessDays;
     }
 
-    public function rekonsiliasi()
+    public function rekonsiliasi(Request $request)
     {
-        $rekeningKorans = RekeningKoranVa::with('transaction.order.supplier')
+        $settingPageId = $request->input('setting_page_id');
+        $user = auth()->user();
+
+        $settingPages = null;
+        if ($user->isSuperAdmin()) {
+            $settingPages = \App\Models\SettingPage::all();
+        }
+
+        $applyScope = function ($query) use ($user, $settingPageId) {
+            if ($user->isSuperAdmin()) {
+                $query->withoutGlobalScope('setting_page');
+                if ($settingPageId) {
+                    $query->where('setting_page_id', $settingPageId);
+                }
+            }
+            return $query;
+        };
+
+        $rekeningKorans = $applyScope(RekeningKoranVa::query())
+            ->with('transaction.order.supplier')
             ->orderBy('tanggal_transaksi', 'asc')
             ->orderBy('id', 'asc')
             ->get();
 
-        $rekeningBKUs = RekeningRekapBKU::with('transaction.order.supplier')
+        $rekeningBKUs = $applyScope(RekeningRekapBKU::query())
+            ->with('transaction.order.supplier')
             ->orderBy('tanggal_transaksi', 'asc')
             ->orderBy('id', 'asc')
             ->get();
 
-        // Group by date and calculate summaries
+        // ... rest of method remains same
         $koranByDate = $rekeningKorans->groupBy(function ($item) {
             return $item->tanggal_transaksi->format('Y-m-d');
         })->map(function ($group) {
@@ -459,7 +556,7 @@ class DashboardController extends Controller
                 'jml_buku' => $bku['count'],
                 'nilai_buku' => ($bku['total_debit'] + $bku['total_kredit']),
                 'selisih' => $selisih,
-                'status' => abs($selisih) < 0.01 ? 'Match' : 'No Match' // Using epsilon for float comparison
+                'status' => abs($selisih) < 0.01 ? 'Match' : 'No Match'
             ];
         }
 
@@ -471,7 +568,9 @@ class DashboardController extends Controller
         return view('rekonsiliasi', [
             'reconciliationData' => $reconciliationData,
             'rekeningKorans' => $rekeningKorans,
-            'rekeningBKUs' => $rekeningBKUs
+            'rekeningBKUs' => $rekeningBKUs,
+            'settingPages' => $settingPages,
+            'settingPageId' => $settingPageId
         ]);
     }
 
