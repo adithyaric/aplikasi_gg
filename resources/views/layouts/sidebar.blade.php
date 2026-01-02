@@ -6,24 +6,15 @@
             <!--Logo start-->
             <div class="logo-main">
                 <div class="logo-normal">
-                    <img src="{{ asset('assets/images/logo-bgn.png') }}" width="50px" alt="logo-bgn" class="img-fluid">
+                    <img src="{{ asset('assets/images/logo-bgn.png') }}" style="width:45px;height:45px;object-fit:contain;" alt="logo-bgn" class="icon-45">
                 </div>
                 <div class="logo-mini">
-                    <svg class=" icon-30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="-0.757324" y="19.2427" width="28" height="4" rx="2"
-                            transform="rotate(-45 -0.757324 19.2427)" fill="currentColor" />
-                        <rect x="7.72803" y="27.728" width="28" height="4" rx="2"
-                            transform="rotate(-45 7.72803 27.728)" fill="currentColor" />
-                        <rect x="10.5366" y="16.3945" width="16" height="4" rx="2"
-                            transform="rotate(45 10.5366 16.3945)" fill="currentColor" />
-                        <rect x="10.5562" y="-0.556152" width="28" height="4" rx="2"
-                            transform="rotate(45 10.5562 -0.556152)" fill="currentColor" />
-                    </svg>
+                    <img src="{{ asset('assets/images/logo-bgn.png') }}" style="width:45px;height:45px;object-fit:contain;" alt="logo-bgn" class="icon-45">
                 </div>
             </div>
             <!--logo End-->
-            <h4 class="logo-title">
-                <strong>BGN</strong>
+            <h4 class="logo-title" style="font-size: 16px !important;">
+                <strong>MBG FOOD HUB</strong>
             </h4>
         </a>
 

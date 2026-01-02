@@ -1,4 +1,4 @@
-@extends('layouts.master')
+f @extends('layouts.master')
 @section('header')
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <!-- Nav Header Component Start -->
@@ -50,7 +50,7 @@
                                 <input type="file" name="file" class="form-control" accept=".xlsx,.xls,.csv" required>
                                 {{-- <div class="form-text">Format: Excel/CSV</div> --}}
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-9">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="bi bi-upload "></i> Import
                                 </button>

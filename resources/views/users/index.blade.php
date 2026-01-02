@@ -8,7 +8,7 @@
                 <div class="flex-wrap d-flex justify-content-between align-items-center">
                     <div>
                         <h3>{{ $title }}</h3>
-                        <p>BGN Makan Sehat Bergizi</p>
+                        <p>Makan Sehat Bergizi</p>
                     </div>
                     <div>
                         <a href="#" class="btn btn-link btn-soft-light" data-bs-toggle="modal" data-bs-target="#modalTambah">
@@ -46,13 +46,13 @@
                                 </div>
 
                                 {{-- <div class="form-group mb-3"> --}}
-                                    {{-- <label class="form-label">Pangkat</label> --}}
-                                    {{-- <input type="text" name="pangkat" class="form-control" placeholder="Masukkan pangkat"> --}}
+                                {{-- <label class="form-label">Pangkat</label> --}}
+                                {{-- <input type="text" name="pangkat" class="form-control" placeholder="Masukkan pangkat"> --}}
                                 {{-- </div> --}}
-{{--  --}}
+                                {{-- --}}
                                 {{-- <div class="form-group mb-3"> --}}
-                                    {{-- <label class="form-label">Jabatan</label> --}}
-                                    {{-- <input type="text" name="jabatan" class="form-control" placeholder="Masukkan jabatan"> --}}
+                                {{-- <label class="form-label">Jabatan</label> --}}
+                                {{-- <input type="text" name="jabatan" class="form-control" placeholder="Masukkan jabatan"> --}}
                                 {{-- </div> --}}
 
                                 <div class="form-group mb-3">
@@ -73,14 +73,14 @@
                                 </div>
 
                                 {{-- <div class="form-group mb-4"> --}}
-                                    {{-- <label class="form-label">Tanda Tangan (TTD)</label> --}}
-                                    {{-- <input type="file" name="ttd" id="ttdTambah" class="form-control" accept=".png,.jpg,.jpeg"> --}}
-                                    {{-- <small class="text-muted">Format: JPG/JPEG/PNG, max 2MB</small> --}}
-{{--  --}}
-                                    {{-- <div class="mt-3"> --}}
-                                        {{-- <label class="form-label">Preview TTD:</label><br> --}}
-                                        {{-- <img id="previewTtdTambah" src="" alt="Preview TTD" width="200" class="border rounded" style="display:none;"> --}}
-                                    {{-- </div> --}}
+                                {{-- <label class="form-label">Tanda Tangan (TTD)</label> --}}
+                                {{-- <input type="file" name="ttd" id="ttdTambah" class="form-control" accept=".png,.jpg,.jpeg"> --}}
+                                {{-- <small class="text-muted">Format: JPG/JPEG/PNG, max 2MB</small> --}}
+                                {{-- --}}
+                                {{-- <div class="mt-3"> --}}
+                                {{-- <label class="form-label">Preview TTD:</label><br> --}}
+                                {{-- <img id="previewTtdTambah" src="" alt="Preview TTD" width="200" class="border rounded" style="display:none;"> --}}
+                                {{-- </div> --}}
                                 {{-- </div> --}}
 
                                 <div class="d-flex justify-content-end gap-2">
@@ -116,9 +116,9 @@
                             <p><strong>Role:</strong> <span id="detail_role"></span></p>
 
                             {{-- <div class="mt-3"> --}}
-                                {{-- <label class="form-label"><strong>Tanda Tangan:</strong></label><br> --}}
-                                {{-- <img id="detail_ttd" src="" alt="TTD" width="300" class="border rounded" style="display:none;"> --}}
-                                {{-- <p id="detail_no_ttd" class="text-muted" style="display:none;">Tidak ada tanda tangan</p> --}}
+                            {{-- <label class="form-label"><strong>Tanda Tangan:</strong></label><br> --}}
+                            {{-- <img id="detail_ttd" src="" alt="TTD" width="300" class="border rounded" style="display:none;"> --}}
+                            {{-- <p id="detail_no_ttd" class="text-muted" style="display:none;">Tidak ada tanda tangan</p> --}}
                             {{-- </div> --}}
 
                         </div>
@@ -159,13 +159,13 @@
                                 </div>
 
                                 {{-- <div class="form-group mb-3"> --}}
-                                    {{-- <label class="form-label">Pangkat</label> --}}
-                                    {{-- <input type="text" name="pangkat" id="edit_pangkat" class="form-control"> --}}
+                                {{-- <label class="form-label">Pangkat</label> --}}
+                                {{-- <input type="text" name="pangkat" id="edit_pangkat" class="form-control"> --}}
                                 {{-- </div> --}}
-{{--  --}}
+                                {{-- --}}
                                 {{-- <div class="form-group mb-3"> --}}
-                                    {{-- <label class="form-label">Jabatan</label> --}}
-                                    {{-- <input type="text" name="jabatan" id="edit_jabatan" class="form-control"> --}}
+                                {{-- <label class="form-label">Jabatan</label> --}}
+                                {{-- <input type="text" name="jabatan" id="edit_jabatan" class="form-control"> --}}
                                 {{-- </div> --}}
 
                                 <div class="form-group mb-3">
@@ -186,20 +186,20 @@
                                 </div>
 
                                 {{-- <div class="form-group mb-3"> --}}
-                                    {{-- <label class="form-label">Tanda Tangan Saat Ini</label><br> --}}
-                                    {{-- <img id="edit_ttd_preview" src="" alt="TTD" width="300" class="border rounded mb-2" style="display:none;"> --}}
-                                    {{-- <p id="edit_no_ttd" class="text-muted" style="display:none;">Tidak ada tanda tangan</p> --}}
+                                {{-- <label class="form-label">Tanda Tangan Saat Ini</label><br> --}}
+                                {{-- <img id="edit_ttd_preview" src="" alt="TTD" width="300" class="border rounded mb-2" style="display:none;"> --}}
+                                {{-- <p id="edit_no_ttd" class="text-muted" style="display:none;">Tidak ada tanda tangan</p> --}}
                                 {{-- </div> --}}
-{{--  --}}
+                                {{-- --}}
                                 {{-- <div class="form-group mb-4"> --}}
-                                    {{-- <label class="form-label">Ganti Tanda Tangan (opsional)</label> --}}
-                                    {{-- <input type="file" name="ttd" id="ttdEdit" class="form-control" accept=".png,.jpg,.jpeg"> --}}
-                                    {{-- <small class="text-muted">Format JPG/JPEG/PNG. Maks 2MB</small> --}}
-{{--  --}}
-                                    {{-- <div class="mt-3"> --}}
-                                        {{-- <label class="form-label">Preview TTD Baru:</label><br> --}}
-                                        {{-- <img id="previewTtdEditNew" src="" alt="Preview New TTD" width="200" class="border rounded" style="display:none;"> --}}
-                                    {{-- </div> --}}
+                                {{-- <label class="form-label">Ganti Tanda Tangan (opsional)</label> --}}
+                                {{-- <input type="file" name="ttd" id="ttdEdit" class="form-control" accept=".png,.jpg,.jpeg"> --}}
+                                {{-- <small class="text-muted">Format JPG/JPEG/PNG. Maks 2MB</small> --}}
+                                {{-- --}}
+                                {{-- <div class="mt-3"> --}}
+                                {{-- <label class="form-label">Preview TTD Baru:</label><br> --}}
+                                {{-- <img id="previewTtdEditNew" src="" alt="Preview New TTD" width="200" class="border rounded" style="display:none;"> --}}
+                                {{-- </div> --}}
                                 {{-- </div> --}}
 
                                 <div class="d-flex justify-content-end gap-2">
@@ -285,29 +285,29 @@
                                     {{-- <td>{{ $user->jabatan }}</td> --}}
                                     <td>{{ $user->role }}</td>
                                     {{-- <td> --}}
-                                        {{-- @if ($user->ttd) --}}
-                                        {{-- <img src="{{ asset('storage/' . $user->ttd) }}" alt="TTD" width="90" class="border rounded"> --}}
-                                        {{-- @else --}}
-                                        {{-- - --}}
-                                        {{-- @endif --}}
+                                    {{-- @if ($user->ttd) --}}
+                                    {{-- <img src="{{ asset('storage/' . $user->ttd) }}" alt="TTD" width="90" class="border rounded"> --}}
+                                    {{-- @else --}}
+                                    {{-- - --}}
+                                    {{-- @endif --}}
                                     {{-- </td> --}}
                                     <td>
                                         {{-- DETAIL --}}
                                         {{-- <a title="Detail" href="#" class="btn btn-icon btn-info" --}}
-                                            {{-- data-bs-toggle="modal" --}}
-                                            {{-- data-bs-target="#modalDetail" --}}
-                                            {{-- data-id="{{ $user->id }}" --}}
-                                            {{-- data-nrp="{{ $user->nrp }}" --}}
-                                            {{-- data-name="{{ $user->name }}" --}}
-                                            {{-- data-pangkat="{{ $user->pangkat }}" --}}
-                                            {{-- data-jabatan="{{ $user->jabatan }}" --}}
-                                            {{-- data-role="{{ $user->role }}" --}}
-                                            {{-- data-ttd="{{ $user->ttd ? asset('storage/' . $user->ttd) : '' }}"> --}}
-                                            {{-- <span class="btn-inner"> --}}
-                                                {{-- <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> --}}
-                                                    {{-- <path fill-rule="evenodd" clip-rule="evenodd" d="M2 11.9993C2 6.48027 6.48 1.99927 12 1.99927C17.53 1.99927 22 6.48027 22 11.9993C22 17.5203 17.53 21.9993 12 21.9993C6.48 21.9993 2 17.5203 2 11.9993ZM11.12 8.20927C11.12 7.73027 11.52 7.32927 12 7.32927C12.48 7.32927 12.87 7.73027 12.87 8.20927V12.6293C12.87 13.1103 12.48 13.4993 12 13.4993C11.52 13.4993 11.12 13.1103 11.12 12.6293V8.20927ZM12.01 16.6803C11.52 16.6803 11.13 16.2803 11.13 15.8003C11.13 15.3203 11.52 14.9303 12 14.9303C12.49 14.9303 12.88 15.3203 12.88 15.8003C12.88 16.2803 12.49 16.6803 12.01 16.6803Z" fill="currentColor"></path> --}}
-                                                {{-- </svg> --}}
-                                            {{-- </span> --}}
+                                        {{-- data-bs-toggle="modal" --}}
+                                        {{-- data-bs-target="#modalDetail" --}}
+                                        {{-- data-id="{{ $user->id }}" --}}
+                                        {{-- data-nrp="{{ $user->nrp }}" --}}
+                                        {{-- data-name="{{ $user->name }}" --}}
+                                        {{-- data-pangkat="{{ $user->pangkat }}" --}}
+                                        {{-- data-jabatan="{{ $user->jabatan }}" --}}
+                                        {{-- data-role="{{ $user->role }}" --}}
+                                        {{-- data-ttd="{{ $user->ttd ? asset('storage/' . $user->ttd) : '' }}"> --}}
+                                        {{-- <span class="btn-inner"> --}}
+                                        {{-- <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> --}}
+                                        {{-- <path fill-rule="evenodd" clip-rule="evenodd" d="M2 11.9993C2 6.48027 6.48 1.99927 12 1.99927C17.53 1.99927 22 6.48027 22 11.9993C22 17.5203 17.53 21.9993 12 21.9993C6.48 21.9993 2 17.5203 2 11.9993ZM11.12 8.20927C11.12 7.73027 11.52 7.32927 12 7.32927C12.48 7.32927 12.87 7.73027 12.87 8.20927V12.6293C12.87 13.1103 12.48 13.4993 12 13.4993C11.52 13.4993 11.12 13.1103 11.12 12.6293V8.20927ZM12.01 16.6803C11.52 16.6803 11.13 16.2803 11.13 15.8003C11.13 15.3203 11.52 14.9303 12 14.9303C12.49 14.9303 12.88 15.3203 12.88 15.8003C12.88 16.2803 12.49 16.6803 12.01 16.6803Z" fill="currentColor"></path> --}}
+                                        {{-- </svg> --}}
+                                        {{-- </span> --}}
                                         {{-- </a> --}}
 
                                         {{-- EDIT --}}
@@ -320,8 +320,7 @@
                                             {{-- data-pangkat="{{ $user->pangkat }}"
                                             data-jabatan="{{ $user->jabatan }}" --}}
                                             data-role="{{ $user->role }}"
-                                            {{-- data-ttd="{{ $user->ttd ? asset('storage/' . $user->ttd) : '' }}" --}}
-                                        >
+                                            {{-- data-ttd="{{ $user->ttd ? asset('storage/' . $user->ttd) : '' }}" --}}>
                                             <span class="btn-inner">
                                                 <svg class="icon-20" width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path fill-rule="evenodd" clip-rule="evenodd" d="M9.3764 20.0279L18.1628 8.66544C18.6403 8.0527 18.8101 7.3443 18.6509 6.62299C18.513 5.96726 18.1097 5.34377 17.5049 4.87078L16.0299 3.69906C14.7459 2.67784 13.1541 2.78534 12.2415 3.95706L11.2546 5.23735C11.1273 5.39752 11.1591 5.63401 11.3183 5.76301C11.3183 5.76301 13.812 7.76246 13.8651 7.80546C14.0349 7.96671 14.1622 8.1817 14.1941 8.43969C14.2471 8.94493 13.8969 9.41792 13.377 9.48242C13.1329 9.51467 12.8994 9.43942 12.7297 9.29967L10.1086 7.21422C9.98126 7.11855 9.79025 7.13898 9.68413 7.26797L3.45514 15.3303C3.0519 15.8355 2.91395 16.4912 3.0519 17.1255L3.84777 20.5761C3.89021 20.7589 4.04939 20.8879 4.24039 20.8879L7.74222 20.8449C8.37891 20.8341 8.97316 20.5439 9.3764 20.0279ZM14.2797 18.9533H19.9898C20.5469 18.9533 21 19.4123 21 19.9766C21 20.5421 20.5469 21 19.9898 21H14.2797C13.7226 21 13.2695 20.5421 13.2695 19.9766C13.2695 19.4123 13.7226 18.9533 14.2797 18.9533Z" fill="currentColor"></path>
@@ -346,16 +345,16 @@
                                 @endforeach
                             </tbody>
                             {{-- <tfoot> --}}
-                                {{-- <tr> --}}
-                                    {{-- <th>No</th> --}}
-                                    {{-- <th>Nama</th> --}}
-                                    {{-- <th>NRP</th> --}}
-                                    {{-- <th>Pangkat</th> --}}
-                                    {{-- <th>Jabatan</th> --}}
-                                    {{-- <th>Role</th> --}}
-                                    {{-- <th>TTD</th> --}}
-                                    {{-- <th>Action</th> --}}
-                                {{-- </tr> --}}
+                            {{-- <tr> --}}
+                            {{-- <th>No</th> --}}
+                            {{-- <th>Nama</th> --}}
+                            {{-- <th>NRP</th> --}}
+                            {{-- <th>Pangkat</th> --}}
+                            {{-- <th>Jabatan</th> --}}
+                            {{-- <th>Role</th> --}}
+                            {{-- <th>TTD</th> --}}
+                            {{-- <th>Action</th> --}}
+                            {{-- </tr> --}}
                             {{-- </tfoot> --}}
                         </table>
                     </div>

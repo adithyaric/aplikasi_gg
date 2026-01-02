@@ -57,7 +57,7 @@
                                 <input type="file" name="file" class="form-control" accept=".xlsx,.xls,.csv" required>
                                 {{-- <div class="form-text">Format: Excel/CSV</div> --}}
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-9">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="bi bi-upload"></i> Import
                                 </button>

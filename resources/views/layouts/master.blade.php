@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>BGN | Badan Gizi Nasional</title>
+    <title>MBG FOOD HUB</title>
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{ asset('assets/images/logo-bgn.png') }}">
@@ -141,7 +141,7 @@
                             </div>
                         </div>
                         <!--logo End-->
-                        <h4 class="logo-title">BGN</h4>
+                        <h4 style="font-size: 16px !important;" class="logo-title">MBG FOOD HUB</h4>
                     </a>
                     <div class="sidebar-toggle" data-toggle="sidebar" data-active="true">
                         <i class="icon">
@@ -204,7 +204,7 @@
                     ©
                     <script>
                         document.write(new Date().getFullYear())
-                    </script> BGN Makan Sehat Bergizi, Developed by <a href="https://decaa.id">DECAA.ID</a>.
+                    </script> MBG FOOD HUB</a>.
                 </div>
             </div>
         </footer>
