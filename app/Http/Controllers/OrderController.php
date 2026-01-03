@@ -305,12 +305,12 @@ class OrderController extends Controller
                 ]);
             }
 
-            // Update transaction amount if exists
-            if ($order->transaction) {
-                $order->transaction->update([
-                    'amount' => $grandTotal,
-                ]);
-            }
+            // // Update transaction amount if exists
+            // if ($order->transaction) {
+            //     $order->transaction->update([
+            //         'amount' => $grandTotal,
+            //     ]);
+            // }
 
             DB::commit();
             return response()->json([
