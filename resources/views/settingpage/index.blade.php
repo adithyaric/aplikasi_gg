@@ -84,13 +84,13 @@
                                         <label class="form-label">Asisten Lapangan</label>
                                         <input type="text" name="asisten_lapangan" class="form-control">
                                     </div>
-                                    <div class="col-6">
-                                        <label class="form-label">Status</label>
-                                        <select name="active" class="form-select">
-                                            <option value="1">Aktif</option>
-                                            <option value="0" selected>Nonaktif</option>
-                                        </select>
-                                    </div>
+                                    {{-- <div class="col-6"> --}}
+                                        {{-- <label class="form-label">Status</label> --}}
+                                        {{-- <select name="active" class="form-select"> --}}
+                                            {{-- <option value="1">Aktif</option> --}}
+                                            {{-- <option value="0" selected>Nonaktif</option> --}}
+                                        {{-- </select> --}}
+                                    {{-- </div> --}}
                                 </div>
                                 <div class="d-flex justify-content-end gap-2 mt-4">
                                     <button type="submit" class="btn btn-success">Simpan</button>
@@ -165,13 +165,13 @@
                                         <input type="text" name="asisten_lapangan" id="edit_asisten_lapangan"
                                             class="form-control">
                                     </div>
-                                    <div class="col-6">
-                                        <label class="form-label">Status</label>
-                                        <select name="active" id="edit_active" class="form-select">
-                                            <option value="1">Aktif</option>
-                                            <option value="0">Nonaktif</option>
-                                        </select>
-                                    </div>
+                                    {{-- <div class="col-6"> --}}
+                                        {{-- <label class="form-label">Status</label> --}}
+                                        {{-- <select name="active" id="edit_active" class="form-select"> --}}
+                                            {{-- <option value="1">Aktif</option> --}}
+                                            {{-- <option value="0">Nonaktif</option> --}}
+                                        {{-- </select> --}}
+                                    {{-- </div> --}}
                                 </div>
                                 <div class="d-flex justify-content-end gap-2 mt-4">
                                     <button type="submit" class="btn btn-success">Simpan Perubahan</button>
@@ -228,7 +228,7 @@
                                         <th>Nama SPPG</th>
                                         <th>Yayasan</th>
                                         <th>Lokasi</th>
-                                        <th>Status</th>
+                                        {{-- <th>Status</th> --}}
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -239,13 +239,13 @@
                                             <td>{{ $setting->nama_sppg }}</td>
                                             <td>{{ $setting->yayasan }}</td>
                                             <td>{{ $setting->kelurahan }}, {{ $setting->kecamatan }}</td>
-                                            <td>
-                                                @if ($setting->active)
-                                                    <span class="badge bg-success">Aktif</span>
-                                                @else
-                                                    <span class="badge bg-danger">Nonaktif</span>
-                                                @endif
-                                            </td>
+                                            {{-- <td> --}}
+                                                {{-- @if ($setting->active) --}}
+                                                    {{-- <span class="badge bg-success">Aktif</span> --}}
+                                                {{-- @else --}}
+                                                    {{-- <span class="badge bg-danger">Nonaktif</span> --}}
+                                                {{-- @endif --}}
+                                            {{-- </td> --}}
                                             <td>
                                                 <a title="Edit" href="#" class="btn btn-icon btn-success"
                                                     data-bs-toggle="modal" data-bs-target="#modalEdit"

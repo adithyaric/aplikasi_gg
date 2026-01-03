@@ -36,6 +36,7 @@
     <!-- SIDEBAR MENU-->
     <div class="sidebar-body pt-0 data-scrollbar">
         <div class="sidebar-list">
+            @if(!in_array(auth()->user()->role, ['superadmin']))
             <!-- Header Info -->
             <div class="card credit-card-widget" data-aos="fade-up" data-aos-delay="900">
                 <div class="pb-4 border-0 card-header">
@@ -82,6 +83,7 @@
                     </div>
                 </div>
             </div>
+            @endif
 
             <!-- Sidebar Menu Start -->
             <ul class="navbar-nav iq-main-menu" id="sidebar-menu">
