@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
+    //TODO by default all data is 0, and need to choose settingpage
     public function index(Request $request)
     {
         $settingPageId = $request->input('setting_page_id');

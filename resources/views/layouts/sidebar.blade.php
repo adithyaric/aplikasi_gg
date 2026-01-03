@@ -44,7 +44,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h5 class="font-weight-bold">SPPG</h5>
-                                <p class="mb-0">{{ $settingView->nama_sppg ?? '-' }}</p>
+                                <p class="mb-0">{{ auth()->user()->settingPage->nama_sppg ?? '-' }}</p>
                             </div>
                             <div class="master-card-content">
                                 <img src="/assets/images/logo-bgn.png" alt="Logo BKU" class="icon-60"
@@ -53,32 +53,32 @@
                         </div>
                         <div class="my-4">
                             <div class="card-number">
-                                <span class="fs-5 me-2">{{ $settingView->provinsi ?? '-' }}</span>
+                                <span class="fs-5 me-2">{{ auth()->user()->settingPage->provinsi ?? '-' }}</span>
                             </div>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
                             <p class="mb-0">Yayasan</p>
                         </div>
                         <div class="mb-3 d-flex align-items-center justify-content-between">
-                            <h6>{{ $settingView->yayasan ?? '-' }}</h6>
+                            <h6>{{ auth()->user()->settingPage->yayasan ?? '-' }}</h6>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
                             <p class="mb-0">SPPI</p>
                         </div>
                         <div class="mb-3 d-flex align-items-center justify-content-between">
-                            <h6>{{ $settingView->nama_sppi ?? '-' }}</h6>
+                            <h6>{{ auth()->user()->settingPage->nama_sppi ?? '-' }}</h6>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
                             <p class="mb-0">Akuntan SPPG</p>
                         </div>
                         <div class="mb-3 d-flex align-items-center justify-content-between">
-                            <h6>{{ $settingView->akuntan_sppg ?? '-' }}</h6>
+                            <h6>{{ auth()->user()->settingPage->akuntan_sppg ?? '-' }}</h6>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
                             <p class="mb-0">Ahli Gizi</p>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
-                            <h6>{{ $settingView->ahli_gizi ?? '-' }}</h6>
+                            <h6>{{ auth()->user()->settingPage->ahli_gizi ?? '-' }}</h6>
                         </div>
                     </div>
                 </div>
@@ -110,6 +110,7 @@
                         <span class="item-name">Dashboard</span>
                     </a>
                 </li>
+                @if(in_array(auth()->user()->role, ['superadmin']))
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('settingpage.*') ? 'active' : '' }}"
                         href="{{ route('settingpage.index') }}">
@@ -117,6 +118,7 @@
                         <span class="item-name">Master Dapur</span>
                     </a>
                 </li>
+                @endif
             </ul>
 
             <ul class="navbar-nav iq-main-menu" id="sidebar-menu">
@@ -131,6 +133,7 @@
                         <span class="mini-icon">-</span>
                     </a>
                 </li>
+                @if(in_array(auth()->user()->role, ['superadmin']))
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"
                         href="{{ route('users.index') }}">
@@ -154,6 +157,7 @@
                         <span class="item-name">Users</span>
                     </a>
                 </li>
+                @endif
                 @endif
 
                 @if(in_array(auth()->user()->role, ['admin', 'ahligizi']))

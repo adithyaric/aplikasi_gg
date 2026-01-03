@@ -29,7 +29,5 @@ class AppServiceProvider extends ServiceProvider
         \Carbon\Carbon::macro('formatId', function ($format = 'd/m/Y') {
             return $this->locale('id')->translatedFormat($format);
         });
-
-        view()->share('settingView', SettingPage::find(auth()->user()?->setting_page_id) ?? []);
     }
 }
