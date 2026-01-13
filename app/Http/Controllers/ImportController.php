@@ -11,6 +11,7 @@ use App\Imports\GiziImport;
 use App\Imports\SekolahImport;
 use App\Imports\SupplierImport;
 use App\Imports\KaryawanImport;
+use App\Imports\KategoriKaryawanImport;
 use App\Imports\RekeningKoranVAImport;
 
 class ImportController extends Controller
@@ -48,6 +49,13 @@ class ImportController extends Controller
         $request->validate(['file' => 'required|mimes:xlsx,xls,csv']);
         Excel::import(new SupplierImport, $request->file('file'));
         return back()->with('success', 'Supplier imported successfully.');
+    }
+
+    public function importKategoriKaryawan(Request $request)
+    {
+        $request->validate(['file' => 'required|mimes:xlsx,xls,csv']);
+        Excel::import(new KategoriKaryawanImport, $request->file('file'));
+        return back()->with('success', 'Kategori karyawan imported successfully.');
     }
 
     public function importKaryawan(Request $request)

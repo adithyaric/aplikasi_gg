@@ -119,3 +119,33 @@ export :
 
 <!-- Super Admin : Informasi utama -> master dapur (datanya sama SettingPage) -->
 <!-- Dashboard, Master Dapur, User -->
+
+import :
+<!-- - bahanbaku:bahan_baku.csv -->
+<!-- - bahanoperasional:bahan_operasional.csv -->
+<!-- - gizi:gizi.csv -->
+<!-- - sekolah:sekolah.csv -->
+<!-- - supplier:supplier.csv -->
+<!-- --------------------------- -->
+<!-- - kategori-relawan:template-kategori_karyawan.csv -->
+<!-- - relawan:karyawan.csv -->
+- absensi
+- gaji
+<!-- --------------------------- -->
+- menu
+- paket-menu
+- rencana-menu
+<!-- --------------------------- -->
+- po
+- penerimaan barang
+- pengunaan barang
+- pembayaran
+<!-- --------------------------- -->
+- stok
+- kartu-stok??? (gk ada input)
+- kartu-opname??? (gk ada input)
+<!-- --------------------------- -->
+- proposal
+<!-- - rekening-koran-va:rekening-koran-va.csv -->
+- rekap bku
+- rekonsiliasi??? (gk ada input)

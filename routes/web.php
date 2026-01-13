@@ -140,6 +140,7 @@ Route::middleware(['auth', 'role:superadmin,admin,akuntan'])->group(function () 
     Route::post('/import-excel/gizi', [ImportController::class, 'importGizi'])->name('import.gizi');
     Route::post('/import-excel/sekolah', [ImportController::class, 'importSekolah'])->name('import.sekolah');
     Route::post('/import-excel/supplier', [ImportController::class, 'importSupplier'])->name('import.supplier');
+    Route::post('/import-excel/kategori-karyawan', [ImportController::class, 'importKategoriKaryawan'])->name('import.kategori_karyawan');
     Route::post('/import-excel/karyawan', [ImportController::class, 'importKaryawan'])->name('import.karyawan');
     Route::post('/import-excel/rekening-koran-va', [ImportController::class, 'importRekeningKoranVA'])->name('import.rekening-koran-va');
 
