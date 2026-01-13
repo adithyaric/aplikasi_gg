@@ -12,7 +12,10 @@ use App\Imports\SekolahImport;
 use App\Imports\SupplierImport;
 use App\Imports\KaryawanImport;
 use App\Imports\KategoriKaryawanImport;
+use App\Imports\MenuImport;
+use App\Imports\PaketMenuImport;
 use App\Imports\RekeningKoranVAImport;
+use App\Imports\RencanaMenuImport;
 
 class ImportController extends Controller
 {
@@ -70,5 +73,27 @@ class ImportController extends Controller
         $request->validate(['file' => 'required|mimes:xlsx,xls,csv']);
         Excel::import(new RekeningKoranVAImport, $request->file('file'));
         return back()->with('success', 'RekeningKoranVA imported successfully.');
+    }
+
+    //menu-menu
+    public function importMenu(Request $request)
+    {
+        $request->validate(['file' => 'required|mimes:xlsx,xls,csv']);
+        Excel::import(new MenuImport, $request->file('file'));
+        return back()->with('success', 'Menu imported successfully.');
+    }
+
+    public function importPaketMenu(Request $request)
+    {
+        $request->validate(['file' => 'required|mimes:xlsx,xls,csv']);
+        Excel::import(new PaketMenuImport, $request->file('file'));
+        return back()->with('success', 'Paket Menu imported successfully.');
+    }
+
+    public function importRencanaMenu(Request $request)
+    {
+        $request->validate(['file' => 'required|mimes:xlsx,xls,csv']);
+        Excel::import(new RencanaMenuImport, $request->file('file'));
+        return back()->with('success', 'Rencana Menu imported successfully.');
     }
 }

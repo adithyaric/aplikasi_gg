@@ -74,6 +74,24 @@
                         </div>
                     </div>
                     <div class="card-body">
+                        <form action="{{ route('import.rencana-menu') }}" method="POST" enctype="multipart/form-data"
+                            class="row g-3">
+                            @csrf
+                            <div class="col-md-3">
+                                <input type="file" name="file" class="form-control" accept=".xlsx,.xls,.csv" required>
+                                {{-- <div class="form-text">Format: Excel/CSV</div> --}}
+                            </div>
+                            <div class="col-md-9">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-upload"></i> Import
+                                </button>
+                                <a href="{{ asset('templates/template-rencana-menu.csv') }}" class="btn btn-secondary ms-2">
+                                    <i class="bi bi-file-earmark-spreadsheet"></i> Template
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-body">
                         <div class="table-responsive text-nowrap custom-datatable-entries">
                             <div class="d-flex align-items-center gap-2 mb-1">
                                 <form method="GET" action="{{ route('rencanamenu.index') }}" class="d-flex gap-2">

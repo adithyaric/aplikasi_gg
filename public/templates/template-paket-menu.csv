@@ -1,0 +1,4 @@
+nama_paket,menus,bahan_baku_details
+Paket Makan Siang A,"Nasi Goreng Ayam, Sayur Sop","[{'menu':'Nasi Goreng Ayam','bahan_baku':'Beras Merah','berat_bersih':200,'energi':300},{'menu':'Nasi Goreng Ayam','bahan_baku':'Daging Ayam','berat_bersih':150,'energi':250},{'menu':'Sayur Sop','bahan_baku':'Wortel','berat_bersih':100,'energi':50},{'menu':'Sayur Sop','bahan_baku':'Kentang','berat_bersih':120,'energi':80}]"
+Paket Makan Siang B,"Ayam Goreng, Capcay","[{'menu':'Ayam Goreng','bahan_baku':'Daging Ayam','berat_bersih':200,'energi':300},{'menu':'Capcay','bahan_baku':'Wortel','berat_bersih':100,'energi':50},{'menu':'Capcay','bahan_baku':'Ikan Lele','berat_bersih':180,'energi':220}]"
+Paket Sarapan,"Mie Goreng","[{'menu':'Mie Goreng','bahan_baku':'Beras Merah','berat_bersih':180,'energi':280},{'menu':'Mie Goreng','bahan_baku':'Wortel','berat_bersih':80,'energi':40},{'menu':'Mie Goreng','bahan_baku':'Daging Ayam','berat_bersih':120,'energi':200}]"

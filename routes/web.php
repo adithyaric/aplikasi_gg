@@ -144,6 +144,11 @@ Route::middleware(['auth', 'role:superadmin,admin,akuntan'])->group(function () 
     Route::post('/import-excel/karyawan', [ImportController::class, 'importKaryawan'])->name('import.karyawan');
     Route::post('/import-excel/rekening-koran-va', [ImportController::class, 'importRekeningKoranVA'])->name('import.rekening-koran-va');
 
+    // Import Excel (menu-menu)
+    Route::post('/import-excel/menu', [ImportController::class, 'importMenu'])->name('import.menu');
+    Route::post('/import-excel/paket-menu', [ImportController::class, 'importPaketMenu'])->name('import.paket-menu');
+    Route::post('/import-excel/rencana-menu', [ImportController::class, 'importRencanaMenu'])->name('import.rencana-menu');
+
     // Export excel (non-gizi)
     Route::get('export-excel/rekap-porsi', [ExportController::class, 'exportRekapPorsi'])->name('export.rekap-porsi');
     Route::get('export-excel/rekap-penerimaan-dana', [ExportController::class, 'exportRekapPenerimaanDana'])->name('export.rekap-penerimaan-dana');
