@@ -79,21 +79,45 @@ class ImportController extends Controller
     public function importMenu(Request $request)
     {
         $request->validate(['file' => 'required|mimes:xlsx,xls,csv']);
-        Excel::import(new MenuImport, $request->file('file'));
+
+        $import = new MenuImport;
+        Excel::import($import, $request->file('file'));
+
+        $errors = $import->getErrors();
+        if (!empty($errors)) {
+            return back()->withErrors(['import_errors' => $errors]);
+        }
+
         return back()->with('success', 'Menu imported successfully.');
     }
 
     public function importPaketMenu(Request $request)
     {
         $request->validate(['file' => 'required|mimes:xlsx,xls,csv']);
-        Excel::import(new PaketMenuImport, $request->file('file'));
+
+        $import = new PaketMenuImport;
+        Excel::import($import, $request->file('file'));
+
+        $errors = $import->getErrors();
+        if (!empty($errors)) {
+            return back()->withErrors(['import_errors' => $errors]);
+        }
+
         return back()->with('success', 'Paket Menu imported successfully.');
     }
 
     public function importRencanaMenu(Request $request)
     {
         $request->validate(['file' => 'required|mimes:xlsx,xls,csv']);
-        Excel::import(new RencanaMenuImport, $request->file('file'));
+
+        $import = new RencanaMenuImport;
+        Excel::import($import, $request->file('file'));
+
+        $errors = $import->getErrors();
+        if (!empty($errors)) {
+            return back()->withErrors(['import_errors' => $errors]);
+        }
+
         return back()->with('success', 'Rencana Menu imported successfully.');
     }
 }

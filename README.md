@@ -132,9 +132,9 @@ import :
 - absensi
 - gaji
 <!-- --------------------------- -->
-- menu
-- paket-menu
-- rencana-menu
+<!-- - menu:menu.csv -->
+<!-- - paket-menu:paket-menu.csv --> csv : perhitungan energi bahanbaku blm sesuai
+<!-- - rencana-menu:rencana-menu.csv -->
 <!-- --------------------------- -->
 - po
 - penerimaan barang
