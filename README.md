@@ -129,11 +129,11 @@ import :
 <!-- --------------------------- -->
 <!-- - kategori-relawan:template-kategori_karyawan.csv -->
 <!-- - relawan:karyawan.csv -->
-- absensi
-- gaji
+<!-- - absensi : coba dr export -->
+<!-- - gaji : coba dr export -->
 <!-- --------------------------- -->
 <!-- - menu:menu.csv -->
-<!-- - paket-menu:paket-menu.csv --> csv : perhitungan energi bahanbaku blm sesuai
+`<!-- - paket-menu:paket-menu.csv -->`
 <!-- - rencana-menu:rencana-menu.csv -->
 <!-- --------------------------- -->
 - po

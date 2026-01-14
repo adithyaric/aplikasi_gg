@@ -3,10 +3,12 @@
 // app/Http/Controllers/ImportController.php
 namespace App\Http\Controllers;
 
+use App\Imports\AbsensiImport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\BahanBakuImport;
 use App\Imports\BahanOperasionalImport;
+use App\Imports\GajiImport;
 use App\Imports\GiziImport;
 use App\Imports\SekolahImport;
 use App\Imports\SupplierImport;
@@ -119,5 +121,30 @@ class ImportController extends Controller
         }
 
         return back()->with('success', 'Rencana Menu imported successfully.');
+    }
+
+    //penggajian
+    public function importAbsensi(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_akhir' => 'required|date|after_or_equal:tanggal_mulai'
+        ]);
+
+        Excel::import(new AbsensiImport($request->tanggal_mulai, $request->tanggal_akhir), $request->file('file'));
+        return back()->with('success', 'Absensi imported successfully.');
+    }
+
+    public function importGaji(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_akhir' => 'required|date|after_or_equal:tanggal_mulai'
+        ]);
+
+        Excel::import(new GajiImport($request->tanggal_mulai, $request->tanggal_akhir), $request->file('file'));
+        return back()->with('success', 'Gaji imported successfully.');
     }
 }

@@ -37,9 +37,35 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
+                    <div class="card-header">
+                        <form action="{{ route('import.gaji') }}" method="POST" enctype="multipart/form-data" class="row g-3">
+                            @csrf
+                            <div class="col-md-3">
+                                <label for="file" class="form-label">Format: Excel/CSV</label>
+                                <input type="file" name="file" class="form-control" accept=".xlsx,.xls,.csv" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="tanggal_mulai" class="form-label">Tanggal Mulai</label>
+                                <input type="date" name="tanggal_mulai" class="form-control" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="tanggal_akhir" class="form-label">Tanggal Akhir</label>
+                                <input type="date" name="tanggal_akhir" class="form-control" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label>&nbsp;</label>
+                                <button type="submit" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-upload"></i> Import
+                                </button>
+                                <a href="{{ asset('templates/template-gaji.csv') }}" class="btn btn-sm btn-secondary ms-2">
+                                    <i class="bi bi-file-earmark-spreadsheet"></i> Template
+                                </a>
+                            </div>
+                        </form>
+                    </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover">
+                            <table id="datatable" class="table table-bordered table-sm" @if (count($periods)>0) data-toggle="data-table" @endif>
                                 <thead>
                                     <tr>
                                         <th width="50">No</th>
